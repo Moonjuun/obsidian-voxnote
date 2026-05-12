@@ -17,6 +17,7 @@ import { detectLang, makeT, T } from './i18n';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
+	private consentModalOpen = false;
 
 	get t(): T {
 		return makeT(detectLang(this.settings.uiLanguage));
@@ -110,11 +111,23 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	private openConsentModal(): void {
-		new ConsentModal(this.app, this.t, async () => {
-			this.settings.consentAcknowledged = true;
-			await this.saveSettings();
-			await this.runConsentSideEffects();
-		}).open();
+		// 중복 호출 가드: 이미 열려있거나 이미 동의 처리됐으면 무시
+		if (this.consentModalOpen) return;
+		if (this.settings.consentAcknowledged) return;
+
+		this.consentModalOpen = true;
+		new ConsentModal(
+			this.app,
+			this.t,
+			async () => {
+				this.settings.consentAcknowledged = true;
+				await this.saveSettings();
+				await this.runConsentSideEffects();
+			},
+			() => {
+				this.consentModalOpen = false;
+			},
+		).open();
 	}
 
 	private async runConsentSideEffects(): Promise<void> {

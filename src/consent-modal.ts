@@ -3,12 +3,19 @@ import type { T } from './i18n';
 
 export class ConsentModal extends Modal {
 	private readonly onAcknowledge: () => Promise<void> | void;
+	private readonly onCloseCallback?: () => void;
 	private readonly t: T;
 
-	constructor(app: App, t: T, onAcknowledge: () => Promise<void> | void) {
+	constructor(
+		app: App,
+		t: T,
+		onAcknowledge: () => Promise<void> | void,
+		onCloseCallback?: () => void,
+	) {
 		super(app);
 		this.t = t;
 		this.onAcknowledge = onAcknowledge;
+		this.onCloseCallback = onCloseCallback;
 	}
 
 	onOpen() {
@@ -65,5 +72,6 @@ export class ConsentModal extends Modal {
 
 	onClose() {
 		this.contentEl.empty();
+		this.onCloseCallback?.();
 	}
 }
