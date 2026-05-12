@@ -66,6 +66,8 @@ ObsiDeep/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 
 - **드래그앤드롭**: Finder에서 옵시디언 창의 `ObsiDeep/Audio/`로 드래그
 - **Finder 직접 복사**: vault 폴더의 `ObsiDeep/Audio/` 안에 파일 복사
 
+> 💡 Finder에서 직접 복사한 경우 옵시디언 사이드바에 즉시 안 보일 수 있습니다. `Cmd+P` (Windows: `Ctrl+P`) → **"저장하지 않고 앱 새로고침"** 실행 후 다시 확인하세요.
+
 > 다른 폴더(`Attachments/`, `Meetings/` 등)에 두어도 변환은 동작하지만, git 보호를 받으려면 본인이 별도로 `.gitignore` 처리해야 합니다.
 
 ### 1. 변환 실행

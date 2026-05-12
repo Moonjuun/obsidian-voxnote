@@ -58,6 +58,8 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
    - **옵시디언 창에 직접 드래그앤드롭**: Finder에서 녹음 파일을 잡아 **옵시디언 창 좌측 사이드바**의 \`ObsiDeep/Audio/\` 폴더 위로 끌어다 놓기.
    - 또는 **Finder에서 직접 복사**: vault 폴더의 \`ObsiDeep/Audio/\` 안에 붙여넣기.
 
+   > 💡 Finder에서 직접 복사한 경우 옵시디언 좌측 사이드바에 파일이 바로 안 보일 수 있습니다. 그 때는 \`Cmd+P\` (Windows/Linux: \`Ctrl+P\`) → **"저장하지 않고 앱 새로고침"** 실행 후 다음 단계로.
+
 2. **변환 실행** — 옵시디언 좌측 사이드바에서 그 오디오 파일을 **우클릭 → "Transcribe with Deepgram"** (한국어 UI에서는 "Deepgram으로 회의록 추출")
 
 ![파일 우클릭 → Transcribe with Deepgram](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
@@ -165,6 +167,8 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 1. **Put the recording into \`ObsiDeep/Audio/\`**
    - **Drag-and-drop into the Obsidian window**: grab the file in Finder/Explorer and drop it onto the \`ObsiDeep/Audio/\` folder in **Obsidian's left sidebar**.
    - Or copy it directly into the \`ObsiDeep/Audio/\` directory in your vault folder.
+
+   > 💡 If you copied via Finder/Explorer, Obsidian's left sidebar might not show the new file immediately. In that case, press \`Cmd+P\` (Windows/Linux: \`Ctrl+P\`) → **"Reload app without saving"** and continue.
 
 2. **Run transcription** — in Obsidian's left sidebar, **right-click** the audio file → **"Transcribe with Deepgram"** (label is localized; "Deepgram으로 회의록 추출" in Korean UI).
 
