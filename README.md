@@ -35,10 +35,18 @@
 
 1. [Deepgram 콘솔](https://console.deepgram.com)에 가입 (Google 또는 이메일).
    - 가입 즉시 **무료 $200 크레딧** 자동 지급 (nova-3 기준 약 770시간 분량).
+
+![Deepgram 회원가입 화면](img/img1.webp)
+
 2. 대시보드 좌측 → **API Keys** → **Create New API Key** 클릭.
 3. 키 이름은 자유 (예: `obsidian-stt`), 권한은 `Member` 이상이면 충분.
 4. 생성된 `xxxxxxxxxxxx...` 형식 토큰을 즉시 복사 (페이지 이탈 시 다시 못 봄).
+
+![API 키 생성 화면](img/img2.webp)
+
 5. 옵시디언 → 플러그인 설정 → **"Deepgram API 키"** 칸에 붙여넣기 → **"검증"** 버튼.
+
+![플러그인 설정 탭](img/img3.webp)
 
 ---
 
@@ -67,7 +75,9 @@ ObsiDeep/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 
 - 변환할 오디오 파일 선택 → 회의록 제목 입력 → Enter
 
 **파일 우클릭**:
-- 옵시디언 좌측 사이드바에서 오디오 파일 우클릭 → **"Deepgram으로 회의록 추출"**
+- 옵시디언 좌측 사이드바에서 오디오 파일 우클릭 → **"Transcribe with Deepgram"** (한국어 UI에서는 **"Deepgram으로 회의록 추출"**)
+
+![파일 우클릭 → Transcribe with Deepgram](img/img4.webp)
 
 **디버그 명령 (선택)**:
 - **"Transcribe audio file (debug — console only)"** — 노트 생성 없이 transcript 결과만 DevTools 콘솔에 출력. API 응답 점검용.

@@ -35,9 +35,14 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
 
 1. [Deepgram 콘솔](https://console.deepgram.com)에 가입 (Google 또는 이메일).
    - 가입 즉시 **무료 $200 크레딧** 자동 지급 (nova-3 기준 약 770시간 분량).
+
+![Deepgram 회원가입 화면](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img1.webp)
+
 2. 대시보드 좌측 메뉴 → **API Keys** → **Create New API Key** 클릭.
 3. 키 이름은 자유 (예: \`obsidian-stt\`), 권한은 \`Member\` 이상이면 충분.
 4. 생성된 \`xxxxxxx...\` 형식 키를 즉시 복사 (페이지 떠나면 다시 못 봄).
+
+![API 키 생성 화면](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img2.webp)
 
 ### 2단계 — 플러그인에 API 키 입력
 
@@ -45,23 +50,21 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
 2. **"Deepgram API 키"** 칸에 복사한 키 붙여넣기.
 3. **"검증"** 버튼 클릭 → \`✓ API 키 유효\` 메시지 확인.
 
-### 3단계 — 녹음 파일을 \`Audio/\`에 넣기
+![플러그인 설정 탭](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
 
-다음 둘 중 편한 방법으로:
+### 3단계 — 녹음 파일 넣고 변환 실행
 
-- **옵시디언 창에 직접 드래그앤드롭**: Finder에서 녹음 파일을 잡아 **옵시디언 창의 좌측 사이드바**에 있는 \`ObsiDeep/Audio/\` 폴더 위로 끌어다 놓기. 옵시디언이 자동으로 vault 안으로 복사합니다.
-- **Finder에서 직접 복사**: macOS Finder에서 vault 폴더의 \`ObsiDeep/Audio/\` 안에 붙여넣기 (Cmd+V).
+1. **녹음 파일을 \`ObsiDeep/Audio/\`에 넣기**
+   - **옵시디언 창에 직접 드래그앤드롭**: Finder에서 녹음 파일을 잡아 **옵시디언 창 좌측 사이드바**의 \`ObsiDeep/Audio/\` 폴더 위로 끌어다 놓기.
+   - 또는 **Finder에서 직접 복사**: vault 폴더의 \`ObsiDeep/Audio/\` 안에 붙여넣기.
 
----
+2. **변환 실행** — 옵시디언 좌측 사이드바에서 그 오디오 파일을 **우클릭 → "Transcribe with Deepgram"** (한국어 UI에서는 "Deepgram으로 회의록 추출")
 
-## 회의록 추출
+![파일 우클릭 → Transcribe with Deepgram](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
 
-다음 둘 중 하나로 실행:
+3. **제목 입력 → Enter** → 약 1~2분 후 \`STT/\` 폴더에 \`.md\` 회의록이 자동 생성·열림.
 
-- **방법 A — 파일 우클릭**: \`ObsiDeep/Audio/\` 안의 오디오 파일을 **옵시디언 좌측 사이드바**에서 우클릭 → **"Deepgram으로 회의록 추출"**.
-- **방법 B — 명령 팔레트**: \`Cmd+P\` (Windows/Linux: \`Ctrl+P\`) → **"Transcribe audio → meeting note"**.
-
-→ 회의록 제목 입력 → Enter → 약 1~2분 후 \`STT/\` 폴더에 \`.md\` 노트가 자동 생성·열림.
+> 명령 팔레트(\`Cmd+P\` / \`Ctrl+P\`)에서 "Transcribe audio → meeting note"로도 동일하게 실행할 수 있습니다.
 
 ---
 
@@ -140,9 +143,14 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 
 1. Create an account at [Deepgram Console](https://console.deepgram.com) (Google or email).
    - You automatically receive **$200 in free credits** on signup (~770 hours of nova-3 transcription).
+
+![Deepgram signup screen](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img1.webp)
+
 2. In the dashboard sidebar → **API Keys** → **Create New API Key**.
 3. Pick any name (e.g. \`obsidian-stt\`); \`Member\` permission is enough.
 4. Copy the \`xxxxxxx...\` key immediately — you can't view it again after leaving the page.
+
+![Create API Key](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img2.webp)
 
 ### Step 2 — Paste the API key into the plugin
 
@@ -150,23 +158,21 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 2. Paste the key into **"Deepgram API key"**.
 3. Click **"Validate"** → you should see \`✓ API key is valid\`.
 
-### Step 3 — Put recordings into \`Audio/\`
+![Plugin settings tab](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
 
-Use either method:
+### Step 3 — Drop a recording and transcribe
 
-- **Drag-and-drop into the Obsidian window**: grab the file in Finder/Explorer and drop it onto the **\`ObsiDeep/Audio/\`** folder in **Obsidian's left sidebar**. Obsidian copies it into your vault automatically.
-- **Direct Finder copy**: paste the file into the \`ObsiDeep/Audio/\` directory inside your vault folder.
+1. **Put the recording into \`ObsiDeep/Audio/\`**
+   - **Drag-and-drop into the Obsidian window**: grab the file in Finder/Explorer and drop it onto the \`ObsiDeep/Audio/\` folder in **Obsidian's left sidebar**.
+   - Or copy it directly into the \`ObsiDeep/Audio/\` directory in your vault folder.
 
----
+2. **Run transcription** — in Obsidian's left sidebar, **right-click** the audio file → **"Transcribe with Deepgram"** (label is localized; "Deepgram으로 회의록 추출" in Korean UI).
 
-## Transcribe a recording
+![Right-click → Transcribe with Deepgram](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
 
-Pick one:
+3. **Enter a title → press Enter** → after ~1–2 min a \`.md\` note appears in \`STT/\` and opens automatically.
 
-- **Method A — Right-click**: in **Obsidian's left sidebar**, right-click any audio file under \`ObsiDeep/Audio/\` → **"Transcribe with Deepgram"** (label varies by UI language).
-- **Method B — Command palette**: \`Cmd+P\` (or \`Ctrl+P\`) → **"Transcribe audio → meeting note"**.
-
-→ Enter a title → press Enter → after ~1–2 min a \`.md\` note appears in \`STT/\` and opens automatically.
+> The command palette (\`Cmd+P\` / \`Ctrl+P\`) → "Transcribe audio → meeting note" runs the same flow.
 
 ---
 
