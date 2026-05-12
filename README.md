@@ -42,14 +42,25 @@
 
 ## 사용법
 
-### 명령 팔레트
-- `Cmd+P` (macOS) / `Ctrl+P` → **"Deepgram Meeting STT: Transcribe audio → meeting note"** 실행.
-- 변환할 오디오 파일 선택 → 회의록 제목 입력 → Enter.
+### 0. 회의 녹음 파일을 vault에 넣기
 
-### 파일 우클릭
-- vault 내 오디오 파일 우클릭 → **"Deepgram으로 회의록 추출"** 클릭.
+플러그인 첫 실행 시 동의 모달에서 동의하면 **vault 루트에 `Audio/` 폴더가 자동 생성**됩니다. 회의 녹음 파일은 이 폴더에 두는 것을 권장합니다 (vault `.gitignore`에 자동 추가되어 git에 올라가지 않음).
 
-### 디버그 명령 (선택)
+- **드래그앤드롭**: Finder에서 옵시디언 창의 `Audio/` 폴더로 드래그
+- **Finder 직접 복사**: vault 폴더의 `Audio/` 안에 파일 복사
+
+> 다른 폴더(`Attachments/`, `Meetings/` 등)에 두어도 변환은 동작하지만, git 보호를 받으려면 본인이 별도로 `.gitignore` 처리해야 합니다.
+
+### 1. 변환 실행
+
+**명령 팔레트**:
+- `Cmd+P` (macOS) / `Ctrl+P` → **"Deepgram Meeting STT: Transcribe audio → meeting note"** 실행
+- 변환할 오디오 파일 선택 → 회의록 제목 입력 → Enter
+
+**파일 우클릭**:
+- 옵시디언 좌측 사이드바에서 오디오 파일 우클릭 → **"Deepgram으로 회의록 추출"**
+
+**디버그 명령 (선택)**:
 - **"Transcribe audio file (debug — console only)"** — 노트 생성 없이 transcript 결과만 DevTools 콘솔에 출력. API 응답 점검용.
 
 > 지원 포맷: `mp3`, `m4a`, `mp4`, `wav`, `flac`, `ogg`, `opus`, `webm`, `aac`
@@ -133,14 +144,19 @@ Deepgram **nova-3** 기준 (2026-05 시점):
 - 회의 참석자에게 **녹음 및 외부 API 전송에 대한 사전 동의**를 받으시는 것을 권장합니다.
 - 요금제가 허용하는 경우 설정에서 **Zero Retention** 옵션을 켜 Deepgram 측 데이터 보관을 비활성화할 수 있습니다.
 
-### API 키 보호
+### API 키 + 회의 녹음 자동 보호
 - API 키는 vault 내 `.obsidian/plugins/deepgram-meeting-stt/data.json`에 **평문 JSON으로 저장**됩니다 (옵시디언 플러그인 표준).
-- vault를 git으로 동기화하는 경우 첫 실행 모달에서 동의 시 **`.gitignore`에 자동 보호 룰을 추가**합니다 (`.gitignore`가 있을 때만).
-- 만약 vault `.gitignore`가 없거나 자동 추가가 실패했다면, 수동으로 다음 한 줄을 추가하세요:
+- 회의 녹음은 사용자가 vault에 두는 파일이라, vault git sync 시 그대로 외부에 업로드될 위험이 있습니다.
+- 첫 실행 모달에서 동의 시 다음을 자동 처리합니다 (`.gitignore`가 있을 때만):
+  - vault 루트에 **`Audio/` 폴더 생성** (녹음 파일 권장 위치)
+  - `.gitignore`에 **`data.json`** 룰 추가 → API 키 보호
+  - `.gitignore`에 **`Audio/`** 룰 추가 → 회의 녹음 외부 유출 차단
+- vault `.gitignore`가 없거나 자동 추가가 실패했다면, 수동으로 다음 두 줄을 추가하세요:
   ```
   .obsidian/plugins/deepgram-meeting-stt/data.json
+  Audio/
   ```
-- **이미 키가 들어간 후 git에 push되었다면**: GitHub은 push 즉시 인덱싱하므로 사후 삭제로는 보장 불가. 즉시 키 폐기 후 신규 발급을 권장합니다.
+- **이미 키나 녹음이 git에 push되었다면**: GitHub은 push 즉시 인덱싱하므로 사후 삭제로는 보장 불가. 키는 즉시 폐기·재발급, 녹음은 별도 평가 후 BFG/`git filter-repo`로 history 제거 필요.
 
 ---
 

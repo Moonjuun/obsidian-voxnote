@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-12
+
+### Added
+- 첫 실행 동의 시 vault 루트에 `Audio/` 폴더 자동 생성 — 회의 녹음 권장 위치.
+- vault `.gitignore`에 `Audio/` 룰 자동 추가 (data.json과 함께) → 회의 녹음이 vault git sync로 외부에 유출되는 것 차단.
+
+### Changed
+- 동의 후 부수 효과를 `applyConsentSideEffects`로 통합. 결과 Notice가 폴더 생성·gitignore 갱신 상태를 분리해서 보고.
+- consent 모달 안내문에 Audio/ 폴더 생성·gitignore 보호 룰 명시.
+- README 사용법 섹션에 `Audio/` 폴더 사용 흐름 추가.
+
 ## [0.1.0] - 2026-05-12
 
 ### Added
@@ -16,5 +27,6 @@
   `{{audio_link}}`, `{{language}}`, `{{model}}`).
 - 네트워크/5xx/429 오류 1회 자동 재시도 + 상황별 안내 메시지.
 
-[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/releases/tag/0.1.0

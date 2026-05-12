@@ -2,7 +2,10 @@ import { Menu, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
 import { ConsentModal } from './consent-modal';
-import { ensureGitignoreRule } from './gitignore';
+import {
+	applyConsentSideEffects,
+	ConsentSideEffectsResult,
+} from './gitignore';
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
 import { TitleInputModal } from './title-input-modal';
@@ -23,7 +26,7 @@ export default class DeepgramSttPlugin extends Plugin {
 				new ConsentModal(this.app, async () => {
 					this.settings.consentAcknowledged = true;
 					await this.saveSettings();
-					await this.applyGitignoreProtection();
+					await this.runConsentSideEffects();
 				}).open();
 			});
 		}
@@ -88,23 +91,45 @@ export default class DeepgramSttPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private async applyGitignoreProtection(): Promise<void> {
-		const result = await ensureGitignoreRule(this.app);
-		switch (result) {
+	private async runConsentSideEffects(): Promise<void> {
+		const result = await applyConsentSideEffects(this.app);
+		this.notifyConsentResult(result);
+	}
+
+	private notifyConsentResult(result: ConsentSideEffectsResult): void {
+		const messages: string[] = [];
+
+		switch (result.audioFolder) {
+			case 'created':
+				messages.push('✓ vault 루트에 Audio/ 폴더를 생성했습니다. 회의 녹음 파일은 이 폴더에 넣어주세요.');
+				break;
+			case 'exists':
+				// 이미 있음 — 알릴 필요 없음
+				break;
+			case 'error':
+				messages.push('⚠ Audio/ 폴더 자동 생성에 실패했습니다. 수동으로 만들어주세요.');
+				break;
+		}
+
+		switch (result.gitignore) {
 			case 'added':
-				new Notice('vault/.gitignore에 API 키 보호 룰을 추가했습니다.', 6000);
+				messages.push('✓ vault/.gitignore에 보호 룰을 추가했습니다 (data.json + Audio/).');
+				break;
+			case 'partial':
+				messages.push('✓ vault/.gitignore에 누락된 보호 룰을 보강했습니다.');
 				break;
 			case 'exists':
 				break;
 			case 'no-gitignore':
-				new Notice(
-					'vault에 .gitignore가 없어 자동 보호를 건너뛰었습니다. git sync 사용 시 수동 추가를 권장합니다.',
-					8000,
-				);
+				messages.push('ℹ vault에 .gitignore가 없어 자동 보호를 건너뛰었습니다. git sync 사용 시 수동 추가를 권장합니다.');
 				break;
 			case 'error':
-				new Notice('.gitignore 자동 갱신 중 오류가 발생했습니다. 수동 확인이 필요합니다.', 8000);
+				messages.push('⚠ .gitignore 자동 갱신 중 오류가 발생했습니다. 수동 확인이 필요합니다.');
 				break;
+		}
+
+		if (messages.length > 0) {
+			new Notice(messages.join('\n'), 10000);
 		}
 	}
 
