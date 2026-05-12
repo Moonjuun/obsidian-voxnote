@@ -44,10 +44,17 @@
 
 ### 0. 회의 녹음 파일을 vault에 넣기
 
-플러그인 첫 실행 시 동의 모달에서 동의하면 **vault 루트에 `Audio/` 폴더가 자동 생성**됩니다. 회의 녹음 파일은 이 폴더에 두는 것을 권장합니다 (vault `.gitignore`에 자동 추가되어 git에 올라가지 않음).
+플러그인 첫 실행 시 동의 모달에서 동의하면 **vault 루트에 `Deepgram/` 폴더가 자동 생성**됩니다:
 
-- **드래그앤드롭**: Finder에서 옵시디언 창의 `Audio/` 폴더로 드래그
-- **Finder 직접 복사**: vault 폴더의 `Audio/` 안에 파일 복사
+```
+Deepgram/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 차단)
+  ├─ Audio/            ← 회의 녹음 파일 (직접 넣기)
+  └─ STT/              ← 변환된 회의록 노트 (자동 저장)
+```
+
+녹음 파일을 `Deepgram/Audio/`에 넣는 방법:
+- **드래그앤드롭**: Finder에서 옵시디언 창의 `Deepgram/Audio/`로 드래그
+- **Finder 직접 복사**: vault 폴더의 `Deepgram/Audio/` 안에 파일 복사
 
 > 다른 폴더(`Attachments/`, `Meetings/` 등)에 두어도 변환은 동작하지만, git 보호를 받으려면 본인이 별도로 `.gitignore` 처리해야 합니다.
 
@@ -72,7 +79,7 @@
 | 항목 | 설명 | 기본값 |
 |---|---|---|
 | Deepgram API 키 | 회의록 변환에 사용할 키 (검증 버튼 옆에 있음) | (없음) |
-| 회의록 저장 폴더 | vault 내 상대 경로. 자동 생성됨 | `STT` |
+| 회의록 저장 폴더 | vault 내 상대 경로. 자동 생성됨 | `Deepgram/STT` |
 | 템플릿 경로 | vault 내 마크다운 파일 경로. 비우면 내장 템플릿 | (빈 값) |
 | 언어 | `ko` / `en` / `auto` (자동 감지) | `ko` |
 | Deepgram 모델 | `nova-3` (최신) / `nova-2` | `nova-3` |
@@ -148,13 +155,13 @@ Deepgram **nova-3** 기준 (2026-05 시점):
 - API 키는 vault 내 `.obsidian/plugins/deepgram-meeting-stt/data.json`에 **평문 JSON으로 저장**됩니다 (옵시디언 플러그인 표준).
 - 회의 녹음은 사용자가 vault에 두는 파일이라, vault git sync 시 그대로 외부에 업로드될 위험이 있습니다.
 - 첫 실행 모달에서 동의 시 다음을 자동 처리합니다 (`.gitignore`가 있을 때만):
-  - vault 루트에 **`Audio/` 폴더 생성** (녹음 파일 권장 위치)
-  - `.gitignore`에 **`data.json`** 룰 추가 → API 키 보호
-  - `.gitignore`에 **`Audio/`** 룰 추가 → 회의 녹음 외부 유출 차단
+  - vault 루트에 **`Deepgram/` 폴더 생성** (그 안에 `Audio/`, `STT/` 하위 폴더)
+  - `.gitignore`에 **`.obsidian/plugins/deepgram-meeting-stt/data.json`** 룰 추가 → API 키 보호
+  - `.gitignore`에 **`Deepgram/`** 룰 추가 → 회의 녹음·회의록 외부 유출 차단
 - vault `.gitignore`가 없거나 자동 추가가 실패했다면, 수동으로 다음 두 줄을 추가하세요:
   ```
   .obsidian/plugins/deepgram-meeting-stt/data.json
-  Audio/
+  Deepgram/
   ```
 - **이미 키나 녹음이 git에 push되었다면**: GitHub은 push 즉시 인덱싱하므로 사후 삭제로는 보장 불가. 키는 즉시 폐기·재발급, 녹음은 별도 평가 후 BFG/`git filter-repo`로 history 제거 필요.
 

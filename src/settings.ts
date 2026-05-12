@@ -14,7 +14,7 @@ export interface DeepgramSettings {
 
 export const DEFAULT_SETTINGS: DeepgramSettings = {
 	apiKey: '',
-	savedFolder: 'STT',
+	savedFolder: 'Deepgram/STT',
 	templatePath: '',
 	language: 'ko',
 	model: 'nova-3',

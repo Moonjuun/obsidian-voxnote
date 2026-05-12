@@ -1,29 +1,31 @@
 import type { App } from 'obsidian';
 
 const GITIGNORE_PATH = '.gitignore';
-const AUDIO_FOLDER = 'Audio';
-const COMMENT = '# Deepgram Meeting STT — protect API key + meeting recordings from vault git sync';
+const ROOT_FOLDER = 'Deepgram';
+const AUDIO_SUBFOLDER = `${ROOT_FOLDER}/Audio`;
+const STT_SUBFOLDER = `${ROOT_FOLDER}/STT`;
+const COMMENT = '# Deepgram Meeting STT — protect API key + meeting recordings & notes from vault git sync';
 
 export type GitignoreResult = 'added' | 'partial' | 'exists' | 'no-gitignore' | 'error';
-export type AudioFolderResult = 'created' | 'exists' | 'error';
+export type FolderResult = 'created' | 'partial' | 'exists' | 'error';
 
 export interface ConsentSideEffectsResult {
 	gitignore: GitignoreResult;
-	audioFolder: AudioFolderResult;
+	folders: FolderResult;
 }
 
 export async function applyConsentSideEffects(app: App): Promise<ConsentSideEffectsResult> {
-	const [gitignore, audioFolder] = await Promise.all([
+	const [gitignore, folders] = await Promise.all([
 		ensureGitignoreRules(app),
-		ensureAudioFolder(app),
+		ensureFolders(app),
 	]);
-	return { gitignore, audioFolder };
+	return { gitignore, folders };
 }
 
 async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 	const rules = [
 		`${app.vault.configDir}/plugins/deepgram-meeting-stt/data.json`,
-		`${AUDIO_FOLDER}/`,
+		`${ROOT_FOLDER}/`,
 	];
 	try {
 		const exists = await app.vault.adapter.exists(GITIGNORE_PATH);
@@ -44,12 +46,20 @@ async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 	}
 }
 
-async function ensureAudioFolder(app: App): Promise<AudioFolderResult> {
+async function ensureFolders(app: App): Promise<FolderResult> {
+	const targets = [ROOT_FOLDER, AUDIO_SUBFOLDER, STT_SUBFOLDER];
 	try {
-		const exists = await app.vault.adapter.exists(AUDIO_FOLDER);
-		if (exists) return 'exists';
-		await app.vault.createFolder(AUDIO_FOLDER);
-		return 'created';
+		let createdCount = 0;
+		for (const path of targets) {
+			const exists = await app.vault.adapter.exists(path);
+			if (!exists) {
+				await app.vault.createFolder(path);
+				createdCount++;
+			}
+		}
+		if (createdCount === 0) return 'exists';
+		if (createdCount === targets.length) return 'created';
+		return 'partial';
 	} catch {
 		return 'error';
 	}

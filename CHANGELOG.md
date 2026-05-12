@@ -3,13 +3,13 @@
 ## [0.2.0] - 2026-05-12
 
 ### Added
-- 첫 실행 동의 시 vault 루트에 `Audio/` 폴더 자동 생성 — 회의 녹음 권장 위치.
-- vault `.gitignore`에 `Audio/` 룰 자동 추가 (data.json과 함께) → 회의 녹음이 vault git sync로 외부에 유출되는 것 차단.
+- 첫 실행 동의 시 vault 루트에 **`Deepgram/` 폴더 자동 생성** — 그 안에 `Audio/` (녹음 파일 권장 위치)와 `STT/` (회의록 노트 기본 저장 위치) 하위 폴더 함께 생성.
+- vault `.gitignore`에 `Deepgram/` 룰 자동 추가 (data.json과 함께) → 회의 녹음·회의록 통째로 vault git sync에서 보호.
 
 ### Changed
+- 기본 `savedFolder` 값을 `STT` → `Deepgram/STT`로 변경 (신규 사용자 한정. 기존 사용자는 본인 설정값 유지).
 - 동의 후 부수 효과를 `applyConsentSideEffects`로 통합. 결과 Notice가 폴더 생성·gitignore 갱신 상태를 분리해서 보고.
-- consent 모달 안내문에 Audio/ 폴더 생성·gitignore 보호 룰 명시.
-- README 사용법 섹션에 `Audio/` 폴더 사용 흐름 추가.
+- consent 모달 안내문 + README 사용법 섹션을 `Deepgram/` 구조 중심으로 재작성.
 
 ## [0.1.0] - 2026-05-12
 
