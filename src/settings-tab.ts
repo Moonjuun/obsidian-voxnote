@@ -49,13 +49,13 @@ export class DeepgramSettingTab extends PluginSettingTab {
 		// 저장 폴더
 		new Setting(containerEl)
 			.setName('회의록 저장 폴더')
-			.setDesc('vault 내 상대 경로. 폴더가 없으면 자동 생성됩니다. 기본값: Deepgram/STT')
+			.setDesc('vault 내 상대 경로. 폴더가 없으면 자동 생성됩니다. 기본값: ObsiDeep/STT')
 			.addText((text) =>
 				text
-					.setPlaceholder('Deepgram/STT')
+					.setPlaceholder('ObsiDeep/STT')
 					.setValue(this.plugin.settings.savedFolder)
 					.onChange(async (value) => {
-						this.plugin.settings.savedFolder = value.trim() || 'Deepgram/STT';
+						this.plugin.settings.savedFolder = value.trim() || 'ObsiDeep/STT';
 						await this.plugin.saveSettings();
 					}),
 			);

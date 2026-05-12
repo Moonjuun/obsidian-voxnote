@@ -61,6 +61,14 @@ export default class DeepgramSttPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: 'reset-consent',
+			name: '동의 모달 다시 보기 (consent reset)',
+			callback: () => {
+				void this.showConsentAgain();
+			},
+		});
+
 		this.registerEvent(
 			this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
 				if (!(file instanceof TFile) || !isAudioFile(file)) return;
@@ -96,26 +104,36 @@ export default class DeepgramSttPlugin extends Plugin {
 		this.notifyConsentResult(result);
 	}
 
+	private async showConsentAgain(): Promise<void> {
+		this.settings.consentAcknowledged = false;
+		await this.saveSettings();
+		new ConsentModal(this.app, async () => {
+			this.settings.consentAcknowledged = true;
+			await this.saveSettings();
+			await this.runConsentSideEffects();
+		}).open();
+	}
+
 	private notifyConsentResult(result: ConsentSideEffectsResult): void {
 		const messages: string[] = [];
 
 		switch (result.folders) {
 			case 'created':
-				messages.push('✓ vault 루트에 Deepgram/ 폴더를 생성했습니다 (Audio/, STT/ 포함). 녹음 파일은 Deepgram/Audio/에 넣어주세요.');
+				messages.push('✓ vault 루트에 ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/ 포함). 녹음 파일은 ObsiDeep/Audio/에 넣어주세요.');
 				break;
 			case 'partial':
-				messages.push('✓ Deepgram 폴더 구조를 보강했습니다.');
+				messages.push('✓ ObsiDeep 폴더 구조를 보강했습니다.');
 				break;
 			case 'exists':
 				break;
 			case 'error':
-				messages.push('⚠ Deepgram/ 폴더 자동 생성에 실패했습니다. 수동으로 만들어주세요.');
+				messages.push('⚠ ObsiDeep/ 폴더 자동 생성에 실패했습니다. 수동으로 만들어주세요.');
 				break;
 		}
 
 		switch (result.gitignore) {
 			case 'added':
-				messages.push('✓ vault/.gitignore에 보호 룰을 추가했습니다 (data.json + Deepgram/).');
+				messages.push('✓ vault/.gitignore에 보호 룰을 추가했습니다 (data.json + ObsiDeep/).');
 				break;
 			case 'partial':
 				messages.push('✓ vault/.gitignore에 누락된 보호 룰을 보강했습니다.');

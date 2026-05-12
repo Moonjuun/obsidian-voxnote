@@ -1,7 +1,7 @@
 import type { App } from 'obsidian';
 
 const GITIGNORE_PATH = '.gitignore';
-const ROOT_FOLDER = 'Deepgram';
+const ROOT_FOLDER = 'ObsiDeep';
 const AUDIO_SUBFOLDER = `${ROOT_FOLDER}/Audio`;
 const STT_SUBFOLDER = `${ROOT_FOLDER}/STT`;
 const COMMENT = '# Deepgram Meeting STT — protect API key + meeting recordings & notes from vault git sync';
