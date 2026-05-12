@@ -2,6 +2,9 @@ import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import type DeepgramSttPlugin from './main';
 import { validateApiKey } from './deepgram';
 import type { UiLang } from './i18n';
+import { compareSemver, fetchLatestRelease, UpdateCheckError } from './update-checker';
+
+const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-deepgram-stt/releases';
 
 export class DeepgramSettingTab extends PluginSettingTab {
 	plugin: DeepgramSttPlugin;
@@ -145,6 +148,76 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					this.plugin.settings.zeroRetention = value;
 					await this.plugin.saveSettings();
 				}),
+			);
+
+		// ─── About ───────────────────────────────────────────────────
+		new Setting(containerEl).setName(t('정보', 'About')).setHeading();
+
+		const currentVersion = this.plugin.manifest.version;
+		new Setting(containerEl)
+			.setName(t('현재 버전', 'Current version'))
+			.setDesc(`v${currentVersion}`)
+			.addButton((btn) =>
+				btn
+					.setButtonText(t('GitHub 릴리스', 'GitHub releases'))
+					.onClick(() => {
+						window.open(RELEASES_PAGE_URL, '_blank');
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName(t('업데이트 확인', 'Check for updates'))
+			.setDesc(t('GitHub에서 최신 릴리스를 확인합니다. 새 버전이 있으면 안내합니다. (BRAT 사용 시 자동 업데이트가 별도로 동작합니다.)', 'Look up the latest release on GitHub and notify if a newer version exists. (BRAT auto-updates separately if enabled.)'))
+			.addButton((btn) =>
+				btn
+					.setButtonText(t('확인', 'Check'))
+					.onClick(async () => {
+						btn.setDisabled(true).setButtonText(t('확인 중...', 'Checking...'));
+						try {
+							const release = await fetchLatestRelease();
+							const cmp = compareSemver(release.tag, currentVersion);
+							if (cmp > 0) {
+								const notice = new Notice(
+									t(
+										`새 버전 ${release.tag} (현재 ${currentVersion}) — 릴리스 페이지를 새 창으로 엽니다.`,
+										`New version ${release.tag} (current ${currentVersion}) — opening release page in a new tab.`,
+									),
+									10000,
+								);
+								window.open(release.htmlUrl, '_blank');
+								notice.hide.bind(notice); // keep ref to avoid unused-binding lint
+							} else if (cmp === 0) {
+								new Notice(
+									t(
+										`최신 버전입니다 (${currentVersion}).`,
+										`You're on the latest version (${currentVersion}).`,
+									),
+									6000,
+								);
+							} else {
+								new Notice(
+									t(
+										`로컬 버전(${currentVersion})이 릴리스(${release.tag})보다 앞서 있습니다.`,
+										`Local version (${currentVersion}) is ahead of latest release (${release.tag}).`,
+									),
+									6000,
+								);
+							}
+						} catch (e) {
+							const msg =
+								e instanceof UpdateCheckError
+									? e.message
+									: e instanceof Error
+										? e.message
+										: String(e);
+							new Notice(
+								t(`업데이트 확인 실패: ${msg}`, `Update check failed: ${msg}`),
+								8000,
+							);
+						} finally {
+							btn.setDisabled(false).setButtonText(t('확인', 'Check'));
+						}
+					}),
 			);
 	}
 }
