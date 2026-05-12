@@ -14,7 +14,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Deepgram Meeting STT' });
+		new Setting(containerEl).setName('API 키').setHeading();
 
 		// API 키
 		let apiKeyInputEl: HTMLInputElement | null = null;
@@ -44,6 +44,8 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					}),
 			);
 
+		new Setting(containerEl).setName('저장').setHeading();
+
 		// 저장 폴더
 		new Setting(containerEl)
 			.setName('회의록 저장 폴더')
@@ -71,6 +73,8 @@ export class DeepgramSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}),
 			);
+
+		new Setting(containerEl).setName('변환 옵션').setHeading();
 
 		// 언어
 		new Setting(containerEl)

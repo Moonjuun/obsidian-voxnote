@@ -22,7 +22,6 @@ export class TitleInputModal extends Modal {
 			.setDesc('비워두면 오디오 파일명으로 저장됩니다.')
 			.addText((text) => {
 				text.setValue(this.title);
-				text.inputEl.style.width = '100%';
 				text.onChange((v) => {
 					this.title = v;
 				});

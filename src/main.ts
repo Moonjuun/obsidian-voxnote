@@ -13,7 +13,7 @@ import { createTranscriptNote } from './note-writer';
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
 
-	async onload() {
+	async onload(): Promise<void> {
 		await this.loadSettings();
 
 		this.addSettingTab(new DeepgramSettingTab(this.app, this));
@@ -41,7 +41,9 @@ export default class DeepgramSttPlugin extends Plugin {
 			name: 'Transcribe audio → meeting note',
 			callback: () => {
 				if (!notifyIfBlocked(checkReady(this.settings))) return;
-				new AudioSuggestModal(this.app, (file) => this.askTitleAndTranscribe(file)).open();
+				new AudioSuggestModal(this.app, (file) => {
+					this.askTitleAndTranscribe(file);
+				}).open();
 			},
 		});
 
@@ -50,7 +52,9 @@ export default class DeepgramSttPlugin extends Plugin {
 			name: 'Transcribe audio file (debug — console only)',
 			callback: () => {
 				if (!notifyIfBlocked(checkReady(this.settings))) return;
-				new AudioSuggestModal(this.app, (file) => this.runDebugTranscribe(file)).open();
+				new AudioSuggestModal(this.app, (file) => {
+					void this.runDebugTranscribe(file);
+				}).open();
 			},
 		});
 
@@ -70,9 +74,9 @@ export default class DeepgramSttPlugin extends Plugin {
 		);
 	}
 
-	onunload() {}
+	onunload(): void {}
 
-	async loadSettings() {
+	async loadSettings(): Promise<void> {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
@@ -80,11 +84,11 @@ export default class DeepgramSttPlugin extends Plugin {
 		);
 	}
 
-	async saveSettings() {
+	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 	}
 
-	private async applyGitignoreProtection() {
+	private async applyGitignoreProtection(): Promise<void> {
 		const result = await ensureGitignoreRule(this.app);
 		switch (result) {
 			case 'added':
@@ -104,9 +108,9 @@ export default class DeepgramSttPlugin extends Plugin {
 		}
 	}
 
-	private askTitleAndTranscribe(file: TFile) {
+	private askTitleAndTranscribe(file: TFile): void {
 		new TitleInputModal(this.app, file.basename, (title) => {
-			this.runTranscribeToNote(file, title);
+			void this.runTranscribeToNote(file, title);
 		}).open();
 	}
 
@@ -122,7 +126,7 @@ export default class DeepgramSttPlugin extends Plugin {
 		});
 	}
 
-	private async runTranscribeToNote(file: TFile, title: string) {
+	private async runTranscribeToNote(file: TFile, title: string): Promise<void> {
 		const progress = new Notice(`Deepgram: ${file.name} 변환 중...`, 0);
 		try {
 			const result = await this.transcribeFile(file);
@@ -146,19 +150,18 @@ export default class DeepgramSttPlugin extends Plugin {
 		}
 	}
 
-	private async runDebugTranscribe(file: TFile) {
+	private async runDebugTranscribe(file: TFile): Promise<void> {
 		const progress = new Notice(`Deepgram: ${file.name} 전송 중...`, 0);
 		try {
 			const result = await this.transcribeFile(file);
 			progress.hide();
 
-			console.group(`[Deepgram STT] ${file.path}`);
-			console.log('duration (s):', result.duration, `(${formatDuration(result.duration)})`);
-			console.log('paragraphs:', result.paragraphs.length);
-			console.log('transcript (plain):', result.transcript);
-			console.log('transcript (speakers):', result.speakersTranscript);
-			console.log('raw:', result.raw);
-			console.groupEnd();
+			const prefix = `[Deepgram STT] ${file.path}`;
+			console.debug(`${prefix} duration (s):`, result.duration, `(${formatDuration(result.duration)})`);
+			console.debug(`${prefix} paragraphs:`, result.paragraphs.length);
+			console.debug(`${prefix} transcript (plain):`, result.transcript);
+			console.debug(`${prefix} transcript (speakers):`, result.speakersTranscript);
+			console.debug(`${prefix} raw:`, result.raw);
 
 			const preview = result.transcript.slice(0, 80).replace(/\s+/g, ' ');
 			new Notice(
@@ -171,12 +174,11 @@ export default class DeepgramSttPlugin extends Plugin {
 		}
 	}
 
-	private reportError(e: unknown) {
+	private reportError(e: unknown): void {
 		console.error('[Deepgram STT] error:', e);
 
 		if (e instanceof DeepgramApiError) {
-			const message = friendlyMessage(e);
-			new Notice(message, 12000);
+			new Notice(friendlyMessage(e), 12000);
 			return;
 		}
 

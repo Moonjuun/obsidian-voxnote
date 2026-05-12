@@ -22,6 +22,12 @@ export default tseslint.config(
 		},
 	},
 	...obsidianmd.configs.recommended,
+	{
+		rules: {
+			// 한국어/영문 혼용 UI 텍스트라 룰이 잘 맞지 않음 (커뮤니티 등록 시 재검토)
+			'obsidianmd/ui/sentence-case': 'off',
+		},
+	},
 	globalIgnores([
 		"node_modules",
 		"dist",

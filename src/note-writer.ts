@@ -57,20 +57,20 @@ function applyTokens(template: string, ctx: NoteContext): string {
 		? ctx.result.speakersTranscript
 		: ctx.result.transcript;
 
-	const tokens: Record<string, string> = {
-		date,
-		title: ctx.title,
-		transcript: primaryTranscript,
-		speakers_transcript: ctx.result.speakersTranscript,
-		plain_transcript: ctx.result.transcript,
-		duration: formatDuration(ctx.result.duration),
-		audio_link: `[[${ctx.audioPath}]]`,
-		language: ctx.settings.language,
-		model: ctx.settings.model,
-	};
+	const tokens = new Map<string, string>([
+		['date', date],
+		['title', ctx.title],
+		['transcript', primaryTranscript],
+		['speakers_transcript', ctx.result.speakersTranscript],
+		['plain_transcript', ctx.result.transcript],
+		['duration', formatDuration(ctx.result.duration)],
+		['audio_link', `[[${ctx.audioPath}]]`],
+		['language', ctx.settings.language],
+		['model', ctx.settings.model],
+	]);
 
-	return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-		return tokens[key] !== undefined ? tokens[key] : match;
+	return template.replace(/\{\{(\w+)\}\}/g, (match: string, key: string) => {
+		return tokens.get(key) ?? match;
 	});
 }
 
