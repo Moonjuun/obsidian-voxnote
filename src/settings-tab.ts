@@ -177,15 +177,13 @@ export class DeepgramSettingTab extends PluginSettingTab {
 							const release = await fetchLatestRelease();
 							const cmp = compareSemver(release.tag, currentVersion);
 							if (cmp > 0) {
-								const notice = new Notice(
+								new Notice(
 									t(
-										`새 버전 ${release.tag} (현재 ${currentVersion}) — 릴리스 페이지를 새 창으로 엽니다.`,
-										`New version ${release.tag} (current ${currentVersion}) — opening release page in a new tab.`,
+										`업데이트 가능: ${release.tag} (현재 ${currentVersion})\n위의 "GitHub 릴리스" 버튼으로 페이지를 여세요. BRAT 사용 시 자동 업데이트됩니다.`,
+										`Update available: ${release.tag} (current ${currentVersion})\nUse the "GitHub releases" button above to open the page. BRAT will auto-update if enabled.`,
 									),
-									10000,
+									12000,
 								);
-								window.open(release.htmlUrl, '_blank');
-								notice.hide.bind(notice); // keep ref to avoid unused-binding lint
 							} else if (cmp === 0) {
 								new Notice(
 									t(
