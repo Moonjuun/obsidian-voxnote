@@ -75,10 +75,12 @@ export class SpeakerRenameModal extends Modal {
 					this.newName = v;
 				});
 				text.inputEl.addEventListener('keydown', (e) => {
-					if (e.key === 'Enter') {
-						e.preventDefault();
-						this.submit();
-					}
+					if (e.key !== 'Enter') return;
+					// IME 합성 중인 Enter는 무시 (한글 마지막 글자 확정 시점)
+					if (e.isComposing || e.keyCode === 229) return;
+					e.preventDefault();
+					e.stopPropagation();
+					this.submit();
 				});
 				setTimeout(() => text.inputEl.focus(), 10);
 			});
