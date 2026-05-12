@@ -70,6 +70,24 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
 
 ---
 
+## 화자 이름 정리
+
+회의록의 frontmatter \`speakers\` 항목은 기본적으로 \`화자 0\`, \`화자 1\`... 같은 익명 라벨로 채워집니다. 누구인지 알면 이름으로 바꿔두는 게 검색·추적에 좋습니다.
+
+1. 정리하려는 회의록 노트를 엽니다.
+2. 명령 팔레트(\`Cmd+P\` / \`Ctrl+P\`) → **"화자 이름 변경 (현재 노트)"** 실행.
+
+![화자 이름 변경 명령](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img5.webp)
+
+3. 모달에 입력:
+   - **변경 전**: \`화자 0\` (frontmatter \`speakers\`에 나열된 라벨 그대로)
+   - **변경 후**: \`홍길동\` (실제 이름)
+4. **치환** 클릭 → 본문의 모든 \`화자 0\` 그리고 frontmatter \`speakers\` 배열의 라벨이 일괄로 치환됩니다.
+
+> 화자가 여러 명이면 명령을 여러 번 실행하면 됩니다.
+
+---
+
 ## 보안 & 프라이버시
 
 ### Deepgram 자체 보안 (외부 API 신뢰성)
@@ -177,6 +195,24 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 3. **Enter a title → press Enter** → after ~1–2 min a \`.md\` note appears in \`STT/\` and opens automatically.
 
 > The command palette (\`Cmd+P\` / \`Ctrl+P\`) → "Transcribe audio → meeting note" runs the same flow.
+
+---
+
+## Renaming speakers
+
+The \`speakers\` frontmatter starts with anonymous labels (\`화자 0\`, \`화자 1\`, ...). If you know who's who, replacing those labels with real names makes notes searchable.
+
+1. Open the meeting note you want to edit.
+2. Command palette (\`Cmd+P\` / \`Ctrl+P\`) → **"Rename speaker (current note)"**.
+
+![Rename speaker command](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img5.webp)
+
+3. In the modal:
+   - **From**: \`화자 0\` (the exact label as it appears in \`speakers\`)
+   - **To**: \`홍길동\` (the actual name, e.g. Hong Gildong)
+4. Click **Replace** — every occurrence in the body and in the \`speakers\` frontmatter array is renamed at once.
+
+> Repeat the command for each speaker.
 
 ---
 
