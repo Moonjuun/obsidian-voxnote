@@ -3,7 +3,7 @@
 	"name": "Deepgram Meeting STT",
 	"version": "1.0.1",
 	"minAppVersion": "1.5.0",
-	"description": "Transcribe meeting recordings with Deepgram API and save as Obsidian notes.",
+	"description": "Transcribe meeting recordings with the Deepgram speech-to-text API.",
 	"author": "Moonjuun",
 	"authorUrl": "https://github.com/Moonjuun",
 	"isDesktopOnly": false
