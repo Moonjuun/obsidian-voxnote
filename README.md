@@ -140,32 +140,6 @@ Approximate cost with `nova-3`:
 
 The free $200 signup credit covers many hours. See [Deepgram Pricing](https://deepgram.com/pricing) for current rates.
 
-## Development
-
-```bash
-git clone https://github.com/Moonjuun/obsidian-deepgram-stt.git
-cd obsidian-deepgram-stt
-npm install
-npm run dev    # esbuild watch
-# or
-npm run build  # production build
-```
-
-For live development, symlink the cloned folder into your vault's `.obsidian/plugins/deepgram-meeting-stt`:
-
-```bash
-ln -s "$(pwd)" /path/to/your/vault/.obsidian/plugins/deepgram-meeting-stt
-```
-
-### Release
-
-```bash
-npm version patch   # or minor / major / explicit version
-git push --follow-tags
-```
-
-`npm version` syncs `manifest.json`, `package.json`, `versions.json`, and creates a tag. The tag push triggers `.github/workflows/release.yml` which builds and attaches `main.js`, `manifest.json`, `styles.css` (with GitHub artifact attestations) to a new release.
-
 ## License
 
 [MIT](LICENSE) © 2026 Moonjuun
