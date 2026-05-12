@@ -32,24 +32,19 @@ An Obsidian plugin that transcribes meeting recordings with the [Deepgram](https
 
 ## Setup
 
-On first enable, the plugin shows a one-time consent modal explaining what is sent to Deepgram. After consent it:
-
-- Creates `ObsiDeep/` (with `Audio/` and `STT/` subfolders) at your vault root
-- Adds two protection rules to your vault's `.gitignore` (one for `data.json`, one for `ObsiDeep/`)
-- Writes `ObsiDeep/README.md` and `ObsiDeep/FEATURES.md` with localized usage guides
+On first enable, a one-time consent modal walks you through what's sent to Deepgram and auto-creates an `ObsiDeep/` workspace at the vault root plus `.gitignore` rules to keep recordings and your API key out of git sync.
 
 Then get a Deepgram API key:
 
-1. Sign up at [Deepgram Console](https://console.deepgram.com) — free tier includes a **$200 credit** (~770 hours of `nova-3` transcription)
+1. Sign up at [Deepgram Console](https://console.deepgram.com) — free tier includes a **$200 credit** (~770 hours of `nova-3`).
 
 ![Deepgram API Keys page](img/img1.webp)
 
-2. Dashboard → **API Keys → Create New API Key** (any name, `Member` permission is enough)
+2. **API Keys → Create New API Key** (any name, `Member` permission is enough).
 
 ![Create API Key dialog](img/img2.webp)
 
-3. Paste the key into **Settings → Deepgram Meeting STT → "Deepgram API key"**
-4. Click **Validate** — you should see `✓ API key is valid`
+3. Paste into **Settings → Deepgram Meeting STT → "Deepgram API key"** → click **Validate**.
 
 ![Plugin settings tab](img/img3.webp)
 
