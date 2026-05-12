@@ -47,7 +47,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 			.setDesc(t('Deepgram 콘솔에서 발급한 키. 로컬 data.json에 저장됩니다.', 'API key from your Deepgram console. Stored locally in data.json.'))
 			.addText((text) => {
 				text
-					.setPlaceholder('xxxxxxxxxxxx...')
+					.setPlaceholder(t('Deepgram API 키 붙여넣기', 'Paste your Deepgram API key'))
 					.setValue(this.plugin.settings.apiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.apiKey = value.trim();
@@ -78,7 +78,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 			.setDesc(t('vault 내 상대 경로. 없으면 자동 생성. 기본값: ObsiDeep/STT', 'Vault-relative path. Auto-created if missing. Default: ObsiDeep/STT'))
 			.addText((text) =>
 				text
-					.setPlaceholder('ObsiDeep/STT')
+					.setPlaceholder(t('예: ObsiDeep/STT', 'e.g. ObsiDeep/STT'))
 					.setValue(this.plugin.settings.savedFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.savedFolder = value.trim() || 'ObsiDeep/STT';

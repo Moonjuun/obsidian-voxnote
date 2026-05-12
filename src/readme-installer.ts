@@ -345,6 +345,20 @@ speakers: {{speakers_list}}
 
 ---
 
+## 모바일에서 사용
+
+이 플러그인은 옵시디언 **iOS / Android에서도 동작**합니다. 데스크톱과 거의 동일하되 입력 방식이 다릅니다:
+
+| 데스크톱 | 모바일 대안 |
+|---|---|
+| Finder/Explorer에서 드래그앤드롭 | 다른 앱 → 공유 → Obsidian, 또는 옵시디언 안 파일 import |
+| 좌측 사이드바에서 우클릭 | 파일을 **길게 누르기 (long-press)** → 컨텍스트 메뉴 |
+| 명령 팔레트 \`Cmd+P\` | 좌측 ⋯ → "Command palette" |
+
+> 큰 녹음 파일은 모바일 메모리·셀룰러 데이터 사용량에 주의하세요. 1시간 회의(~50MB)는 일반적으로 무리 없습니다.
+
+---
+
 ## 업데이트 확인
 
 설정 → "정보" 섹션에 두 가지 항목이 있습니다:
@@ -455,6 +469,20 @@ speakers: {{speakers_list}}
 
 {{transcript}}
 \`\`\`
+
+---
+
+## Mobile usage
+
+The plugin works on **Obsidian for iOS / Android** as well. Inputs differ a bit:
+
+| Desktop | Mobile equivalent |
+|---|---|
+| Drag-and-drop from Finder/Explorer | Share → Obsidian from another app, or use in-app file import |
+| Right-click in the left sidebar | **Long-press** the file for the context menu |
+| Command palette \`Cmd+P\` | Left ⋯ menu → "Command palette" |
+
+> Watch memory and mobile data usage for very large recordings. 1-hour meetings (~50MB) are usually fine.
 
 ---
 

@@ -1,5 +1,22 @@
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-12
+
+### Summary
+- 첫 정식 안정 릴리스 (Obsidian Community Plugin 등록 후보).
+- 0.5.x 베타에서 누적된 기능을 그대로 가져오면서, 마켓 심사 통과를 위한 사전 정리를 거쳤습니다.
+
+### Changed
+- `obsidianmd/ui/sentence-case` ESLint 룰 다시 활성화 후 통과.
+  - 설정 탭의 의미 없는 placeholder를 의미 있는 안내 텍스트(`Paste your Deepgram API key`, `e.g. ObsiDeep/STT`)로 교체.
+- FEATURES 문서에 **"모바일에서 사용"** 섹션 추가 — iOS/Android에서의 입력 방식 차이 안내 (드래그앤드롭 → 공유, 우클릭 → long-press 등).
+
+### Verified for submission
+- 위험 DOM API 사용 없음 (innerHTML / eval / Function 생성자 / 직접 fetch).
+- Node 모듈 의존성 없음 (모바일 호환).
+- 하드코딩된 `.obsidian` 경로 없음 — `app.vault.configDir` 사용.
+- `styles.css` 비어있음 — Obsidian 전역 스타일 안 건드림.
+
 ## [0.5.0] - 2026-05-12
 
 ### Added
@@ -60,7 +77,8 @@
   `{{audio_link}}`, `{{language}}`, `{{model}}`).
 - 네트워크/5xx/429 오류 1회 자동 재시도 + 상황별 안내 메시지.
 
-[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.5.4...1.0.0
 [0.3.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.2.1...0.3.0
 [0.2.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/releases/tag/0.1.0
