@@ -1,10 +1,1 @@
-{
-	"id": "deepgram-meeting-stt",
-	"name": "Deepgram Meeting STT",
-	"version": "0.0.1",
-	"minAppVersion": "1.5.0",
-	"description": "Transcribe meeting recordings with Deepgram API and save as Obsidian notes.",
-	"author": "Moonjuun",
-	"authorUrl": "https://github.com/Moonjuun",
-	"isDesktopOnly": false
-}
+{"id":"deepgram-meeting-stt","name":"Deepgram Meeting STT","version":"0.0.1","minAppVersion":"1.5.0","description":"Transcribe meeting recordings with Deepgram API and save as Obsidian notes.","author":"Moonjuun","authorUrl":"https://github.com/Moonjuun","isDesktopOnly":false}
