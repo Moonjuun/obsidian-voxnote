@@ -183,10 +183,20 @@ function parseTranscribeResponse(raw: unknown, diarize: boolean): TranscribeResu
 }
 
 function buildSpeakersTranscript(paragraphs: ParagraphInfo[]): string {
-	return paragraphs
-		.map((p) => {
-			const label = p.speaker !== undefined ? `**화자 ${p.speaker}:**` : '**화자:**';
-			return `${label} ${p.text}`;
+	// 연속된 같은 화자의 paragraph는 하나의 블록으로 병합
+	const groups: Array<{ speaker?: number; text: string }> = [];
+	for (const p of paragraphs) {
+		const last = groups[groups.length - 1];
+		if (last && last.speaker === p.speaker) {
+			last.text = `${last.text} ${p.text}`.trim();
+		} else {
+			groups.push({ speaker: p.speaker, text: p.text });
+		}
+	}
+	return groups
+		.map((g) => {
+			const label = g.speaker !== undefined ? `**화자 ${g.speaker}:**` : '**화자:**';
+			return `${label} ${g.text}`;
 		})
 		.join('\n\n');
 }

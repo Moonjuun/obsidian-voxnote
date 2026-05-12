@@ -5,8 +5,10 @@ import { ConsentModal } from './consent-modal';
 import { ensureGitignoreRule } from './gitignore';
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
+import { TitleInputModal } from './title-input-modal';
 import { audioMimeType, formatDuration } from './audio-utils';
-import { DeepgramApiError, transcribe } from './deepgram';
+import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
+import { createTranscriptNote } from './note-writer';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
@@ -31,6 +33,20 @@ export default class DeepgramSttPlugin extends Plugin {
 			name: 'Hello (sanity check)',
 			callback: () => {
 				new Notice('Deepgram Meeting STT — plugin loaded!');
+			},
+		});
+
+		this.addCommand({
+			id: 'transcribe-to-note',
+			name: 'Transcribe audio → meeting note',
+			callback: () => {
+				if (!notifyIfBlocked(checkReady(this.settings))) return;
+				new AudioSuggestModal(this.app, (file) => {
+					const defaultTitle = file.basename;
+					new TitleInputModal(this.app, defaultTitle, (title) => {
+						this.runTranscribeToNote(file, title);
+					}).open();
+				}).open();
 			},
 		});
 
@@ -78,19 +94,46 @@ export default class DeepgramSttPlugin extends Plugin {
 		}
 	}
 
+	private async transcribeFile(file: TFile): Promise<TranscribeResult> {
+		const audio = await this.app.vault.readBinary(file);
+		return await transcribe(audio, {
+			apiKey: this.settings.apiKey,
+			model: this.settings.model,
+			language: this.settings.language,
+			diarize: this.settings.diarize,
+			zeroRetention: this.settings.zeroRetention,
+			mimeType: audioMimeType(file.extension),
+		});
+	}
+
+	private async runTranscribeToNote(file: TFile, title: string) {
+		const progress = new Notice(`Deepgram: ${file.name} 변환 중...`, 0);
+		try {
+			const result = await this.transcribeFile(file);
+			progress.hide();
+
+			const notePath = await createTranscriptNote(this.app, {
+				title,
+				audioPath: file.path,
+				result,
+				settings: this.settings,
+			});
+
+			await this.app.workspace.openLinkText(notePath, '', false);
+			new Notice(
+				`✓ 회의록 생성: ${notePath} (${formatDuration(result.duration)})`,
+				8000,
+			);
+		} catch (e) {
+			progress.hide();
+			this.reportError(e);
+		}
+	}
+
 	private async runDebugTranscribe(file: TFile) {
 		const progress = new Notice(`Deepgram: ${file.name} 전송 중...`, 0);
 		try {
-			const audio = await this.app.vault.readBinary(file);
-			const result = await transcribe(audio, {
-				apiKey: this.settings.apiKey,
-				model: this.settings.model,
-				language: this.settings.language,
-				diarize: this.settings.diarize,
-				zeroRetention: this.settings.zeroRetention,
-				mimeType: audioMimeType(file.extension),
-			});
-
+			const result = await this.transcribeFile(file);
 			progress.hide();
 
 			console.group(`[Deepgram STT] ${file.path}`);
@@ -103,14 +146,21 @@ export default class DeepgramSttPlugin extends Plugin {
 
 			const preview = result.transcript.slice(0, 80).replace(/\s+/g, ' ');
 			new Notice(
-				`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(전체 결과는 DevTools 콘솔 확인)`,
+				`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(전체 결과는 DevTools 콘솔)`,
 				10000,
 			);
 		} catch (e) {
 			progress.hide();
-			const msg = e instanceof DeepgramApiError ? e.message : `예상치 못한 오류: ${e instanceof Error ? e.message : String(e)}`;
-			console.error('[Deepgram STT] error:', e);
-			new Notice(`Deepgram 오류: ${msg}`, 10000);
+			this.reportError(e);
 		}
+	}
+
+	private reportError(e: unknown) {
+		const msg =
+			e instanceof DeepgramApiError
+				? e.message
+				: `예상치 못한 오류: ${e instanceof Error ? e.message : String(e)}`;
+		console.error('[Deepgram STT] error:', e);
+		new Notice(`Deepgram 오류: ${msg}`, 10000);
 	}
 }
