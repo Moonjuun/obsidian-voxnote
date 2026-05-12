@@ -5,13 +5,24 @@ export class SpeakerRenameModal extends Modal {
 	private oldName = '';
 	private newName = '';
 	private readonly t: T;
+	private readonly noteName: string;
+	private readonly candidates: string[];
 	private readonly onSubmit: (oldName: string, newName: string) => void;
 	private submitted = false;
 
-	constructor(app: App, t: T, onSubmit: (oldName: string, newName: string) => void) {
+	constructor(
+		app: App,
+		t: T,
+		noteName: string,
+		candidates: string[],
+		onSubmit: (oldName: string, newName: string) => void,
+	) {
 		super(app);
 		this.t = t;
+		this.noteName = noteName;
+		this.candidates = candidates;
 		this.onSubmit = onSubmit;
+		this.oldName = candidates[0] ?? '';
 	}
 
 	onOpen() {
@@ -21,22 +32,39 @@ export class SpeakerRenameModal extends Modal {
 		titleEl.setText(t('화자 이름 변경', 'Rename speaker'));
 
 		contentEl.createEl('p', {
-			text: t(
-				'현재 노트의 본문과 frontmatter에서 일치하는 모든 텍스트를 일괄 치환합니다.',
-				'Replace every matching occurrence in the current note (body + frontmatter).',
-			),
+			text: t(`현재 노트: ${this.noteName}`, `Current note: ${this.noteName}`),
 		});
 
-		new Setting(contentEl)
-			.setName(t('변경 전', 'From'))
-			.setDesc(t('예: 화자 0', 'Example: 화자 0'))
-			.addText((text) => {
-				text.setPlaceholder('화자 0');
-				text.onChange((v) => {
-					this.oldName = v;
-				});
-				setTimeout(() => text.inputEl.focus(), 10);
+		if (this.candidates.length === 0) {
+			contentEl.createEl('p', {
+				text: t(
+					'이 노트에서 화자 라벨을 찾지 못했습니다. 변경할 라벨을 직접 입력하세요.',
+					'No speaker labels detected in this note. Type the label to replace manually.',
+				),
 			});
+
+			new Setting(contentEl)
+				.setName(t('변경 전', 'From'))
+				.addText((text) => {
+					text.setPlaceholder('화자 0');
+					text.onChange((v) => {
+						this.oldName = v;
+					});
+				});
+		} else {
+			new Setting(contentEl)
+				.setName(t('변경 전', 'From'))
+				.setDesc(t('현재 노트의 화자 목록에서 선택', 'Pick a speaker detected in this note'))
+				.addDropdown((dd) => {
+					for (const c of this.candidates) {
+						dd.addOption(c, c);
+					}
+					dd.setValue(this.oldName);
+					dd.onChange((v) => {
+						this.oldName = v;
+					});
+				});
+		}
 
 		new Setting(contentEl)
 			.setName(t('변경 후', 'To'))
@@ -52,6 +80,7 @@ export class SpeakerRenameModal extends Modal {
 						this.submit();
 					}
 				});
+				setTimeout(() => text.inputEl.focus(), 10);
 			});
 
 		new Setting(contentEl)

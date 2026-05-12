@@ -134,9 +134,33 @@ export default class DeepgramSttPlugin extends Plugin {
 			new Notice(this.t('현재 활성화된 노트가 없습니다.', 'No active note.'));
 			return;
 		}
-		new SpeakerRenameModal(this.app, this.t, (oldName, newName) => {
+		const candidates = await this.detectSpeakers(file);
+		new SpeakerRenameModal(this.app, this.t, file.basename, candidates, (oldName, newName) => {
 			void this.replaceSpeakerInFile(file, oldName, newName);
 		}).open();
+	}
+
+	private async detectSpeakers(file: TFile): Promise<string[]> {
+		const cache = this.app.metadataCache.getFileCache(file);
+		const fm = cache?.frontmatter as { speakers?: unknown } | undefined;
+		const fmSpeakers = fm?.speakers;
+		if (Array.isArray(fmSpeakers)) {
+			const list = fmSpeakers
+				.filter((s): s is string => typeof s === 'string')
+				.map((s) => s.trim())
+				.filter((s) => s.length > 0);
+			if (list.length > 0) return list;
+		}
+		// Fallback: scan body for **<label>** [HH:MM patterns left by older notes
+		const content = await this.app.vault.read(file);
+		const set = new Set<string>();
+		const re = /\*\*([^*\n]+?)\*\*\s*\[\d/g;
+		let match: RegExpExecArray | null;
+		while ((match = re.exec(content)) !== null) {
+			const label = match[1];
+			if (label) set.add(label.trim());
+		}
+		return [...set];
 	}
 
 	private async replaceSpeakerInFile(file: TFile, oldName: string, newName: string): Promise<void> {
