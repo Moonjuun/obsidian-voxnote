@@ -174,32 +174,6 @@ Deepgram은 다음 보안·규제 표준을 준수합니다:
 
 ---
 
-## 개발
-
-```bash
-git clone https://github.com/Moonjuun/obsidian-deepgram-stt.git
-cd obsidian-deepgram-stt
-npm install
-npm run dev    # esbuild watch
-# 또는
-npm run build  # 프로덕션 빌드
-```
-
-vault에 hot reload 연결하려면 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt`를 클론한 폴더로 symlink:
-
-```bash
-ln -s "$(pwd)" /path/to/your/vault/.obsidian/plugins/deepgram-meeting-stt
-```
-
-### 릴리스
-
-```bash
-npm version patch   # 또는 minor / major
-git push --follow-tags
-```
-
----
-
 ## License
 
 [MIT](LICENSE) © 2026 Moonjuun
