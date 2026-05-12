@@ -1,3 +1,5 @@
+import type { UiLang } from './i18n';
+
 export type DeepgramLanguage = 'ko' | 'en' | 'auto';
 export type DeepgramModel = 'nova-3' | 'nova-2';
 
@@ -10,6 +12,7 @@ export interface DeepgramSettings {
 	diarize: boolean;
 	zeroRetention: boolean;
 	consentAcknowledged: boolean;
+	uiLanguage: UiLang;
 }
 
 export const DEFAULT_SETTINGS: DeepgramSettings = {
@@ -21,4 +24,5 @@ export const DEFAULT_SETTINGS: DeepgramSettings = {
 	diarize: true,
 	zeroRetention: false,
 	consentAcknowledged: false,
+	uiLanguage: 'auto',
 };

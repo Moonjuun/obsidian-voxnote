@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-12
+
+### Added
+- **다국어 (i18n)**: 한국어 / 영어 / 자동(옵시디언 locale 따름) 지원. 설정 → "UI 언어"에서 즉시 전환. 모든 modal, settings, command, Notice가 자동으로 해당 언어로 전환됩니다.
+- **ObsiDeep/README.md 자동 생성**: 동의 시 폴더 안에 사용 가이드 README 자동 작성 (사용자 언어에 맞춰 한/영). 폴더 구조, 사용 흐름, 비용, 보안 안내 포함.
+
+### Changed
+- **동의 모달 축약**: 다섯 줄 안내 → 핵심 세 줄로 줄임. 자세한 사용법은 ObsiDeep/README.md로 위임.
+- 모든 사용자 노출 텍스트를 인라인 i18n으로 분기.
+
 ## [0.2.0] - 2026-05-12
 
 ### Added
@@ -28,6 +38,7 @@
   `{{audio_link}}`, `{{language}}`, `{{model}}`).
 - 네트워크/5xx/429 오류 1회 자동 재시도 + 상황별 안내 메시지.
 
-[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.2.1...0.3.0
 [0.2.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/releases/tag/0.1.0

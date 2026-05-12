@@ -12,9 +12,14 @@ import { TitleInputModal } from './title-input-modal';
 import { audioMimeType, formatDuration, isAudioFile } from './audio-utils';
 import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
 import { createTranscriptNote } from './note-writer';
+import { detectLang, makeT, T } from './i18n';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
+
+	get t(): T {
+		return makeT(detectLang(this.settings.uiLanguage));
+	}
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
@@ -23,28 +28,24 @@ export default class DeepgramSttPlugin extends Plugin {
 
 		if (!this.settings.consentAcknowledged) {
 			this.app.workspace.onLayoutReady(() => {
-				new ConsentModal(this.app, async () => {
-					this.settings.consentAcknowledged = true;
-					await this.saveSettings();
-					await this.runConsentSideEffects();
-				}).open();
+				this.openConsentModal();
 			});
 		}
 
 		this.addCommand({
 			id: 'hello',
-			name: 'Hello (sanity check)',
+			name: this.t('Hello (sanity check)', 'Hello (sanity check)'),
 			callback: () => {
-				new Notice('Deepgram Meeting STT — plugin loaded!');
+				new Notice(this.t('Deepgram Meeting STT — 플러그인이 로드되었습니다.', 'Deepgram Meeting STT — plugin loaded!'));
 			},
 		});
 
 		this.addCommand({
 			id: 'transcribe-to-note',
-			name: 'Transcribe audio → meeting note',
+			name: this.t('회의록 추출 (Transcribe audio → meeting note)', 'Transcribe audio → meeting note'),
 			callback: () => {
-				if (!notifyIfBlocked(checkReady(this.settings))) return;
-				new AudioSuggestModal(this.app, (file) => {
+				if (!notifyIfBlocked(checkReady(this.settings), this.t)) return;
+				new AudioSuggestModal(this.app, this.t, (file) => {
 					this.askTitleAndTranscribe(file);
 				}).open();
 			},
@@ -52,10 +53,10 @@ export default class DeepgramSttPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'transcribe-debug',
-			name: 'Transcribe audio file (debug — console only)',
+			name: this.t('회의록 추출 (디버그: 콘솔만)', 'Transcribe audio (debug — console only)'),
 			callback: () => {
-				if (!notifyIfBlocked(checkReady(this.settings))) return;
-				new AudioSuggestModal(this.app, (file) => {
+				if (!notifyIfBlocked(checkReady(this.settings), this.t)) return;
+				new AudioSuggestModal(this.app, this.t, (file) => {
 					void this.runDebugTranscribe(file);
 				}).open();
 			},
@@ -63,7 +64,7 @@ export default class DeepgramSttPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'reset-consent',
-			name: '동의 모달 다시 보기 (consent reset)',
+			name: this.t('동의 모달 다시 보기', 'Reset consent (show notice again)'),
 			callback: () => {
 				void this.showConsentAgain();
 			},
@@ -74,10 +75,10 @@ export default class DeepgramSttPlugin extends Plugin {
 				if (!(file instanceof TFile) || !isAudioFile(file)) return;
 				menu.addItem((item) =>
 					item
-						.setTitle('Deepgram으로 회의록 추출')
+						.setTitle(this.t('Deepgram으로 회의록 추출', 'Transcribe with Deepgram'))
 						.setIcon('mic')
 						.onClick(() => {
-							if (!notifyIfBlocked(checkReady(this.settings))) return;
+							if (!notifyIfBlocked(checkReady(this.settings), this.t)) return;
 							this.askTitleAndTranscribe(file);
 						}),
 				);
@@ -99,52 +100,68 @@ export default class DeepgramSttPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private async runConsentSideEffects(): Promise<void> {
-		const result = await applyConsentSideEffects(this.app);
-		this.notifyConsentResult(result);
-	}
-
-	private async showConsentAgain(): Promise<void> {
-		this.settings.consentAcknowledged = false;
-		await this.saveSettings();
-		new ConsentModal(this.app, async () => {
+	private openConsentModal(): void {
+		new ConsentModal(this.app, this.t, async () => {
 			this.settings.consentAcknowledged = true;
 			await this.saveSettings();
 			await this.runConsentSideEffects();
 		}).open();
 	}
 
+	private async runConsentSideEffects(): Promise<void> {
+		const result = await applyConsentSideEffects(this.app, detectLang(this.settings.uiLanguage));
+		this.notifyConsentResult(result);
+	}
+
+	private async showConsentAgain(): Promise<void> {
+		this.settings.consentAcknowledged = false;
+		await this.saveSettings();
+		this.openConsentModal();
+	}
+
 	private notifyConsentResult(result: ConsentSideEffectsResult): void {
+		const t = this.t;
 		const messages: string[] = [];
 
 		switch (result.folders) {
 			case 'created':
-				messages.push('✓ vault 루트에 ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/ 포함). 녹음 파일은 ObsiDeep/Audio/에 넣어주세요.');
+				messages.push(t('✓ ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/ 포함).', '✓ Created ObsiDeep/ (with Audio/ and STT/).'));
 				break;
 			case 'partial':
-				messages.push('✓ ObsiDeep 폴더 구조를 보강했습니다.');
+				messages.push(t('✓ ObsiDeep 폴더 구조를 보강했습니다.', '✓ Repaired ObsiDeep folder structure.'));
 				break;
 			case 'exists':
 				break;
 			case 'error':
-				messages.push('⚠ ObsiDeep/ 폴더 자동 생성에 실패했습니다. 수동으로 만들어주세요.');
+				messages.push(t('⚠ ObsiDeep/ 폴더 자동 생성에 실패했습니다.', '⚠ Failed to auto-create ObsiDeep/.'));
 				break;
 		}
 
 		switch (result.gitignore) {
 			case 'added':
-				messages.push('✓ vault/.gitignore에 보호 룰을 추가했습니다 (data.json + ObsiDeep/).');
+				messages.push(t('✓ vault/.gitignore에 보호 룰을 추가했습니다.', '✓ Added protection rules to vault/.gitignore.'));
 				break;
 			case 'partial':
-				messages.push('✓ vault/.gitignore에 누락된 보호 룰을 보강했습니다.');
+				messages.push(t('✓ vault/.gitignore에 누락된 룰을 보강했습니다.', '✓ Filled in missing rules in vault/.gitignore.'));
 				break;
 			case 'exists':
 				break;
 			case 'no-gitignore':
-				messages.push('ℹ vault에 .gitignore가 없어 자동 보호를 건너뛰었습니다. git sync 사용 시 수동 추가를 권장합니다.');
+				messages.push(t('ℹ vault에 .gitignore가 없어 보호를 건너뛰었습니다.', 'ℹ No .gitignore in vault — skipped auto-protection.'));
 				break;
 			case 'error':
-				messages.push('⚠ .gitignore 자동 갱신 중 오류가 발생했습니다. 수동 확인이 필요합니다.');
+				messages.push(t('⚠ .gitignore 갱신 중 오류가 발생했습니다.', '⚠ Error while updating .gitignore.'));
+				break;
+		}
+
+		switch (result.readme) {
+			case 'created':
+				messages.push(t('✓ ObsiDeep/README.md 안내 파일을 생성했습니다.', '✓ Created ObsiDeep/README.md with usage guide.'));
+				break;
+			case 'exists':
+				break;
+			case 'error':
+				messages.push(t('⚠ ObsiDeep/README.md 생성 실패.', '⚠ Failed to create ObsiDeep/README.md.'));
 				break;
 		}
 
@@ -154,7 +171,7 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	private askTitleAndTranscribe(file: TFile): void {
-		new TitleInputModal(this.app, file.basename, (title) => {
+		new TitleInputModal(this.app, this.t, file.basename, (title) => {
 			void this.runTranscribeToNote(file, title);
 		}).open();
 	}
@@ -172,7 +189,8 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	private async runTranscribeToNote(file: TFile, title: string): Promise<void> {
-		const progress = new Notice(`Deepgram: ${file.name} 변환 중...`, 0);
+		const t = this.t;
+		const progress = new Notice(t(`Deepgram: ${file.name} 변환 중...`, `Deepgram: transcribing ${file.name}...`), 0);
 		try {
 			const result = await this.transcribeFile(file);
 			progress.hide();
@@ -186,7 +204,10 @@ export default class DeepgramSttPlugin extends Plugin {
 
 			await this.app.workspace.openLinkText(notePath, '', false);
 			new Notice(
-				`✓ 회의록 생성: ${notePath} (${formatDuration(result.duration)})`,
+				t(
+					`✓ 회의록 생성: ${notePath} (${formatDuration(result.duration)})`,
+					`✓ Note created: ${notePath} (${formatDuration(result.duration)})`,
+				),
 				8000,
 			);
 		} catch (e) {
@@ -196,7 +217,8 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	private async runDebugTranscribe(file: TFile): Promise<void> {
-		const progress = new Notice(`Deepgram: ${file.name} 전송 중...`, 0);
+		const t = this.t;
+		const progress = new Notice(t(`Deepgram: ${file.name} 전송 중...`, `Deepgram: sending ${file.name}...`), 0);
 		try {
 			const result = await this.transcribeFile(file);
 			progress.hide();
@@ -210,7 +232,10 @@ export default class DeepgramSttPlugin extends Plugin {
 
 			const preview = result.transcript.slice(0, 80).replace(/\s+/g, ' ');
 			new Notice(
-				`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(전체 결과는 DevTools 콘솔)`,
+				t(
+					`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(전체 결과는 DevTools 콘솔)`,
+					`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(Full result in DevTools console)`,
+				),
 				10000,
 			);
 		} catch (e) {
@@ -223,30 +248,45 @@ export default class DeepgramSttPlugin extends Plugin {
 		console.error('[Deepgram STT] error:', e);
 
 		if (e instanceof DeepgramApiError) {
-			new Notice(friendlyMessage(e), 12000);
+			new Notice(friendlyMessage(e, this.t), 12000);
 			return;
 		}
 
 		const generic = e instanceof Error ? e.message : String(e);
-		new Notice(`예상치 못한 오류: ${generic}`, 10000);
+		new Notice(this.t(`예상치 못한 오류: ${generic}`, `Unexpected error: ${generic}`), 10000);
 	}
 }
 
-function friendlyMessage(err: DeepgramApiError): string {
+function friendlyMessage(err: DeepgramApiError, t: T): string {
 	switch (err.status) {
 		case 401:
-			return '⚠ API 키 인증 실패\n설정 → Deepgram Meeting STT에서 키를 다시 확인하세요. ("검증" 버튼으로 즉시 점검 가능)';
+			return t(
+				'⚠ API 키 인증 실패\n설정 → Deepgram Meeting STT에서 키를 다시 확인하세요.',
+				'⚠ API key auth failed\nCheck Settings → Deepgram Meeting STT and re-validate the key.',
+			);
 		case 413:
-			return '⚠ 파일이 너무 큼\nDeepgram sync API 한도(~2GB)를 초과했거나 네트워크가 거부했습니다. 더 짧은 녹음으로 시도하세요.';
+			return t(
+				'⚠ 파일이 너무 큼\nDeepgram sync API 한도를 초과했습니다. 더 짧은 녹음으로 시도하세요.',
+				'⚠ File too large\nExceeds the Deepgram sync limit. Try a shorter recording.',
+			);
 		case 429:
-			return '⚠ 요청 한도 초과 (429)\n자동 1회 재시도 후에도 실패. 1~2분 후 다시 시도하세요.';
+			return t(
+				'⚠ 요청 한도 초과 (429)\n자동 1회 재시도 후에도 실패. 1~2분 후 다시 시도하세요.',
+				'⚠ Rate limit exceeded (429)\nFailed after auto-retry. Try again in 1–2 minutes.',
+			);
 		default:
 			if (err.status && err.status >= 500) {
-				return `⚠ Deepgram 서버 오류 (HTTP ${err.status})\n자동 재시도 후에도 실패. 잠시 후 다시 시도하세요.`;
+				return t(
+					`⚠ Deepgram 서버 오류 (HTTP ${err.status})\n잠시 후 다시 시도하세요.`,
+					`⚠ Deepgram server error (HTTP ${err.status})\nPlease try again later.`,
+				);
 			}
 			if (err.status === undefined) {
-				return `⚠ 네트워크 오류\n인터넷 연결을 확인해주세요. (${err.message})`;
+				return t(
+					`⚠ 네트워크 오류\n인터넷 연결을 확인해주세요. (${err.message})`,
+					`⚠ Network error\nCheck your internet connection. (${err.message})`,
+				);
 			}
-			return `⚠ Deepgram 오류: ${err.message}`;
+			return t(`⚠ Deepgram 오류: ${err.message}`, `⚠ Deepgram error: ${err.message}`);
 	}
 }

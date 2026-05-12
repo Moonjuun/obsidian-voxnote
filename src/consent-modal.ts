@@ -1,54 +1,66 @@
 import { App, Modal, Setting } from 'obsidian';
+import type { T } from './i18n';
 
 export class ConsentModal extends Modal {
 	private readonly onAcknowledge: () => Promise<void> | void;
+	private readonly t: T;
 
-	constructor(app: App, onAcknowledge: () => Promise<void> | void) {
+	constructor(app: App, t: T, onAcknowledge: () => Promise<void> | void) {
 		super(app);
+		this.t = t;
 		this.onAcknowledge = onAcknowledge;
 	}
 
 	onOpen() {
 		const { contentEl, titleEl } = this;
+		const t = this.t;
 
-		titleEl.setText('데이터 전송 안내');
+		titleEl.setText(t('데이터 전송 안내', 'Data transmission notice'));
 
 		contentEl.createEl('p', {
-			text: '이 플러그인은 회의 녹음 등 오디오 파일을 Deepgram(외부 API)에 전송하여 음성 인식 결과를 받아옵니다.',
+			text: t(
+				'이 플러그인은 오디오 파일을 Deepgram(외부 API)에 전송해 STT 결과를 받아옵니다.',
+				'This plugin sends audio files to Deepgram (external API) to receive STT results.',
+			),
 		});
 
-		const considerationsEl = contentEl.createEl('div');
-		considerationsEl.createEl('p', {
-			text: '사용 전 확인해주세요:',
-			attr: { style: 'margin-bottom: 4px; font-weight: 600;' },
-		});
-		const ul = considerationsEl.createEl('ul');
+		const ul = contentEl.createEl('ul');
 		ul.createEl('li', {
-			text: '회의 참석자에게 녹음·외부 전송에 대한 사전 동의를 받는 것을 권장합니다.',
+			text: t(
+				'회의 참석자에게 사전 동의를 받으시는 것을 권장합니다.',
+				'We recommend obtaining prior consent from meeting participants.',
+			),
 		});
 		ul.createEl('li', {
-			text: 'API 키는 이 기기의 vault 설정 파일(data.json)에 평문으로 저장됩니다.',
+			text: t(
+				'API 키는 로컬 data.json에 평문 저장되며 외부로 전송되지 않습니다.',
+				'Your API key is stored as plain JSON locally (data.json) and is not transmitted elsewhere.',
+			),
 		});
 		ul.createEl('li', {
-			text: '동의 시 vault 루트에 ObsiDeep/ 폴더를 자동 생성합니다 (그 안에 Audio/, STT/ 하위 폴더). 회의 녹음 파일은 ObsiDeep/Audio/에 넣으시고, 변환된 회의록은 ObsiDeep/STT/에 저장됩니다.',
-		});
-		ul.createEl('li', {
-			text: 'vault 루트의 .gitignore에 자동으로 두 줄을 추가합니다 (.gitignore가 없는 경우 건너뜀): data.json (API 키), ObsiDeep/ (녹음·회의록 통째 보호). 필요하면 사용자가 수동으로 다른 위치로 옮기실 수 있습니다.',
-		});
-		ul.createEl('li', {
-			text: '필요 시 설정에서 Deepgram Zero Retention 옵션을 켜 외부 보관을 비활성화할 수 있습니다 (요금제 조건 확인 필요).',
+			text: t(
+				'동의 시 vault 루트에 ObsiDeep/ 폴더가 자동 생성되고 .gitignore 보호 룰이 추가됩니다.',
+				'On consent, an ObsiDeep/ folder is auto-created at the vault root and .gitignore protection rules are added.',
+			),
 		});
 
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText('동의하고 시작')
-					.setCta()
-					.onClick(async () => {
-						await this.onAcknowledge();
-						this.close();
-					}),
-			);
+		contentEl.createEl('p', {
+			text: t(
+				'자세한 사용법은 동의 후 생성되는 ObsiDeep/README.md를 참고해주세요.',
+				'For detailed usage, see ObsiDeep/README.md (created after consent).',
+			),
+			attr: { style: 'margin-top: 12px; opacity: 0.8;' },
+		});
+
+		new Setting(contentEl).addButton((btn) =>
+			btn
+				.setButtonText(t('동의하고 시작', 'I agree, get started'))
+				.setCta()
+				.onClick(async () => {
+					await this.onAcknowledge();
+					this.close();
+				}),
+		);
 	}
 
 	onClose() {

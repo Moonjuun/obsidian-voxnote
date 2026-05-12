@@ -1,4 +1,6 @@
 import type { App } from 'obsidian';
+import type { Lang } from './i18n';
+import { installReadme, ReadmeResult } from './readme-installer';
 
 const GITIGNORE_PATH = '.gitignore';
 const ROOT_FOLDER = 'ObsiDeep';
@@ -12,14 +14,16 @@ export type FolderResult = 'created' | 'partial' | 'exists' | 'error';
 export interface ConsentSideEffectsResult {
 	gitignore: GitignoreResult;
 	folders: FolderResult;
+	readme: ReadmeResult;
 }
 
-export async function applyConsentSideEffects(app: App): Promise<ConsentSideEffectsResult> {
+export async function applyConsentSideEffects(app: App, lang: Lang): Promise<ConsentSideEffectsResult> {
 	const [gitignore, folders] = await Promise.all([
 		ensureGitignoreRules(app),
 		ensureFolders(app),
 	]);
-	return { gitignore, folders };
+	const readme = await installReadme(app, lang); // 폴더 생성 후에 실행
+	return { gitignore, folders, readme };
 }
 
 async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {

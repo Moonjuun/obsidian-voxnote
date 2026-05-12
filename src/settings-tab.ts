@@ -1,6 +1,7 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import type DeepgramSttPlugin from './main';
 import { validateApiKey } from './deepgram';
+import type { UiLang } from './i18n';
 
 export class DeepgramSettingTab extends PluginSettingTab {
 	plugin: DeepgramSttPlugin;
@@ -13,14 +14,34 @@ export class DeepgramSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
+		const t = this.plugin.t;
 
-		new Setting(containerEl).setName('API 키').setHeading();
+		// ─── General ─────────────────────────────────────────────────
+		new Setting(containerEl).setName(t('일반', 'General')).setHeading();
 
-		// API 키
+		new Setting(containerEl)
+			.setName(t('UI 언어', 'UI language'))
+			.setDesc(t('플러그인 UI 언어. auto는 옵시디언 locale에 따름. 변경 후 옵시디언 재시작 권장.', 'UI language for this plugin. "auto" follows your Obsidian locale. Restart recommended after change.'))
+			.addDropdown((dd) =>
+				dd
+					.addOption('auto', t('자동 (옵시디언 locale)', 'Auto (Obsidian locale)'))
+					.addOption('ko', '한국어')
+					.addOption('en', 'English')
+					.setValue(this.plugin.settings.uiLanguage)
+					.onChange(async (value) => {
+						this.plugin.settings.uiLanguage = value as UiLang;
+						await this.plugin.saveSettings();
+						this.display(); // 즉시 새 언어로 다시 그림
+					}),
+			);
+
+		// ─── API key ─────────────────────────────────────────────────
+		new Setting(containerEl).setName(t('API 키', 'API key')).setHeading();
+
 		let apiKeyInputEl: HTMLInputElement | null = null;
 		new Setting(containerEl)
-			.setName('Deepgram API 키')
-			.setDesc('Deepgram 콘솔에서 발급한 API 키. 로컬 data.json에 저장됩니다.')
+			.setName(t('Deepgram API 키', 'Deepgram API key'))
+			.setDesc(t('Deepgram 콘솔에서 발급한 키. 로컬 data.json에 저장됩니다.', 'API key from your Deepgram console. Stored locally in data.json.'))
 			.addText((text) => {
 				text
 					.setPlaceholder('xxxxxxxxxxxx...')
@@ -33,23 +54,25 @@ export class DeepgramSettingTab extends PluginSettingTab {
 				apiKeyInputEl = text.inputEl;
 			})
 			.addButton((btn) =>
-				btn
-					.setButtonText('검증')
-					.onClick(async () => {
-						btn.setDisabled(true).setButtonText('검증 중...');
-						const result = await validateApiKey(this.plugin.settings.apiKey);
-						new Notice(result.message);
-						btn.setDisabled(false).setButtonText('검증');
-						if (apiKeyInputEl) apiKeyInputEl.focus();
-					}),
+				btn.setButtonText(t('검증', 'Validate')).onClick(async () => {
+					btn.setDisabled(true).setButtonText(t('검증 중...', 'Validating...'));
+					const result = await validateApiKey(this.plugin.settings.apiKey);
+					new Notice(
+						result.ok
+							? t('✓ API 키 유효', '✓ API key is valid')
+							: t(`API 키가 유효하지 않습니다 (${result.message})`, `API key is invalid (${result.message})`),
+					);
+					btn.setDisabled(false).setButtonText(t('검증', 'Validate'));
+					if (apiKeyInputEl) apiKeyInputEl.focus();
+				}),
 			);
 
-		new Setting(containerEl).setName('저장').setHeading();
+		// ─── Save ────────────────────────────────────────────────────
+		new Setting(containerEl).setName(t('저장', 'Save')).setHeading();
 
-		// 저장 폴더
 		new Setting(containerEl)
-			.setName('회의록 저장 폴더')
-			.setDesc('vault 내 상대 경로. 폴더가 없으면 자동 생성됩니다. 기본값: ObsiDeep/STT')
+			.setName(t('회의록 저장 폴더', 'Note folder'))
+			.setDesc(t('vault 내 상대 경로. 없으면 자동 생성. 기본값: ObsiDeep/STT', 'Vault-relative path. Auto-created if missing. Default: ObsiDeep/STT'))
 			.addText((text) =>
 				text
 					.setPlaceholder('ObsiDeep/STT')
@@ -60,13 +83,12 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					}),
 			);
 
-		// 템플릿 경로 (선택)
 		new Setting(containerEl)
-			.setName('템플릿 경로 (선택)')
-			.setDesc('비워두면 내장 기본 템플릿을 사용합니다. 예: 90_Templates/meeting.md')
+			.setName(t('템플릿 경로 (선택)', 'Template path (optional)'))
+			.setDesc(t('비우면 내장 기본 템플릿 사용. 예: 90_Templates/meeting.md', 'Leave blank to use the built-in template. Example: 90_Templates/meeting.md'))
 			.addText((text) =>
 				text
-					.setPlaceholder('(내장 템플릿 사용)')
+					.setPlaceholder(t('(내장 템플릿 사용)', '(built-in template)'))
 					.setValue(this.plugin.settings.templatePath)
 					.onChange(async (value) => {
 						this.plugin.settings.templatePath = value.trim();
@@ -74,17 +96,17 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					}),
 			);
 
-		new Setting(containerEl).setName('변환 옵션').setHeading();
+		// ─── Transcription ──────────────────────────────────────────
+		new Setting(containerEl).setName(t('변환 옵션', 'Transcription')).setHeading();
 
-		// 언어
 		new Setting(containerEl)
-			.setName('언어')
-			.setDesc('회의록 주 사용 언어')
+			.setName(t('회의 언어', 'Audio language'))
+			.setDesc(t('회의록 주 사용 언어 (Deepgram에 전달)', 'Primary language of the recording (passed to Deepgram)'))
 			.addDropdown((dd) =>
 				dd
-					.addOption('ko', '한국어')
-					.addOption('en', '영어')
-					.addOption('auto', '자동 감지')
+					.addOption('ko', t('한국어', 'Korean'))
+					.addOption('en', t('영어', 'English'))
+					.addOption('auto', t('자동 감지', 'Auto detect'))
 					.setValue(this.plugin.settings.language)
 					.onChange(async (value) => {
 						this.plugin.settings.language = value as 'ko' | 'en' | 'auto';
@@ -92,13 +114,12 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					}),
 			);
 
-		// 모델
 		new Setting(containerEl)
-			.setName('Deepgram 모델')
+			.setName(t('Deepgram 모델', 'Deepgram model'))
 			.addDropdown((dd) =>
 				dd
-					.addOption('nova-3', 'nova-3 (최신, 권장)')
-					.addOption('nova-2', 'nova-2 (안정)')
+					.addOption('nova-3', t('nova-3 (최신, 권장)', 'nova-3 (latest, recommended)'))
+					.addOption('nova-2', t('nova-2 (안정)', 'nova-2 (stable)'))
 					.setValue(this.plugin.settings.model)
 					.onChange(async (value) => {
 						this.plugin.settings.model = value as 'nova-3' | 'nova-2';
@@ -106,10 +127,9 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					}),
 			);
 
-		// 화자 분리
 		new Setting(containerEl)
-			.setName('화자 분리 (Diarize)')
-			.setDesc('녹음 내 화자별로 분리된 transcript 생성')
+			.setName(t('화자 분리 (Diarize)', 'Speaker diarization'))
+			.setDesc(t('녹음 내 화자별로 분리된 transcript 생성', 'Produce per-speaker transcripts'))
 			.addToggle((tg) =>
 				tg.setValue(this.plugin.settings.diarize).onChange(async (value) => {
 					this.plugin.settings.diarize = value;
@@ -117,10 +137,9 @@ export class DeepgramSettingTab extends PluginSettingTab {
 				}),
 			);
 
-		// Zero Retention
 		new Setting(containerEl)
-			.setName('Zero Retention')
-			.setDesc('Deepgram 측 데이터 보관 비활성화 요청 (요금제에 따라 적용)')
+			.setName(t('Zero Retention', 'Zero Retention'))
+			.setDesc(t('Deepgram 측 데이터 보관 비활성화 요청 (요금제에 따라 적용)', 'Request Deepgram to not retain data (subject to your plan)'))
 			.addToggle((tg) =>
 				tg.setValue(this.plugin.settings.zeroRetention).onChange(async (value) => {
 					this.plugin.settings.zeroRetention = value;
