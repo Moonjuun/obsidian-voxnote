@@ -1,238 +1,170 @@
 # Deepgram Meeting STT
 
-옵시디언 안에서 회의 녹음 파일을 [Deepgram](https://deepgram.com) API로 STT 변환하여 마크다운 회의록 노트로 저장하는 플러그인.
+An Obsidian plugin that transcribes meeting recordings with the [Deepgram](https://deepgram.com) speech-to-text API and saves them as markdown notes with per-speaker timestamps.
 
-- 한국어 회의 / 화자 분리(Diarize) / 마크다운 자동 포맷
-- 파일 우클릭 또는 명령 팔레트에서 한 번에 변환
-- 외부 템플릿 지원 (frontmatter / 본문 자유 커스텀)
-
-> 📌 **베타 단계** — 사내 동료 BRAT 배포 위주. 정식 Obsidian Community 등록 전 단계입니다.
+> 🇰🇷 한국어 가이드: [README-ko.md](README-ko.md)
 
 ---
 
-## 설치
+## Features
 
-### 방법 1 — BRAT (권장)
+- **Right-click → transcribe**: pick any audio file from the vault sidebar (or run the command palette) and the transcription lands in a new markdown note
+- **Per-speaker diarization** with `[HH:MM:SS]` segment timestamps
+- **Optional custom templates** with token substitution
+- **Bilingual UI** (Korean / English / auto-follow Obsidian locale)
+- **Zero Retention by default** — Deepgram discards audio + transcripts after processing (plan-dependent)
+- **Auto-managed workspace**: creates `ObsiDeep/` (Audio/, STT/) at the vault root and writes vault `.gitignore` rules so recordings and your API key stay out of vault git sync
+- **Mobile compatible** — works on Obsidian for iOS / Android
 
-1. [Obsidian BRAT](https://github.com/TfTHacker/obsidian42-brat) 플러그인 설치 + 활성화.
-2. BRAT 설정 → **"Add Beta Plugin"** → 다음 URL 입력:
-   ```
-   https://github.com/Moonjuun/obsidian-deepgram-stt
-   ```
-3. **"Enable after installing the plugin"** 체크 → **Add plugin**.
-4. 옵시디언 설정 → Community plugins → "Deepgram Meeting STT" 활성화.
-5. 옆 톱니바퀴 → Deepgram API 키 입력 (다음 섹션 참고).
+## Install
 
-### 방법 2 — 수동
+### Obsidian Community Plugins (recommended)
 
-1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
-2. 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt/` 폴더(없으면 생성)에 3개 파일 복사.
-3. 옵시디언 재시작 → Community plugins → "Deepgram Meeting STT" 활성화.
+1. **Settings → Community plugins → Browse**
+2. Search for **"Deepgram Meeting STT"**
+3. Install + Enable
 
----
+### BRAT (beta releases)
 
-## API 키 발급
+1. Install the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
+2. BRAT settings → **Add Beta Plugin** → `Moonjuun/obsidian-deepgram-stt`
+3. Enable the plugin in Community plugins
 
-1. [Deepgram 콘솔](https://console.deepgram.com)에 가입 (Google 또는 이메일).
-   - 가입 즉시 **무료 $200 크레딧** 자동 지급 (nova-3 기준 약 770시간 분량).
+## Setup
 
-![Deepgram 회원가입 화면](img/img1.webp)
+On first enable, the plugin shows a one-time consent modal explaining what is sent to Deepgram. After consent it:
 
-2. 대시보드 좌측 → **API Keys** → **Create New API Key** 클릭.
-3. 키 이름은 자유 (예: `obsidian-stt`), 권한은 `Member` 이상이면 충분.
-4. 생성된 `xxxxxxxxxxxx...` 형식 토큰을 즉시 복사 (페이지 이탈 시 다시 못 봄).
+- Creates `ObsiDeep/` (with `Audio/` and `STT/` subfolders) at your vault root
+- Adds two protection rules to your vault's `.gitignore` (one for `data.json`, one for `ObsiDeep/`)
+- Writes `ObsiDeep/README.md` and `ObsiDeep/FEATURES.md` with localized usage guides
 
-![API 키 생성 화면](img/img2.webp)
+Then get a Deepgram API key:
 
-5. 옵시디언 → 플러그인 설정 → **"Deepgram API 키"** 칸에 붙여넣기 → **"검증"** 버튼.
+1. Sign up at [Deepgram Console](https://console.deepgram.com) — free tier includes a **$200 credit** (~770 hours of `nova-3` transcription)
 
-![플러그인 설정 탭](img/img3.webp)
+![Deepgram API Keys page](img/img1.webp)
 
----
+2. Dashboard → **API Keys → Create New API Key** (any name, `Member` permission is enough)
 
-## 사용법
+![Create API Key dialog](img/img2.webp)
 
-### 0. 회의 녹음 파일을 vault에 넣기
+3. Paste the key into **Settings → Deepgram Meeting STT → "Deepgram API key"**
+4. Click **Validate** — you should see `✓ API key is valid`
 
-플러그인 첫 실행 시 동의 모달에서 동의하면 **vault 루트에 `ObsiDeep/` 폴더가 자동 생성**됩니다:
+![Plugin settings tab](img/img3.webp)
 
-```
-ObsiDeep/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 차단)
-  ├─ Audio/            ← 회의 녹음 파일 (직접 넣기)
-  └─ STT/              ← 변환된 회의록 노트 (자동 저장)
-```
+## Usage
 
-녹음 파일을 `ObsiDeep/Audio/`에 넣는 방법:
-- **드래그앤드롭**: Finder에서 옵시디언 창의 `ObsiDeep/Audio/`로 드래그
-- **Finder 직접 복사**: vault 폴더의 `ObsiDeep/Audio/` 안에 파일 복사
+### Drop a recording and transcribe
 
-> 💡 Finder에서 직접 복사한 경우 옵시디언 사이드바에 즉시 안 보일 수 있습니다. `Cmd+P` (Windows: `Ctrl+P`) → **"저장하지 않고 앱 새로고침"** 실행 후 다시 확인하세요.
+1. Place an audio file (`mp3`, `m4a`, `mp4`, `wav`, `flac`, `ogg`, `opus`, `webm`, `aac`) into `ObsiDeep/Audio/` (drag into the Obsidian window, or copy via Finder/Explorer)
+2. **Right-click** the file in Obsidian's left sidebar → **"Transcribe with Deepgram"**
+3. Enter a title → Enter
+4. After ~1–2 minutes the transcribed note appears in `ObsiDeep/STT/` and opens automatically
 
-> 다른 폴더(`Attachments/`, `Meetings/` 등)에 두어도 변환은 동작하지만, git 보호를 받으려면 본인이 별도로 `.gitignore` 처리해야 합니다.
+![Right-click → Transcribe with Deepgram](img/img4.webp)
 
-### 1. 변환 실행
+The same flow is available from the command palette (`Cmd+P` / `Ctrl+P`) → **"Transcribe audio → meeting note"**.
 
-**명령 팔레트**:
-- `Cmd+P` (macOS) / `Ctrl+P` → **"Deepgram Meeting STT: Transcribe audio → meeting note"** 실행
-- 변환할 오디오 파일 선택 → 회의록 제목 입력 → Enter
+> If you copied the file via Finder/Explorer and it doesn't appear in the sidebar right away, run `Cmd+P` → **"Reload app without saving"** first.
 
-**파일 우클릭**:
-- 옵시디언 좌측 사이드바에서 오디오 파일 우클릭 → **"Transcribe with Deepgram"** (한국어 UI에서는 **"Deepgram으로 회의록 추출"**)
-
-![파일 우클릭 → Transcribe with Deepgram](img/img4.webp)
-
-**디버그 명령 (선택)**:
-- **"Transcribe audio file (debug — console only)"** — 노트 생성 없이 transcript 결과만 DevTools 콘솔에 출력. API 응답 점검용.
-- **"동의 모달 다시 보기 (consent reset)"** — 첫 실행 동의 모달을 다시 띄움. `ObsiDeep/` 폴더가 삭제됐거나 처음 안내를 다시 보고 싶을 때 유용.
-
-> 지원 포맷: `mp3`, `m4a`, `mp4`, `wav`, `flac`, `ogg`, `opus`, `webm`, `aac`
-
----
-
-## 더 알아보기
-
-기능별 상세 가이드(정확도 팁, 화자 이름 정리, 템플릿 토큰, 업데이트 확인 등)는 [**FEATURES.md**](FEATURES.md)에 모았습니다. 새 기능이 추가될 때마다 거기에 섹션이 늘어납니다.
-
----
-
-## 설정 항목
-
-| 항목 | 설명 | 기본값 |
-|---|---|---|
-| Deepgram API 키 | 회의록 변환에 사용할 키 (검증 버튼 옆에 있음) | (없음) |
-| 회의록 저장 폴더 | vault 내 상대 경로. 자동 생성됨 | `ObsiDeep/STT` |
-| 템플릿 경로 | vault 내 마크다운 파일 경로. 비우면 내장 템플릿 | (빈 값) |
-| 언어 | `ko` / `en` / `auto` (자동 감지) | `ko` |
-| Deepgram 모델 | `nova-3` (최신) / `nova-2` | `nova-3` |
-| 화자 분리 (Diarize) | 화자별로 분리된 transcript 생성 | `true` |
-| Zero Retention | Deepgram 측 데이터 보관 비활성화 (요금제 조건) | `false` |
-
----
-
-## 템플릿 토큰
-
-설정의 **"템플릿 경로"** 칸에 vault 내 마크다운 파일을 지정하면, 그 안의 다음 토큰들이 자동 치환됩니다.
-
-| 토큰 | 치환 결과 |
-|---|---|
-| `{{date}}` | `YYYY-MM-DD` (변환 실행 시각 기준) |
-| `{{title}}` | 사용자 입력 제목 |
-| `{{transcript}}` | diarize on이면 화자별 마크다운, off면 plain text |
-| `{{speakers_transcript}}` | 항상 화자별 마크다운 |
-| `{{plain_transcript}}` | 항상 plain text |
-| `{{duration}}` | `5m 30s` 같은 형식 |
-| `{{audio_link}}` | `[[Attachments/녹음.m4a]]` wikilink |
-| `{{language}}` | `ko` / `en` / `auto` |
-| `{{model}}` | `nova-3` / `nova-2` |
-
-내장 기본 템플릿:
+### Output
 
 ```markdown
 ---
-date: {{date}}
+date: 2026-05-13
 type: meeting
 tags: [meeting, stt]
-duration: {{duration}}
-language: {{language}}
-model: {{model}}
-source: {{audio_link}}
+duration: 28m 41s
+language: ko
+source: [[ObsiDeep/Audio/standup.m4a]]
+speakers: ["화자 0", "화자 1"]
 ---
 
-# {{title}}
+# Stand-up 2026-05-13
 
-- 녹음: {{audio_link}}
-- 길이: {{duration}}
-- 모델: {{model}} ({{language}})
+**화자 0** [00:00:01 - 00:00:08]
+Good morning, let's start with the status updates.
 
-## 회의 내용
-
-{{transcript}}
+**화자 1** [00:00:09 - 00:00:14]
+Sure, I'll go first.
 ```
 
----
+### Rename speakers
 
-## 비용 (참고)
+Speakers are labelled `화자 0`, `화자 1` by default. To replace with real names:
 
-Deepgram **nova-3** 기준 (2026-05 시점):
+1. Open the meeting note
+2. Command palette → **"Rename speaker (current note)"**
 
-| 회의 길이 | 비용 (USD, 약) |
+![Rename speaker command](img/img5.webp)
+
+3. Pick the speaker from the dropdown (auto-detected from the note's frontmatter)
+4. Type the real name → click **Replace**
+
+Every occurrence in both the body and the `speakers` frontmatter array is rewritten.
+
+## Settings
+
+| Setting | Description | Default |
+|---|---|---|
+| UI language | Plugin UI (Korean / English / auto-follow Obsidian) | `auto` |
+| Deepgram API key | Stored locally in `data.json` | (none) |
+| Note folder | Vault-relative output path | `ObsiDeep/STT` |
+| Template path | Optional custom template file | (built-in template) |
+| Audio language | Primary recording language | `ko` |
+| Deepgram model | `nova-3` (latest) / `nova-2` (stable) | `nova-3` |
+| Speaker diarization | Produce per-speaker transcripts | `true` |
+| Zero Retention | Ask Deepgram to discard data after processing | `true` |
+
+See [FEATURES.md](FEATURES.md) for the full template token reference, accuracy guide (audio quality, speaker count, recording-room checklist), mobile usage notes, and update check.
+
+## Security & Privacy
+
+- Audio is sent to Deepgram over HTTPS for processing.
+- Your API key is stored locally as plain JSON in `.obsidian/plugins/deepgram-meeting-stt/data.json` (Obsidian plugin standard). The plugin auto-adds this path to your vault's `.gitignore`.
+- The `ObsiDeep/` folder is also auto-added to `.gitignore` so recordings and notes never enter vault git sync.
+- Deepgram complies with **GDPR / SOC 2 Type II / HIPAA (with BAA) / CCPA**. See [Deepgram Trust Center](https://trust.deepgram.com) and [Privacy Policy](https://deepgram.com/privacy).
+- **Zero Retention** is on by default. Guaranteed immediate effect on Growth or higher Deepgram plans; free / Pay-as-you-go tier may still retain data per standard policy (~30 days).
+- Please obtain consent from meeting participants before recording and transmitting audio to a third-party API.
+
+## Cost
+
+Approximate cost with `nova-3`:
+
+| Length | Cost (USD) |
 |---|---|
-| 30분 | $0.13 |
-| 1시간 | $0.26 |
-| 2시간 | $0.52 |
+| 30 min | $0.13 |
+| 1 hour | $0.26 |
+| 2 hours | $0.52 |
 
-최신 가격은 [Deepgram Pricing](https://deepgram.com/pricing) 확인.
+The free $200 signup credit covers many hours. See [Deepgram Pricing](https://deepgram.com/pricing) for current rates.
 
----
-
-## 프라이버시 / 보안
-
-### Deepgram 자체 보안 (외부 API 신뢰성)
-
-Deepgram은 다음 보안·규제 표준을 준수합니다:
-
-| 표준 | 내용 |
-|---|---|
-| **GDPR** | EU/UK 일반 개인정보보호 규정 준수 |
-| **SOC 2 Type II** | 외부 감사 완료 (보안·가용성·기밀성) |
-| **HIPAA** | 의료 정보 처리 호환 가능 (별도 BAA 필요) |
-| **CCPA** | 캘리포니아 소비자 개인정보 보호법 대응 |
-| **DPA** | 기업 고객용 데이터 처리 동의서 제공 |
-
-상세: [Deepgram Trust Center](https://trust.deepgram.com) · [Privacy Policy](https://deepgram.com/privacy)
-
-### Zero Retention (기본 ON)
-
-플러그인은 기본적으로 `dg-zero-retention: true` 헤더를 Deepgram에 전달합니다 — Deepgram이 변환 후 데이터를 즉시 폐기. Growth 이상 요금제에서 즉시 적용, 무료/PAYG에서는 표준 정책(~30일 보관)이 적용될 수 있습니다. 설정에서 토글로 끌 수 있습니다.
-
-### 데이터 전송 일반
-
-- 이 플러그인은 오디오 파일을 **Deepgram 서버에 전송**해 STT 결과를 받아옵니다.
-- 회의 참석자에게 **녹음 및 외부 API 전송에 대한 사전 동의**를 받으시는 것을 권장합니다.
-
-### API 키 + 회의 녹음 자동 보호
-- API 키는 vault 내 `.obsidian/plugins/deepgram-meeting-stt/data.json`에 **평문 JSON으로 저장**됩니다 (옵시디언 플러그인 표준).
-- 회의 녹음은 사용자가 vault에 두는 파일이라, vault git sync 시 그대로 외부에 업로드될 위험이 있습니다.
-- 첫 실행 모달에서 동의 시 다음을 자동 처리합니다 (`.gitignore`가 있을 때만):
-  - vault 루트에 **`ObsiDeep/` 폴더 생성** (그 안에 `Audio/`, `STT/` 하위 폴더)
-  - `.gitignore`에 **`.obsidian/plugins/deepgram-meeting-stt/data.json`** 룰 추가 → API 키 보호
-  - `.gitignore`에 **`ObsiDeep/`** 룰 추가 → 회의 녹음·회의록 외부 유출 차단
-- vault `.gitignore`가 없거나 자동 추가가 실패했다면, 수동으로 다음 두 줄을 추가하세요:
-  ```
-  .obsidian/plugins/deepgram-meeting-stt/data.json
-  ObsiDeep/
-  ```
-- **이미 키나 녹음이 git에 push되었다면**: GitHub은 push 즉시 인덱싱하므로 사후 삭제로는 보장 불가. 키는 즉시 폐기·재발급, 녹음은 별도 평가 후 BFG/`git filter-repo`로 history 제거 필요.
-
----
-
-## 개발
+## Development
 
 ```bash
 git clone https://github.com/Moonjuun/obsidian-deepgram-stt.git
 cd obsidian-deepgram-stt
 npm install
 npm run dev    # esbuild watch
-# 또는
-npm run build  # 프로덕션 빌드
+# or
+npm run build  # production build
 ```
 
-vault에 hot reload 연결하려면 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt`를 클론한 폴더로 symlink:
+For live development, symlink the cloned folder into your vault's `.obsidian/plugins/deepgram-meeting-stt`:
 
 ```bash
 ln -s "$(pwd)" /path/to/your/vault/.obsidian/plugins/deepgram-meeting-stt
 ```
 
-### 릴리스
+### Release
 
 ```bash
-npm version patch   # 또는 minor / major / specific (예: 0.1.0)
+npm version patch   # or minor / major / explicit version
 git push --follow-tags
 ```
 
-`npm version`은 `manifest.json`, `package.json`, `versions.json`을 한 번에 동기화하고 git tag를 만듭니다. tag가 push되면 GitHub Actions가 자동으로 `main.js`, `manifest.json`, `styles.css`를 첨부한 release를 생성합니다 (`.github/workflows/release.yml` 참고).
-
----
+`npm version` syncs `manifest.json`, `package.json`, `versions.json`, and creates a tag. The tag push triggers `.github/workflows/release.yml` which builds and attaches `main.js`, `manifest.json`, `styles.css` (with GitHub artifact attestations) to a new release.
 
 ## License
 
