@@ -30,6 +30,7 @@ async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 	const rules = [
 		`${app.vault.configDir}/plugins/deepgram-meeting-stt/data.json`,
 		`${ROOT_FOLDER}/`,
+		`${ROOT_FOLDER}/README.md`,
 	];
 	try {
 		const exists = await app.vault.adapter.exists(GITIGNORE_PATH);

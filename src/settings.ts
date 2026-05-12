@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS: DeepgramSettings = {
 	language: 'ko',
 	model: 'nova-3',
 	diarize: true,
-	zeroRetention: false,
+	zeroRetention: true,
 	consentAcknowledged: false,
 	uiLanguage: 'auto',
 };

@@ -33,10 +33,12 @@
 
 ## API 키 발급
 
-1. [Deepgram 콘솔](https://console.deepgram.com)에서 회원가입.
-2. **API Keys** → **Create New API Key** → 권한은 `Member` 또는 `Admin`이면 충분.
-3. 생성된 `xxxxxxxxxxxx...` 형식 토큰을 복사.
-4. 옵시디언 → 플러그인 설정 → **"Deepgram API 키"** 칸에 붙여넣기 → **"검증"** 버튼.
+1. [Deepgram 콘솔](https://console.deepgram.com)에 가입 (Google 또는 이메일).
+   - 가입 즉시 **무료 $200 크레딧** 자동 지급 (nova-3 기준 약 770시간 분량).
+2. 대시보드 좌측 → **API Keys** → **Create New API Key** 클릭.
+3. 키 이름은 자유 (예: `obsidian-stt`), 권한은 `Member` 이상이면 충분.
+4. 생성된 `xxxxxxxxxxxx...` 형식 토큰을 즉시 복사 (페이지 이탈 시 다시 못 봄).
+5. 옵시디언 → 플러그인 설정 → **"Deepgram API 키"** 칸에 붙여넣기 → **"검증"** 버튼.
 
 ---
 
@@ -147,10 +149,28 @@ Deepgram **nova-3** 기준 (2026-05 시점):
 
 ## 프라이버시 / 보안
 
-### 데이터 전송
+### Deepgram 자체 보안 (외부 API 신뢰성)
+
+Deepgram은 다음 보안·규제 표준을 준수합니다:
+
+| 표준 | 내용 |
+|---|---|
+| **GDPR** | EU/UK 일반 개인정보보호 규정 준수 |
+| **SOC 2 Type II** | 외부 감사 완료 (보안·가용성·기밀성) |
+| **HIPAA** | 의료 정보 처리 호환 가능 (별도 BAA 필요) |
+| **CCPA** | 캘리포니아 소비자 개인정보 보호법 대응 |
+| **DPA** | 기업 고객용 데이터 처리 동의서 제공 |
+
+상세: [Deepgram Trust Center](https://trust.deepgram.com) · [Privacy Policy](https://deepgram.com/privacy)
+
+### Zero Retention (기본 ON)
+
+플러그인은 기본적으로 `dg-zero-retention: true` 헤더를 Deepgram에 전달합니다 — Deepgram이 변환 후 데이터를 즉시 폐기. Growth 이상 요금제에서 즉시 적용, 무료/PAYG에서는 표준 정책(~30일 보관)이 적용될 수 있습니다. 설정에서 토글로 끌 수 있습니다.
+
+### 데이터 전송 일반
+
 - 이 플러그인은 오디오 파일을 **Deepgram 서버에 전송**해 STT 결과를 받아옵니다.
 - 회의 참석자에게 **녹음 및 외부 API 전송에 대한 사전 동의**를 받으시는 것을 권장합니다.
-- 요금제가 허용하는 경우 설정에서 **Zero Retention** 옵션을 켜 Deepgram 측 데이터 보관을 비활성화할 수 있습니다.
 
 ### API 키 + 회의 녹음 자동 보호
 - API 키는 vault 내 `.obsidian/plugins/deepgram-meeting-stt/data.json`에 **평문 JSON으로 저장**됩니다 (옵시디언 플러그인 표준).
