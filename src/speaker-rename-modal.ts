@@ -82,7 +82,7 @@ export class SpeakerRenameModal extends Modal {
 					e.stopPropagation();
 					this.submit();
 				});
-				setTimeout(() => text.inputEl.focus(), 10);
+				window.setTimeout(() => text.inputEl.focus(), 10);
 			});
 
 		new Setting(contentEl)

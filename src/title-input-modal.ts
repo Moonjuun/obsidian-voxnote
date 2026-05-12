@@ -38,7 +38,7 @@ export class TitleInputModal extends Modal {
 					e.stopPropagation();
 					this.submit();
 				});
-				setTimeout(() => {
+				window.setTimeout(() => {
 					text.inputEl.focus();
 					text.inputEl.select();
 				}, 10);

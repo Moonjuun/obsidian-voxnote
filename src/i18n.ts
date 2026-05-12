@@ -1,3 +1,5 @@
+import { getLanguage } from 'obsidian';
+
 export type UiLang = 'ko' | 'en' | 'auto';
 export type Lang = 'ko' | 'en';
 
@@ -6,11 +8,11 @@ export type T = (ko: string, en: string) => string;
 export function detectLang(setting: UiLang): Lang {
 	if (setting === 'ko' || setting === 'en') return setting;
 
-	// auto: Obsidian 자체 locale (localStorage 'language') → 브라우저 → 기본 en
-	if (typeof window !== 'undefined') {
-		const stored = window.localStorage.getItem('language');
-		if (stored?.toLowerCase().startsWith('ko')) return 'ko';
-		if (stored?.toLowerCase().startsWith('en')) return 'en';
+	// auto: Obsidian's locale (newer Obsidian versions) → browser locale → en
+	if (typeof getLanguage === 'function') {
+		const obsLang = getLanguage();
+		if (obsLang.toLowerCase().startsWith('ko')) return 'ko';
+		if (obsLang.toLowerCase().startsWith('en')) return 'en';
 	}
 	if (typeof navigator !== 'undefined' && navigator.language) {
 		if (navigator.language.toLowerCase().startsWith('ko')) return 'ko';
