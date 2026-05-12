@@ -1,5 +1,24 @@
+export type DeepgramLanguage = 'ko' | 'en' | 'auto';
+export type DeepgramModel = 'nova-3' | 'nova-2';
+
 export interface DeepgramSettings {
-	// Phase 1에서 확장 예정 (apiKey, savedFolder, templatePath, language, model, diarize, zeroRetention 등)
+	apiKey: string;
+	savedFolder: string;
+	templatePath: string;
+	language: DeepgramLanguage;
+	model: DeepgramModel;
+	diarize: boolean;
+	zeroRetention: boolean;
+	consentAcknowledged: boolean;
 }
 
-export const DEFAULT_SETTINGS: DeepgramSettings = {};
+export const DEFAULT_SETTINGS: DeepgramSettings = {
+	apiKey: '',
+	savedFolder: 'STT',
+	templatePath: '',
+	language: 'ko',
+	model: 'nova-3',
+	diarize: true,
+	zeroRetention: false,
+	consentAcknowledged: false,
+};

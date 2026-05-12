@@ -1,11 +1,24 @@
 import { Notice, Plugin } from 'obsidian';
 import { DEFAULT_SETTINGS, DeepgramSettings } from './settings';
+import { DeepgramSettingTab } from './settings-tab';
+import { ConsentModal } from './consent-modal';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
 
 	async onload() {
 		await this.loadSettings();
+
+		this.addSettingTab(new DeepgramSettingTab(this.app, this));
+
+		if (!this.settings.consentAcknowledged) {
+			this.app.workspace.onLayoutReady(() => {
+				new ConsentModal(this.app, async () => {
+					this.settings.consentAcknowledged = true;
+					await this.saveSettings();
+				}).open();
+			});
+		}
 
 		this.addCommand({
 			id: 'hello',
