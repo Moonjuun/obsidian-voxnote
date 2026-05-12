@@ -67,7 +67,36 @@ export class DeepgramApiError extends Error {
 	}
 }
 
+const RETRY_DELAY_MS = 1000;
+
 export async function transcribe(
+	audio: ArrayBuffer,
+	options: TranscribeOptions,
+): Promise<TranscribeResult> {
+	try {
+		return await callListenOnce(audio, options);
+	} catch (e) {
+		if (e instanceof DeepgramApiError && isRetryable(e)) {
+			console.warn('[Deepgram STT] retrying after transient error:', e.message);
+			await sleep(RETRY_DELAY_MS);
+			return await callListenOnce(audio, options);
+		}
+		throw e;
+	}
+}
+
+function isRetryable(err: DeepgramApiError): boolean {
+	if (err.status === undefined) return true; // 네트워크 오류
+	if (err.status === 429) return true;
+	if (err.status >= 500) return true;
+	return false;
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function callListenOnce(
 	audio: ArrayBuffer,
 	options: TranscribeOptions,
 ): Promise<TranscribeResult> {

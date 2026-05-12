@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile } from 'obsidian';
+import { Menu, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
 import { ConsentModal } from './consent-modal';
@@ -6,7 +6,7 @@ import { ensureGitignoreRule } from './gitignore';
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
 import { TitleInputModal } from './title-input-modal';
-import { audioMimeType, formatDuration } from './audio-utils';
+import { audioMimeType, formatDuration, isAudioFile } from './audio-utils';
 import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
 import { createTranscriptNote } from './note-writer';
 
@@ -41,12 +41,7 @@ export default class DeepgramSttPlugin extends Plugin {
 			name: 'Transcribe audio → meeting note',
 			callback: () => {
 				if (!notifyIfBlocked(checkReady(this.settings))) return;
-				new AudioSuggestModal(this.app, (file) => {
-					const defaultTitle = file.basename;
-					new TitleInputModal(this.app, defaultTitle, (title) => {
-						this.runTranscribeToNote(file, title);
-					}).open();
-				}).open();
+				new AudioSuggestModal(this.app, (file) => this.askTitleAndTranscribe(file)).open();
 			},
 		});
 
@@ -58,6 +53,21 @@ export default class DeepgramSttPlugin extends Plugin {
 				new AudioSuggestModal(this.app, (file) => this.runDebugTranscribe(file)).open();
 			},
 		});
+
+		this.registerEvent(
+			this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
+				if (!(file instanceof TFile) || !isAudioFile(file)) return;
+				menu.addItem((item) =>
+					item
+						.setTitle('Deepgram으로 회의록 추출')
+						.setIcon('mic')
+						.onClick(() => {
+							if (!notifyIfBlocked(checkReady(this.settings))) return;
+							this.askTitleAndTranscribe(file);
+						}),
+				);
+			}),
+		);
 	}
 
 	onunload() {}
@@ -92,6 +102,12 @@ export default class DeepgramSttPlugin extends Plugin {
 				new Notice('.gitignore 자동 갱신 중 오류가 발생했습니다. 수동 확인이 필요합니다.', 8000);
 				break;
 		}
+	}
+
+	private askTitleAndTranscribe(file: TFile) {
+		new TitleInputModal(this.app, file.basename, (title) => {
+			this.runTranscribeToNote(file, title);
+		}).open();
 	}
 
 	private async transcribeFile(file: TFile): Promise<TranscribeResult> {
@@ -156,11 +172,34 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	private reportError(e: unknown) {
-		const msg =
-			e instanceof DeepgramApiError
-				? e.message
-				: `예상치 못한 오류: ${e instanceof Error ? e.message : String(e)}`;
 		console.error('[Deepgram STT] error:', e);
-		new Notice(`Deepgram 오류: ${msg}`, 10000);
+
+		if (e instanceof DeepgramApiError) {
+			const message = friendlyMessage(e);
+			new Notice(message, 12000);
+			return;
+		}
+
+		const generic = e instanceof Error ? e.message : String(e);
+		new Notice(`예상치 못한 오류: ${generic}`, 10000);
+	}
+}
+
+function friendlyMessage(err: DeepgramApiError): string {
+	switch (err.status) {
+		case 401:
+			return '⚠ API 키 인증 실패\n설정 → Deepgram Meeting STT에서 키를 다시 확인하세요. ("검증" 버튼으로 즉시 점검 가능)';
+		case 413:
+			return '⚠ 파일이 너무 큼\nDeepgram sync API 한도(~2GB)를 초과했거나 네트워크가 거부했습니다. 더 짧은 녹음으로 시도하세요.';
+		case 429:
+			return '⚠ 요청 한도 초과 (429)\n자동 1회 재시도 후에도 실패. 1~2분 후 다시 시도하세요.';
+		default:
+			if (err.status && err.status >= 500) {
+				return `⚠ Deepgram 서버 오류 (HTTP ${err.status})\n자동 재시도 후에도 실패. 잠시 후 다시 시도하세요.`;
+			}
+			if (err.status === undefined) {
+				return `⚠ 네트워크 오류\n인터넷 연결을 확인해주세요. (${err.message})`;
+			}
+			return `⚠ Deepgram 오류: ${err.message}`;
 	}
 }
