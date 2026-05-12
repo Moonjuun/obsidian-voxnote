@@ -1,6 +1,6 @@
 import type { App } from 'obsidian';
 import type { Lang } from './i18n';
-import { installReadme, ReadmeResult } from './readme-installer';
+import { FileInstallResult, installFeatures, installReadme } from './readme-installer';
 
 const GITIGNORE_PATH = '.gitignore';
 const ROOT_FOLDER = 'ObsiDeep';
@@ -14,7 +14,8 @@ export type FolderResult = 'created' | 'partial' | 'exists' | 'error';
 export interface ConsentSideEffectsResult {
 	gitignore: GitignoreResult;
 	folders: FolderResult;
-	readme: ReadmeResult;
+	readme: FileInstallResult;
+	features: FileInstallResult;
 }
 
 export async function applyConsentSideEffects(app: App, lang: Lang): Promise<ConsentSideEffectsResult> {
@@ -22,8 +23,9 @@ export async function applyConsentSideEffects(app: App, lang: Lang): Promise<Con
 		ensureGitignoreRules(app),
 		ensureFolders(app),
 	]);
-	const readme = await installReadme(app, lang); // 폴더 생성 후에 실행
-	return { gitignore, folders, readme };
+	const readme = await installReadme(app, lang);
+	const features = await installFeatures(app, lang);
+	return { gitignore, folders, readme, features };
 }
 
 async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
@@ -31,6 +33,7 @@ async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 		`${app.vault.configDir}/plugins/deepgram-meeting-stt/data.json`,
 		`${ROOT_FOLDER}/`,
 		`${ROOT_FOLDER}/README.md`,
+		`${ROOT_FOLDER}/FEATURES.md`,
 	];
 	try {
 		const exists = await app.vault.adapter.exists(GITIGNORE_PATH);

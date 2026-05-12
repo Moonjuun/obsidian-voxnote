@@ -232,6 +232,17 @@ export default class DeepgramSttPlugin extends Plugin {
 				break;
 		}
 
+		switch (result.features) {
+			case 'created':
+				messages.push(t('✓ ObsiDeep/FEATURES.md 기능 가이드를 생성했습니다.', '✓ Created ObsiDeep/FEATURES.md with feature guides.'));
+				break;
+			case 'exists':
+				break;
+			case 'error':
+				messages.push(t('⚠ ObsiDeep/FEATURES.md 생성 실패.', '⚠ Failed to create ObsiDeep/FEATURES.md.'));
+				break;
+		}
+
 		if (messages.length > 0) {
 			new Notice(messages.join('\n'), 10000);
 		}
