@@ -1,5 +1,5 @@
 import { App, TFile, normalizePath } from 'obsidian';
-import type { TranscribeResult } from './deepgram';
+import { listSpeakers, type TranscribeResult } from './deepgram';
 import type { DeepgramSettings } from './settings';
 import { formatDuration } from './audio-utils';
 
@@ -9,17 +9,11 @@ type: meeting
 tags: [meeting, stt]
 duration: {{duration}}
 language: {{language}}
-model: {{model}}
 source: {{audio_link}}
+speakers: {{speakers_list}}
 ---
 
 # {{title}}
-
-- 녹음: {{audio_link}}
-- 길이: {{duration}}
-- 모델: {{model}} ({{language}})
-
-## 회의 내용
 
 {{transcript}}
 `;
@@ -57,12 +51,17 @@ function applyTokens(template: string, ctx: NoteContext): string {
 		? ctx.result.speakersTranscript
 		: ctx.result.transcript;
 
+	const speakers = listSpeakers(ctx.result.paragraphs);
+	const speakersList =
+		speakers.length > 0 ? `[${speakers.map((s) => `"${s}"`).join(', ')}]` : '[]';
+
 	const tokens = new Map<string, string>([
 		['date', date],
 		['title', ctx.title],
 		['transcript', primaryTranscript],
 		['speakers_transcript', ctx.result.speakersTranscript],
 		['plain_transcript', ctx.result.transcript],
+		['speakers_list', speakersList],
 		['duration', formatDuration(ctx.result.duration)],
 		['audio_link', `[[${ctx.audioPath}]]`],
 		['language', ctx.settings.language],

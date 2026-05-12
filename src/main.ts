@@ -9,6 +9,7 @@ import {
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
 import { TitleInputModal } from './title-input-modal';
+import { SpeakerRenameModal } from './speaker-rename-modal';
 import { audioMimeType, formatDuration, isAudioFile } from './audio-utils';
 import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
 import { createTranscriptNote } from './note-writer';
@@ -70,6 +71,14 @@ export default class DeepgramSttPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: 'rename-speaker',
+			name: this.t('화자 이름 변경 (현재 노트)', 'Rename speaker (current note)'),
+			callback: () => {
+				void this.openSpeakerRename();
+			},
+		});
+
 		this.registerEvent(
 			this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
 				if (!(file instanceof TFile) || !isAudioFile(file)) return;
@@ -117,6 +126,40 @@ export default class DeepgramSttPlugin extends Plugin {
 		this.settings.consentAcknowledged = false;
 		await this.saveSettings();
 		this.openConsentModal();
+	}
+
+	private async openSpeakerRename(): Promise<void> {
+		const file = this.app.workspace.getActiveFile();
+		if (!file) {
+			new Notice(this.t('현재 활성화된 노트가 없습니다.', 'No active note.'));
+			return;
+		}
+		new SpeakerRenameModal(this.app, this.t, (oldName, newName) => {
+			void this.replaceSpeakerInFile(file, oldName, newName);
+		}).open();
+	}
+
+	private async replaceSpeakerInFile(file: TFile, oldName: string, newName: string): Promise<void> {
+		const t = this.t;
+		try {
+			const content = await this.app.vault.read(file);
+			const matches = occurrenceCount(content, oldName);
+			if (matches === 0) {
+				new Notice(t(`"${oldName}"을(를) 찾지 못했습니다.`, `"${oldName}" not found in this note.`));
+				return;
+			}
+			const updated = content.split(oldName).join(newName);
+			await this.app.vault.modify(file, updated);
+			new Notice(
+				t(
+					`✓ ${matches}곳 치환 완료: ${oldName} → ${newName}`,
+					`✓ Replaced ${matches} occurrence(s): ${oldName} → ${newName}`,
+				),
+			);
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			new Notice(t(`치환 실패: ${msg}`, `Replace failed: ${msg}`));
+		}
 	}
 
 	private notifyConsentResult(result: ConsentSideEffectsResult): void {
@@ -255,6 +298,17 @@ export default class DeepgramSttPlugin extends Plugin {
 		const generic = e instanceof Error ? e.message : String(e);
 		new Notice(this.t(`예상치 못한 오류: ${generic}`, `Unexpected error: ${generic}`), 10000);
 	}
+}
+
+function occurrenceCount(haystack: string, needle: string): number {
+	if (!needle) return 0;
+	let count = 0;
+	let idx = haystack.indexOf(needle);
+	while (idx !== -1) {
+		count++;
+		idx = haystack.indexOf(needle, idx + needle.length);
+	}
+	return count;
 }
 
 function friendlyMessage(err: DeepgramApiError, t: T): string {

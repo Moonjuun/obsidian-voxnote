@@ -213,19 +213,38 @@ function parseTranscribeResponse(raw: unknown, diarize: boolean): TranscribeResu
 
 function buildSpeakersTranscript(paragraphs: ParagraphInfo[]): string {
 	// 연속된 같은 화자의 paragraph는 하나의 블록으로 병합
-	const groups: Array<{ speaker?: number; text: string }> = [];
+	const groups: Array<{ speaker?: number; start: number; end: number; text: string }> = [];
 	for (const p of paragraphs) {
 		const last = groups[groups.length - 1];
 		if (last && last.speaker === p.speaker) {
 			last.text = `${last.text} ${p.text}`.trim();
+			last.end = p.end;
 		} else {
-			groups.push({ speaker: p.speaker, text: p.text });
+			groups.push({ speaker: p.speaker, start: p.start, end: p.end, text: p.text });
 		}
 	}
 	return groups
 		.map((g) => {
-			const label = g.speaker !== undefined ? `**화자 ${g.speaker}:**` : '**화자:**';
-			return `${label} ${g.text}`;
+			const name = g.speaker !== undefined ? `화자 ${g.speaker}` : '화자';
+			const range = `[${formatTimestamp(g.start)} - ${formatTimestamp(g.end)}]`;
+			return `**${name}** ${range}\n${g.text}`;
 		})
 		.join('\n\n');
+}
+
+function formatTimestamp(seconds: number): string {
+	const total = Math.max(0, Math.floor(seconds));
+	const h = Math.floor(total / 3600);
+	const m = Math.floor((total % 3600) / 60);
+	const s = total % 60;
+	const pad = (n: number) => String(n).padStart(2, '0');
+	return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+export function listSpeakers(paragraphs: ParagraphInfo[]): string[] {
+	const set = new Set<number>();
+	for (const p of paragraphs) {
+		if (p.speaker !== undefined) set.add(p.speaker);
+	}
+	return [...set].sort((a, b) => a - b).map((n) => `화자 ${n}`);
 }

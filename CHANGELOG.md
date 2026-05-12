@@ -1,5 +1,19 @@
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-12
+
+### Added
+- **시간 세그먼트 표시**: 화자별 transcript 블록에 `[HH:MM:SS - HH:MM:SS]` 시간 범위 표시 (paragraph 병합 시 그룹의 시작~끝 시간).
+- **`{{speakers_list}}` 토큰**: 회의에 등장한 화자 목록을 YAML 배열로 frontmatter에 자동 기록 (`speakers: ["화자 0", "화자 1"]`).
+- **명령어 "화자 이름 변경 (현재 노트)"**: 모달에서 기존 이름·새 이름 입력하면 본문 + frontmatter 일괄 치환. 변경된 횟수를 Notice로 알림.
+
+### Changed
+- 기본 회의록 템플릿 정리:
+  * body의 메타 list(녹음/길이/모델) 제거 — 동일 정보가 frontmatter에 있어 중복.
+  * frontmatter에서 `model` 제거.
+  * frontmatter에 `speakers` 추가.
+- 화자별 transcript 헤더 형식 변경: `**화자 0:** 내용` → `**화자 0** [00:00:01 - 00:00:08]\n내용` (라벨과 본문 분리, 시간 범위 추가).
+
 ## [0.4.0] - 2026-05-12
 
 ### Added
