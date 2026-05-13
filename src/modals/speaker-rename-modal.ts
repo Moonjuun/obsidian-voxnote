@@ -48,7 +48,7 @@ export class SpeakerRenameModal extends Modal {
 			new Setting(contentEl)
 				.setName(t('변경 전', 'From'))
 				.addText((text) => {
-					text.setPlaceholder('화자 0');
+					text.setPlaceholder('화자 1');
 					text.onChange((v) => {
 						this.oldName = v;
 					});
@@ -72,7 +72,7 @@ export class SpeakerRenameModal extends Modal {
 			.setName(t('변경 후', 'To'))
 			.setDesc(t('예: 홍길동', 'Example: Hong Gildong'))
 			.addText((text) => {
-				text.setPlaceholder('홍길동');
+				text.setPlaceholder(t('홍길동', 'Hong Gildong'));
 				text.onChange((v) => {
 					this.newName = v;
 				});

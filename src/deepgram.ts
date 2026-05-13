@@ -225,7 +225,8 @@ function buildSpeakersTranscript(paragraphs: ParagraphInfo[]): string {
 	}
 	return groups
 		.map((g) => {
-			const name = g.speaker !== undefined ? `화자 ${g.speaker}` : '화자';
+			// Deepgram returns 0-based speaker indices; display them 1-based for readability.
+			const name = g.speaker !== undefined ? `화자 ${g.speaker + 1}` : '화자';
 			const range = `[${formatTimestamp(g.start)} - ${formatTimestamp(g.end)}]`;
 			return `**${name}** ${range}\n${g.text}`;
 		})
@@ -246,5 +247,6 @@ export function listSpeakers(paragraphs: ParagraphInfo[]): string[] {
 	for (const p of paragraphs) {
 		if (p.speaker !== undefined) set.add(p.speaker);
 	}
-	return [...set].sort((a, b) => a - b).map((n) => `화자 ${n}`);
+	// 1-based labels to match buildSpeakersTranscript().
+	return [...set].sort((a, b) => a - b).map((n) => `화자 ${n + 1}`);
 }
