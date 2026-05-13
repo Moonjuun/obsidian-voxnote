@@ -1,7 +1,7 @@
 {
 	"id": "deepgram-meeting-stt",
 	"name": "Deepgram Meeting STT",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"minAppVersion": "1.8.7",
 	"description": "Transcribe meeting recordings with the Deepgram speech-to-text API.",
 	"author": "Moonjuun",
