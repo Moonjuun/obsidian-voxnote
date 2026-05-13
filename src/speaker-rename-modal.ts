@@ -1,6 +1,8 @@
 import { App, Modal, Setting } from 'obsidian';
 import type { T } from './i18n';
 
+const FOCUS_DELAY_MS = 10;
+
 export class SpeakerRenameModal extends Modal {
 	private oldName = '';
 	private newName = '';
@@ -82,7 +84,7 @@ export class SpeakerRenameModal extends Modal {
 					e.stopPropagation();
 					this.submit();
 				});
-				window.setTimeout(() => text.inputEl.focus(), 10);
+				window.setTimeout(() => text.inputEl.focus(), FOCUS_DELAY_MS);
 			});
 
 		new Setting(contentEl)

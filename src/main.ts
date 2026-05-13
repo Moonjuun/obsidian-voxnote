@@ -14,6 +14,7 @@ import { audioMimeType, formatDuration, isAudioFile } from './audio-utils';
 import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
 import { createTranscriptNote } from './note-writer';
 import { detectLang, makeT, T } from './i18n';
+import { NoticeDuration } from './constants';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
@@ -257,7 +258,7 @@ export default class DeepgramSttPlugin extends Plugin {
 		}
 
 		if (messages.length > 0) {
-			new Notice(messages.join('\n'), 10000);
+			new Notice(messages.join('\n'), NoticeDuration.Long);
 		}
 	}
 
@@ -299,7 +300,7 @@ export default class DeepgramSttPlugin extends Plugin {
 					`✓ 회의록 생성: ${notePath} (${formatDuration(result.duration)})`,
 					`✓ Note created: ${notePath} (${formatDuration(result.duration)})`,
 				),
-				8000,
+				NoticeDuration.Medium,
 			);
 		} catch (e) {
 			progress.hide();
@@ -327,7 +328,7 @@ export default class DeepgramSttPlugin extends Plugin {
 					`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(전체 결과는 DevTools 콘솔)`,
 					`✓ ${formatDuration(result.duration)} · ${result.paragraphs.length} paragraphs\n${preview}…\n\n(Full result in DevTools console)`,
 				),
-				10000,
+				NoticeDuration.Long,
 			);
 		} catch (e) {
 			progress.hide();
@@ -339,12 +340,12 @@ export default class DeepgramSttPlugin extends Plugin {
 		console.error('[Deepgram STT] error:', e);
 
 		if (e instanceof DeepgramApiError) {
-			new Notice(friendlyMessage(e, this.t), 12000);
+			new Notice(friendlyMessage(e, this.t), NoticeDuration.Error);
 			return;
 		}
 
 		const generic = e instanceof Error ? e.message : String(e);
-		new Notice(this.t(`예상치 못한 오류: ${generic}`, `Unexpected error: ${generic}`), 10000);
+		new Notice(this.t(`예상치 못한 오류: ${generic}`, `Unexpected error: ${generic}`), NoticeDuration.Long);
 	}
 }
 

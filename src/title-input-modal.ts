@@ -1,6 +1,8 @@
 import { App, Modal, Setting } from 'obsidian';
 import type { T } from './i18n';
 
+const FOCUS_DELAY_MS = 10;
+
 export class TitleInputModal extends Modal {
 	private title: string;
 	private readonly defaultTitle: string;
@@ -41,7 +43,7 @@ export class TitleInputModal extends Modal {
 				window.setTimeout(() => {
 					text.inputEl.focus();
 					text.inputEl.select();
-				}, 10);
+				}, FOCUS_DELAY_MS);
 			});
 
 		new Setting(contentEl)
