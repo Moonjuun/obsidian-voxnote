@@ -419,7 +419,7 @@ STT accuracy is **heavily influenced by the recording environment**. A few input
 
 ## Renaming speakers
 
-The \`speakers\` frontmatter starts with anonymous labels (\`화자 1\`, \`화자 2\`, ...). Replacing those with real names makes the notes searchable.
+The \`speakers\` frontmatter starts with anonymous labels (\`Speaker 1\`, \`Speaker 2\`, ...). Replacing those with real names makes the notes searchable.
 
 1. Open the meeting note you want to edit.
 2. Command palette (\`Cmd+P\` / \`Ctrl+P\`) → **"Rename speaker (current note)"**.
@@ -427,8 +427,8 @@ The \`speakers\` frontmatter starts with anonymous labels (\`화자 1\`, \`화�
 ![Rename speaker command](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img5.webp)
 
 3. The modal shows the **current note name** at the top, and the **From field is a dropdown** populated with speakers auto-detected from the note.
-   - **From**: pick the speaker to rename (e.g. \`화자 1\`)
-   - **To**: type the real name (e.g. \`홍길동\`)
+   - **From**: pick the speaker to rename (e.g. \`Speaker 1\`)
+   - **To**: type the real name (e.g. \`Hong Gildong\`)
 4. Click **Replace** — every occurrence in the body and in the \`speakers\` frontmatter array is renamed at once.
 
 > Repeat the command for each speaker.
@@ -446,7 +446,7 @@ Set Settings → Transcription → **"Template path"** to any vault-relative mar
 | \`{{transcript}}\` | Speaker-formatted markdown when diarize is on, plain text otherwise |
 | \`{{speakers_transcript}}\` | Always speaker-formatted markdown (with time ranges) |
 | \`{{plain_transcript}}\` | Always plain text |
-| \`{{speakers_list}}\` | Detected speakers as YAML inline array (e.g. \`["화자 1", "화자 2"]\`) |
+| \`{{speakers_list}}\` | Detected speakers as YAML inline array (e.g. \`["Speaker 1", "Speaker 2"]\`) |
 | \`{{duration}}\` | Formatted like \`5m 30s\` |
 | \`{{audio_link}}\` | Wikilink such as \`[[ObsiDeep/Audio/recording.m4a]]\` |
 | \`{{language}}\` | \`ko\` / \`en\` / \`auto\` |

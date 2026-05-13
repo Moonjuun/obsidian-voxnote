@@ -1,5 +1,5 @@
 import { type App, TFile, normalizePath } from 'obsidian';
-import { listSpeakers, type TranscribeResult } from './deepgram';
+import type { TranscribeResult } from './deepgram';
 import type { DeepgramSettings } from './settings';
 import { formatDuration } from './utils/audio-utils';
 
@@ -51,7 +51,7 @@ function applyTokens(template: string, ctx: NoteContext): string {
 		? ctx.result.speakersTranscript
 		: ctx.result.transcript;
 
-	const speakers = listSpeakers(ctx.result.paragraphs);
+	const speakers = ctx.result.speakers;
 	const speakersList =
 		speakers.length > 0 ? `[${speakers.map((s) => `"${s}"`).join(', ')}]` : '[]';
 

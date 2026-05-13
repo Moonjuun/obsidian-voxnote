@@ -65,21 +65,21 @@ tags: [meeting, stt]
 duration: 28m 41s
 language: ko
 source: [[ObsiDeep/Audio/standup.m4a]]
-speakers: ["화자 1", "화자 2"]
+speakers: ["Speaker 1", "Speaker 2"]
 ---
 
 # Stand-up 2026-05-13
 
-**화자 1** [00:00:01 - 00:00:08]
+**Speaker 1** [00:00:01 - 00:00:08]
 Good morning, let's start with the status updates.
 
-**화자 2** [00:00:09 - 00:00:14]
+**Speaker 2** [00:00:09 - 00:00:14]
 Sure, I'll go first.
 ```
 
 ### Rename speakers
 
-Speakers are labelled `화자 1`, `화자 2` by default. To replace with real names:
+Speakers are labelled `Speaker 1`, `Speaker 2` by default. To replace with real names:
 
 1. Open the meeting note
 2. Command palette → **"Rename speaker (current note)"**

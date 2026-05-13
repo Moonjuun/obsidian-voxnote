@@ -92,6 +92,7 @@ export default class DeepgramSttPlugin extends Plugin {
 			diarize: this.settings.diarize,
 			zeroRetention: this.settings.zeroRetention,
 			mimeType: audioMimeType(file.extension),
+			speakerLabelPrefix: this.t('화자', 'Speaker'),
 		});
 	}
 

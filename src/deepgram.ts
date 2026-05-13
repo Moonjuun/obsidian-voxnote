@@ -43,6 +43,8 @@ export interface TranscribeOptions {
 	diarize: boolean;
 	zeroRetention: boolean;
 	mimeType: string;
+	/** Prefix used when rendering diarized speaker labels, e.g. `화자` or `Speaker`. */
+	speakerLabelPrefix: string;
 }
 
 export interface ParagraphInfo {
@@ -56,6 +58,8 @@ export interface TranscribeResult {
 	transcript: string;
 	speakersTranscript: string;
 	paragraphs: ParagraphInfo[];
+	/** Human-readable speaker labels in the same prefix used for `speakersTranscript`. */
+	speakers: string[];
 	duration: number;
 	raw: unknown;
 }
@@ -155,10 +159,14 @@ async function callListenOnce(
 		throw new DeepgramApiError(`예상치 못한 응답: HTTP ${res.status}`, res.status);
 	}
 
-	return parseTranscribeResponse(res.json, options.diarize);
+	return parseTranscribeResponse(res.json, options.diarize, options.speakerLabelPrefix);
 }
 
-function parseTranscribeResponse(raw: unknown, diarize: boolean): TranscribeResult {
+function parseTranscribeResponse(
+	raw: unknown,
+	diarize: boolean,
+	speakerLabelPrefix: string,
+): TranscribeResult {
 	const root = raw as {
 		metadata?: { duration?: number };
 		results?: {
@@ -199,19 +207,21 @@ function parseTranscribeResponse(raw: unknown, diarize: boolean): TranscribeResu
 	const transcript: string = alt.paragraphs?.transcript ?? alt.transcript ?? '';
 
 	const speakersTranscript = diarize && paragraphs.length > 0
-		? buildSpeakersTranscript(paragraphs)
+		? buildSpeakersTranscript(paragraphs, speakerLabelPrefix)
 		: transcript;
+	const speakers = listSpeakers(paragraphs, speakerLabelPrefix);
 
 	return {
 		transcript,
 		speakersTranscript,
 		paragraphs,
+		speakers,
 		duration,
 		raw,
 	};
 }
 
-function buildSpeakersTranscript(paragraphs: ParagraphInfo[]): string {
+function buildSpeakersTranscript(paragraphs: ParagraphInfo[], prefix: string): string {
 	// 연속된 같은 화자의 paragraph는 하나의 블록으로 병합
 	const groups: Array<{ speaker?: number; start: number; end: number; text: string }> = [];
 	for (const p of paragraphs) {
@@ -226,7 +236,7 @@ function buildSpeakersTranscript(paragraphs: ParagraphInfo[]): string {
 	return groups
 		.map((g) => {
 			// Deepgram returns 0-based speaker indices; display them 1-based for readability.
-			const name = g.speaker !== undefined ? `화자 ${g.speaker + 1}` : '화자';
+			const name = g.speaker !== undefined ? `${prefix} ${g.speaker + 1}` : prefix;
 			const range = `[${formatTimestamp(g.start)} - ${formatTimestamp(g.end)}]`;
 			return `**${name}** ${range}\n${g.text}`;
 		})
@@ -242,11 +252,11 @@ function formatTimestamp(seconds: number): string {
 	return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
-export function listSpeakers(paragraphs: ParagraphInfo[]): string[] {
+export function listSpeakers(paragraphs: ParagraphInfo[], prefix: string): string[] {
 	const set = new Set<number>();
 	for (const p of paragraphs) {
 		if (p.speaker !== undefined) set.add(p.speaker);
 	}
 	// 1-based labels to match buildSpeakersTranscript().
-	return [...set].sort((a, b) => a - b).map((n) => `화자 ${n + 1}`);
+	return [...set].sort((a, b) => a - b).map((n) => `${prefix} ${n + 1}`);
 }
