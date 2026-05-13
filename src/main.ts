@@ -1,19 +1,16 @@
 import { Menu, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
-import { DEFAULT_SETTINGS, DeepgramSettings } from './settings';
+import { DEFAULT_SETTINGS, type DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
 import { ConsentModal } from './consent-modal';
-import {
-	applyConsentSideEffects,
-	ConsentSideEffectsResult,
-} from './gitignore';
+import { applyConsentSideEffects, type ConsentSideEffectsResult } from './gitignore';
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
 import { TitleInputModal } from './title-input-modal';
 import { SpeakerRenameModal } from './speaker-rename-modal';
 import { audioMimeType, formatDuration, isAudioFile } from './audio-utils';
-import { DeepgramApiError, transcribe, TranscribeResult } from './deepgram';
+import { DeepgramApiError, transcribe, type TranscribeResult } from './deepgram';
 import { createTranscriptNote } from './note-writer';
-import { detectLang, makeT, T } from './i18n';
+import { detectLang, makeT, type T } from './i18n';
 import { NoticeDuration } from './constants';
 
 export default class DeepgramSttPlugin extends Plugin {
