@@ -52,4 +52,4 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
 	};
 }
 
-export { compareSemver } from './semver';
+export { compareSemver } from './utils/semver';

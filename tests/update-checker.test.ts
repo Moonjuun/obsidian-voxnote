@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compareSemver } from '../src/semver';
+import { compareSemver } from '../src/utils/semver';
 
 describe('compareSemver', () => {
 	it('returns 0 for identical versions', () => {

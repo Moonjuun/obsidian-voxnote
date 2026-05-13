@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { audioMimeType, formatDuration } from '../src/audio-utils';
+import { audioMimeType, formatDuration } from '../src/utils/audio-utils';
 
 describe('audioMimeType', () => {
 	it('maps mp3 to audio/mpeg', () => {

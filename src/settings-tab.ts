@@ -1,7 +1,7 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import type DeepgramSttPlugin from './main';
 import { validateApiKey } from './deepgram';
-import type { UiLang } from './i18n';
+import type { UiLang } from './utils/i18n';
 import { compareSemver, fetchLatestRelease, UpdateCheckError } from './update-checker';
 
 const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-deepgram-stt/releases';

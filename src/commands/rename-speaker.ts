@@ -1,6 +1,6 @@
 import { Notice, type TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
-import { SpeakerRenameModal } from '../speaker-rename-modal';
+import { SpeakerRenameModal } from '../modals/speaker-rename-modal';
 
 /**
  * Register the "Rename speaker (current note)" command and wire the modal

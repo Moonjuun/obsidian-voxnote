@@ -1,5 +1,5 @@
 import type { App } from 'obsidian';
-import type { Lang } from './i18n';
+import type { Lang } from './utils/i18n';
 import { installFeatures, installReadme, type FileInstallResult } from './readme-installer';
 
 const GITIGNORE_PATH = '.gitignore';

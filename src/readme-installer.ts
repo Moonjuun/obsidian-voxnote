@@ -1,5 +1,5 @@
 import type { App } from 'obsidian';
-import type { Lang } from './i18n';
+import type { Lang } from './utils/i18n';
 
 const README_PATH = 'ObsiDeep/README.md';
 const FEATURES_PATH = 'ObsiDeep/FEATURES.md';

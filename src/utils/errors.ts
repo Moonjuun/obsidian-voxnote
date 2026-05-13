@@ -1,5 +1,5 @@
 import type { T } from './i18n';
-import { DeepgramApiError } from './deepgram';
+import { DeepgramApiError } from '../deepgram';
 
 /**
  * Convert a DeepgramApiError into a user-facing notice message localized

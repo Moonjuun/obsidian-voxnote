@@ -1,16 +1,16 @@
 import { Notice, Plugin, type TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, type DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
-import { ConsentModal } from './consent-modal';
+import { ConsentModal } from './modals/consent-modal';
 import {
 	applyConsentSideEffects,
 	type ConsentSideEffectsResult,
 } from './consent-side-effects';
-import { audioMimeType } from './audio-utils';
+import { audioMimeType } from './utils/audio-utils';
 import { DeepgramApiError, transcribe, type TranscribeResult } from './deepgram';
-import { detectLang, makeT, type T } from './i18n';
-import { NoticeDuration } from './constants';
-import { friendlyMessage } from './errors';
+import { detectLang, makeT, type T } from './utils/i18n';
+import { NoticeDuration } from './utils/constants';
+import { friendlyMessage } from './utils/errors';
 import { registerTranscribeToNoteCommand } from './commands/transcribe-to-note';
 import { registerTranscribeDebugCommand } from './commands/transcribe-debug';
 import { registerRenameSpeakerCommand } from './commands/rename-speaker';

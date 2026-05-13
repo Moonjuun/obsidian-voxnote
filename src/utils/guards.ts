@@ -1,5 +1,5 @@
 import { Notice } from 'obsidian';
-import type { DeepgramSettings } from './settings';
+import type { DeepgramSettings } from '../settings';
 import type { T } from './i18n';
 
 export type GuardResult = { ok: true } | { ok: false; kind: 'consent' | 'apiKey' };

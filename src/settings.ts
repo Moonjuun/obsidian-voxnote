@@ -1,4 +1,4 @@
-import type { UiLang } from './i18n';
+import type { UiLang } from './utils/i18n';
 
 export type DeepgramLanguage = 'ko' | 'en' | 'auto';
 export type DeepgramModel = 'nova-3' | 'nova-2';

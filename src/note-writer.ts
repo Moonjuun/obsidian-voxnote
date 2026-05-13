@@ -1,7 +1,7 @@
 import { type App, TFile, normalizePath } from 'obsidian';
 import { listSpeakers, type TranscribeResult } from './deepgram';
 import type { DeepgramSettings } from './settings';
-import { formatDuration } from './audio-utils';
+import { formatDuration } from './utils/audio-utils';
 
 const DEFAULT_TEMPLATE = `---
 date: {{date}}

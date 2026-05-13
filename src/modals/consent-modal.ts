@@ -1,5 +1,5 @@
 import { App, Modal, Setting } from 'obsidian';
-import type { T } from './i18n';
+import type { T } from '../utils/i18n';
 
 export class ConsentModal extends Modal {
 	private readonly onAcknowledge: () => Promise<void> | void;

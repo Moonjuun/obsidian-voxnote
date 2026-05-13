@@ -1,9 +1,9 @@
 import { Notice, type TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
-import { AudioSuggestModal } from '../audio-suggest-modal';
-import { formatDuration } from '../audio-utils';
-import { checkReady, notifyIfBlocked } from '../guards';
-import { NoticeDuration } from '../constants';
+import { AudioSuggestModal } from '../modals/audio-suggest-modal';
+import { formatDuration } from '../utils/audio-utils';
+import { checkReady, notifyIfBlocked } from '../utils/guards';
+import { NoticeDuration } from '../utils/constants';
 
 /**
  * Register the debug-only transcribe command. It runs the same API call

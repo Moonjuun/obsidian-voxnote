@@ -1,6 +1,6 @@
 import { App, FuzzySuggestModal, TFile } from 'obsidian';
-import { isAudioFile } from './audio-utils';
-import type { T } from './i18n';
+import { isAudioFile } from '../utils/audio-utils';
+import type { T } from '../utils/i18n';
 
 export class AudioSuggestModal extends FuzzySuggestModal<TFile> {
 	private readonly onChoose: (file: TFile) => void;

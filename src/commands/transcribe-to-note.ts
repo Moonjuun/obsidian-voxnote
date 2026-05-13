@@ -1,11 +1,11 @@
 import { Menu, Notice, TAbstractFile, TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
-import { AudioSuggestModal } from '../audio-suggest-modal';
-import { TitleInputModal } from '../title-input-modal';
-import { formatDuration, isAudioFile } from '../audio-utils';
+import { AudioSuggestModal } from '../modals/audio-suggest-modal';
+import { TitleInputModal } from '../modals/title-input-modal';
+import { formatDuration, isAudioFile } from '../utils/audio-utils';
 import { createTranscriptNote } from '../note-writer';
-import { checkReady, notifyIfBlocked } from '../guards';
-import { NoticeDuration } from '../constants';
+import { checkReady, notifyIfBlocked } from '../utils/guards';
+import { NoticeDuration } from '../utils/constants';
 
 /**
  * Register the primary "Transcribe audio → meeting note" command
