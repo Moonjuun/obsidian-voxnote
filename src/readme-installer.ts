@@ -369,7 +369,7 @@ speakers: {{speakers_list}}
   - 최신: \`최신 버전입니다\`
   - 로컬이 앞섬(개발자 케이스): \`로컬 버전이 릴리스보다 앞섭니다\`
 
-BRAT 사용자는 옵시디언 시작 시 자동 업데이트 알림을 받으므로 이 버튼은 보조 용도입니다.
+Community Plugins로 설치한 경우 옵시디언이 새 버전을 자동으로 안내하므로 이 버튼은 보조 진입점입니다.
 `;
 
 const EN_FEATURES = `# Features & Guides
@@ -496,5 +496,5 @@ In Settings → "About" you have two controls:
   - You're up to date: \`You're on the latest version\`
   - Local ahead (dev case): \`Local version is ahead of latest release\`
 
-BRAT users get auto-update notifications on Obsidian startup, so this button is just a supplementary entry point.
+If you installed via Community Plugins, Obsidian will notify you of new versions automatically — this button is just a secondary entry point.
 `;

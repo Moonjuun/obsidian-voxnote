@@ -18,17 +18,9 @@ An Obsidian plugin that transcribes meeting recordings with the [Deepgram](https
 
 ## Install
 
-### Obsidian Community Plugins (recommended)
-
 1. **Settings → Community plugins → Browse**
 2. Search for **"Deepgram Meeting STT"**
 3. Install + Enable
-
-### BRAT (beta releases)
-
-1. Install the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
-2. BRAT settings → **Add Beta Plugin** → `Moonjuun/obsidian-deepgram-stt`
-3. Enable the plugin in Community plugins
 
 ## Setup
 

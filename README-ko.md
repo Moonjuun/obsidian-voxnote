@@ -18,17 +18,7 @@
 2. **"Deepgram Meeting STT"** 검색
 3. Install + Enable
 
-### 방법 2 — BRAT (베타)
-
-1. [Obsidian BRAT](https://github.com/TfTHacker/obsidian42-brat) 플러그인 설치 + 활성화.
-2. BRAT 설정 → **"Add Beta Plugin"** → 다음 URL 입력:
-   ```
-   https://github.com/Moonjuun/obsidian-deepgram-stt
-   ```
-3. **"Enable after installing the plugin"** 체크 → **Add plugin**.
-4. 옵시디언 설정 → Community plugins → "Deepgram Meeting STT" 활성화.
-
-### 방법 3 — 수동
+### 방법 2 — 수동
 
 1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
 2. 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt/` 폴더(없으면 생성)에 3개 파일 복사.

@@ -167,7 +167,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName(t('업데이트 확인', 'Check for updates'))
-			.setDesc(t('GitHub에서 최신 릴리스를 확인합니다. 새 버전이 있으면 안내합니다. (BRAT 사용 시 자동 업데이트가 별도로 동작합니다.)', 'Look up the latest release on GitHub and notify if a newer version exists. (BRAT auto-updates separately if enabled.)'))
+			.setDesc(t('GitHub에서 최신 릴리스를 확인합니다. 새 버전이 있으면 안내합니다.', 'Look up the latest release on GitHub and notify if a newer version exists.'))
 			.addButton((btn) =>
 				btn
 					.setButtonText(t('확인', 'Check'))
@@ -179,8 +179,8 @@ export class DeepgramSettingTab extends PluginSettingTab {
 							if (cmp > 0) {
 								new Notice(
 									t(
-										`업데이트 가능: ${release.tag} (현재 ${currentVersion})\n위의 "GitHub 릴리스" 버튼으로 페이지를 여세요. BRAT 사용 시 자동 업데이트됩니다.`,
-										`Update available: ${release.tag} (current ${currentVersion})\nUse the "GitHub releases" button above to open the page. BRAT will auto-update if enabled.`,
+										`업데이트 가능: ${release.tag} (현재 ${currentVersion})\n옵시디언 → Community plugins → "Check for updates"에서 자동 업데이트되거나, 위의 "GitHub 릴리스" 버튼으로 페이지를 여세요.`,
+										`Update available: ${release.tag} (current ${currentVersion})\nObsidian's Community plugins → "Check for updates" will fetch it automatically, or use the "GitHub releases" button above.`,
 									),
 									12000,
 								);
