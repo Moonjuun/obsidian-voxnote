@@ -2,7 +2,7 @@ import { Menu, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, type DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
 import { ConsentModal } from './consent-modal';
-import { applyConsentSideEffects, type ConsentSideEffectsResult } from './gitignore';
+import { applyConsentSideEffects, type ConsentSideEffectsResult } from './consent-side-effects';
 import { checkReady, notifyIfBlocked } from './guards';
 import { AudioSuggestModal } from './audio-suggest-modal';
 import { TitleInputModal } from './title-input-modal';
