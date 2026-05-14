@@ -1,4 +1,4 @@
-import { Notice, Plugin, type TFile } from 'obsidian';
+import { Notice, Plugin, TAbstractFile, type TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, type DeepgramSettings } from './settings';
 import { DeepgramSettingTab } from './settings-tab';
 import { ConsentModal } from './modals/consent-modal';
@@ -18,9 +18,11 @@ import { registerSummarizeNoteCommand } from './commands/summarize-note';
 import { registerTranscribeAndSummarizeCommand } from './commands/transcribe-and-summarize';
 import { registerCreateTemplateCommand } from './commands/create-template';
 import { registerFileMenus } from './menu-registration';
+import { loadTemplates, type TemplateMeta } from './summary/template-loader';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
+	templatesCache: TemplateMeta[] = [];
 	private consentModalOpen = false;
 
 	get t(): T {
@@ -69,6 +71,51 @@ export default class DeepgramSttPlugin extends Plugin {
 		registerTranscribeAndSummarizeCommand(this);
 		registerCreateTemplateCommand(this);
 		registerFileMenus(this);
+
+		this.app.workspace.onLayoutReady(() => {
+			void this.refreshTemplatesCache();
+		});
+		const watch = this.onTemplateMaybeChanged.bind(this);
+		this.registerEvent(this.app.vault.on('create', watch));
+		this.registerEvent(this.app.vault.on('modify', watch));
+		this.registerEvent(this.app.vault.on('delete', watch));
+		this.registerEvent(
+			this.app.vault.on('rename', (file, oldPath) => {
+				this.onTemplateMaybeChanged(file, oldPath);
+			}),
+		);
+	}
+
+	async refreshTemplatesCache(): Promise<void> {
+		const key = this.settings.geminiApiKey?.trim();
+		if (!key) {
+			this.templatesCache = [];
+			return;
+		}
+		try {
+			this.templatesCache = await loadTemplates(
+				this.app,
+				this.settings.templatesFolder,
+			);
+		} catch (e) {
+			console.warn('[ObsiDeep] failed to refresh templates cache:', e);
+			this.templatesCache = [];
+		}
+	}
+
+	private onTemplateMaybeChanged(file: TAbstractFile, oldPath?: string): void {
+		const folder = (this.settings.templatesFolder || 'ObsiDeep/Templates').replace(
+			/\/+$/,
+			'',
+		);
+		const prefix = `${folder}/`;
+		if (
+			file.path === folder ||
+			file.path.startsWith(prefix) ||
+			(oldPath !== undefined && (oldPath === folder || oldPath.startsWith(prefix)))
+		) {
+			void this.refreshTemplatesCache();
+		}
 	}
 
 	onunload(): void {

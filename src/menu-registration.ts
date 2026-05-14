@@ -1,7 +1,7 @@
 import { Menu, TAbstractFile, TFile } from 'obsidian';
 import type DeepgramSttPlugin from './main';
 import { isAudioFile } from './utils/audio-utils';
-import { loadTemplates, type TemplateMeta } from './summary/template-loader';
+import type { TemplateMeta } from './summary/template-loader';
 import { TitleInputModal } from './modals/title-input-modal';
 import { runTranscribeToNote } from './commands/transcribe-to-note';
 import { runTranscribeAndSummarize } from './commands/transcribe-and-summarize';
@@ -19,24 +19,18 @@ export function registerFileMenus(plugin: DeepgramSttPlugin): void {
 		plugin.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
 			if (!(file instanceof TFile)) return;
 			if (isAudioFile(file)) {
-				void buildAudioMenu(plugin, menu, file);
+				buildAudioMenu(plugin, menu, file);
 				return;
 			}
 			if (file.extension === 'md') {
-				void buildMarkdownMenu(plugin, menu, file);
+				buildMarkdownMenu(plugin, menu, file);
 			}
 		}),
 	);
 }
 
-async function buildAudioMenu(
-	plugin: DeepgramSttPlugin,
-	menu: Menu,
-	file: TFile,
-): Promise<void> {
-	const templates = hasGeminiKey(plugin)
-		? await loadTemplates(plugin.app, plugin.settings.templatesFolder)
-		: [];
+function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): void {
+	const templates = hasGeminiKey(plugin) ? plugin.templatesCache : [];
 	const favorites = templates.filter((t) => t.favorite);
 	const others = templates.filter((t) => !t.favorite);
 
@@ -87,13 +81,9 @@ async function buildAudioMenu(
 	});
 }
 
-async function buildMarkdownMenu(
-	plugin: DeepgramSttPlugin,
-	menu: Menu,
-	file: TFile,
-): Promise<void> {
+function buildMarkdownMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): void {
 	if (!hasGeminiKey(plugin)) return;
-	const templates = await loadTemplates(plugin.app, plugin.settings.templatesFolder);
+	const templates = plugin.templatesCache;
 	if (templates.length === 0) return;
 	const favorites = templates.filter((t) => t.favorite);
 	const others = templates.filter((t) => !t.favorite);
@@ -150,4 +140,3 @@ function askTitleThenTranscribeAndSummarize(
 		void runTranscribeAndSummarize(plugin, file, title, template);
 	}).open();
 }
-

@@ -4,7 +4,13 @@ vi.mock('obsidian', () => ({
 	normalizePath: (p: string) => p.replace(/\\+/g, '/').replace(/\/+/g, '/'),
 }));
 
-import { BUILT_IN_TEMPLATES, seedBuiltInTemplates } from '../../src/summary/built-in-templates';
+import {
+	BUILT_IN_TEMPLATES_EN,
+	BUILT_IN_TEMPLATES_KO,
+	getBuiltInTemplates,
+	seedBuiltInTemplates,
+} from '../../src/summary/built-in-templates';
+import type { Lang } from '../../src/utils/i18n';
 
 interface FakeApp {
 	vault: {
@@ -29,56 +35,104 @@ function makeApp(existing: string[] = []): FakeApp {
 	};
 }
 
-describe('BUILT_IN_TEMPLATES', () => {
+describe('BUILT_IN_TEMPLATES_EN', () => {
 	it('exposes Meeting, Interview, Lecture', () => {
-		const names = BUILT_IN_TEMPLATES.map((t) => t.filename);
-		expect(names).toEqual(['Meeting.md', 'Interview.md', 'Lecture.md']);
+		expect(BUILT_IN_TEMPLATES_EN.map((t) => t.filename)).toEqual([
+			'Meeting.md',
+			'Interview.md',
+			'Lecture.md',
+		]);
 	});
 
 	it('Meeting is the only favorite', () => {
-		const favoriteCount = BUILT_IN_TEMPLATES.filter((t) =>
+		const favorites = BUILT_IN_TEMPLATES_EN.filter((t) =>
 			t.content.includes('favorite: true'),
-		).length;
-		expect(favoriteCount).toBe(1);
-		expect(BUILT_IN_TEMPLATES[0]?.content).toContain('favorite: true');
+		);
+		expect(favorites).toHaveLength(1);
+		expect(favorites[0]?.filename).toBe('Meeting.md');
 	});
 
-	it('each template has placeholders map and a prompt', () => {
-		for (const t of BUILT_IN_TEMPLATES) {
-			expect(t.content).toContain('placeholders:');
+	it('each template has prompt + placeholders + guide comment', () => {
+		for (const t of BUILT_IN_TEMPLATES_EN) {
 			expect(t.content).toContain('prompt:');
+			expect(t.content).toContain('placeholders:');
+			expect(t.content).toContain('System placeholders');
+			expect(t.content).toContain('{{transcript}}');
 		}
 	});
 });
 
+describe('BUILT_IN_TEMPLATES_KO', () => {
+	it('exposes 회의록, 인터뷰, 강의노트', () => {
+		expect(BUILT_IN_TEMPLATES_KO.map((t) => t.filename)).toEqual([
+			'회의록.md',
+			'인터뷰.md',
+			'강의노트.md',
+		]);
+	});
+
+	it('회의록 is the only favorite', () => {
+		const favorites = BUILT_IN_TEMPLATES_KO.filter((t) =>
+			t.content.includes('favorite: true'),
+		);
+		expect(favorites).toHaveLength(1);
+		expect(favorites[0]?.filename).toBe('회의록.md');
+	});
+
+	it('each template has Korean section headers and guide comment', () => {
+		for (const t of BUILT_IN_TEMPLATES_KO) {
+			expect(t.content).toContain('## 요약');
+			expect(t.content).toContain('시스템 placeholder');
+			expect(t.content).toContain('{{transcript}}');
+		}
+	});
+
+	it('uses Korean instructions in prompt', () => {
+		expect(BUILT_IN_TEMPLATES_KO[0]?.content).toContain('한국어');
+	});
+});
+
+describe('getBuiltInTemplates', () => {
+	it('returns KO set for ko', () => {
+		expect(getBuiltInTemplates('ko')).toBe(BUILT_IN_TEMPLATES_KO);
+	});
+
+	it('returns EN set for en', () => {
+		expect(getBuiltInTemplates('en')).toBe(BUILT_IN_TEMPLATES_EN);
+	});
+});
+
 describe('seedBuiltInTemplates', () => {
-	it('creates folder and seeds all templates when empty', async () => {
+	it.each<Lang>(['ko', 'en'])('creates folder + seeds all (%s)', async (lang) => {
+		const expected = getBuiltInTemplates(lang);
 		const app = makeApp();
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
 			'ObsiDeep/Templates',
+			lang,
 		);
 		expect(result).toBe('seeded');
 		expect(app.vault.createFolder).toHaveBeenCalledWith('ObsiDeep/Templates');
-		expect(app.vault.create).toHaveBeenCalledTimes(BUILT_IN_TEMPLATES.length);
+		expect(app.vault.create).toHaveBeenCalledTimes(expected.length);
 	});
 
-	it('returns exists when all templates already present', async () => {
+	it('returns exists when all KO templates already present', async () => {
 		const app = makeApp([
 			'ObsiDeep/Templates',
-			'ObsiDeep/Templates/Meeting.md',
-			'ObsiDeep/Templates/Interview.md',
-			'ObsiDeep/Templates/Lecture.md',
+			'ObsiDeep/Templates/회의록.md',
+			'ObsiDeep/Templates/인터뷰.md',
+			'ObsiDeep/Templates/강의노트.md',
 		]);
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
 			'ObsiDeep/Templates',
+			'ko',
 		);
 		expect(result).toBe('exists');
 		expect(app.vault.create).not.toHaveBeenCalled();
 	});
 
-	it('returns partial when only some are present', async () => {
+	it('returns partial when only some EN templates present', async () => {
 		const app = makeApp([
 			'ObsiDeep/Templates',
 			'ObsiDeep/Templates/Meeting.md',
@@ -86,9 +140,10 @@ describe('seedBuiltInTemplates', () => {
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
 			'ObsiDeep/Templates',
+			'en',
 		);
 		expect(result).toBe('partial');
-		expect(app.vault.create).toHaveBeenCalledTimes(BUILT_IN_TEMPLATES.length - 1);
+		expect(app.vault.create).toHaveBeenCalledTimes(BUILT_IN_TEMPLATES_EN.length - 1);
 	});
 
 	it('returns error when vault throws', async () => {
@@ -97,7 +152,27 @@ describe('seedBuiltInTemplates', () => {
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
 			'ObsiDeep/Templates',
+			'en',
 		);
 		expect(result).toBe('error');
+	});
+
+	it('switching language seeds the other set without colliding', async () => {
+		const app = makeApp();
+		const first = await seedBuiltInTemplates(
+			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
+			'ObsiDeep/Templates',
+			'en',
+		);
+		const second = await seedBuiltInTemplates(
+			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
+			'ObsiDeep/Templates',
+			'ko',
+		);
+		expect(first).toBe('seeded');
+		expect(second).toBe('seeded');
+		expect(app.vault.create).toHaveBeenCalledTimes(
+			BUILT_IN_TEMPLATES_EN.length + BUILT_IN_TEMPLATES_KO.length,
+		);
 	});
 });

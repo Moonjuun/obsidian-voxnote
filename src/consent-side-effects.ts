@@ -29,7 +29,7 @@ export async function applyConsentSideEffects(app: App, lang: Lang): Promise<Con
 	]);
 	const readme = await installReadme(app, lang);
 	const features = await installFeatures(app, lang);
-	const templates = await seedBuiltInTemplates(app, TEMPLATES_SUBFOLDER);
+	const templates = await seedBuiltInTemplates(app, TEMPLATES_SUBFOLDER, lang);
 	return { gitignore, folders, readme, features, templates };
 }
 

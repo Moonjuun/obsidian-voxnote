@@ -6,8 +6,9 @@ vi.mock('obsidian', () => ({
 
 import {
 	createStarterTemplate,
+	defaultStarterBaseName,
+	getStarterTemplate,
 	resolveStarterPath,
-	STARTER_TEMPLATE_CONTENT,
 } from '../../src/summary/template-starter';
 
 interface FakeApp {
@@ -89,16 +90,39 @@ describe('resolveStarterPath', () => {
 });
 
 describe('createStarterTemplate', () => {
-	it('writes the starter content and auto-creates folder', async () => {
+	it('writes EN starter and auto-creates folder', async () => {
 		const app = makeApp();
 		const path = await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
 			'ObsiDeep/Templates',
+			'en',
 			'meeting',
 		);
 		expect(path).toBe('ObsiDeep/Templates/meeting.md');
 		expect(app.vault.createFolder).toHaveBeenCalledWith('ObsiDeep/Templates');
-		expect(app.vault.create).toHaveBeenCalledWith(path, STARTER_TEMPLATE_CONTENT);
+		expect(app.vault.create).toHaveBeenCalledWith(path, getStarterTemplate('en'));
+	});
+
+	it('writes KO starter when lang is ko', async () => {
+		const app = makeApp();
+		await createStarterTemplate(
+			app as unknown as Parameters<typeof createStarterTemplate>[0],
+			'ObsiDeep/Templates',
+			'ko',
+			'meeting',
+		);
+		const call = app.vault.create.mock.calls[0];
+		expect(call?.[1]).toContain('## 요약');
+	});
+
+	it('uses default basename per lang when none provided', async () => {
+		const app = makeApp();
+		const path = await createStarterTemplate(
+			app as unknown as Parameters<typeof createStarterTemplate>[0],
+			'ObsiDeep/Templates',
+			'ko',
+		);
+		expect(path).toBe('ObsiDeep/Templates/새 템플릿.md');
 	});
 
 	it('uses (2) suffix when file already exists', async () => {
@@ -106,23 +130,46 @@ describe('createStarterTemplate', () => {
 		const path = await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
 			'ObsiDeep/Templates',
+			'en',
 			'meeting',
 		);
 		expect(path).toBe('ObsiDeep/Templates/meeting (2).md');
 	});
 });
 
-describe('STARTER_TEMPLATE_CONTENT', () => {
-	it('contains a frontmatter block with placeholders map', () => {
-		expect(STARTER_TEMPLATE_CONTENT.startsWith('---\n')).toBe(true);
-		expect(STARTER_TEMPLATE_CONTENT).toContain('placeholders:');
-		expect(STARTER_TEMPLATE_CONTENT).toContain('summary:');
-		expect(STARTER_TEMPLATE_CONTENT).toContain('key_points:');
+describe('getStarterTemplate', () => {
+	it('returns a Korean template for ko', () => {
+		const content = getStarterTemplate('ko');
+		expect(content.startsWith('---\n')).toBe(true);
+		expect(content).toContain('placeholders:');
+		expect(content).toContain('## 요약');
+		expect(content).toContain('시스템 placeholder');
 	});
 
-	it('documents system placeholders in a comment', () => {
-		expect(STARTER_TEMPLATE_CONTENT).toContain('{{transcript}}');
-		expect(STARTER_TEMPLATE_CONTENT).toContain('{{title}}');
-		expect(STARTER_TEMPLATE_CONTENT).toContain('{{source}}');
+	it('returns an English template for en', () => {
+		const content = getStarterTemplate('en');
+		expect(content.startsWith('---\n')).toBe(true);
+		expect(content).toContain('placeholders:');
+		expect(content).toContain('## Summary');
+		expect(content).toContain('System placeholders');
+	});
+
+	it('documents all system placeholders in each language', () => {
+		for (const lang of ['ko', 'en'] as const) {
+			const content = getStarterTemplate(lang);
+			for (const token of ['{{transcript}}', '{{title}}', '{{date}}', '{{source}}']) {
+				expect(content).toContain(token);
+			}
+		}
+	});
+});
+
+describe('defaultStarterBaseName', () => {
+	it('returns "새 템플릿" for ko', () => {
+		expect(defaultStarterBaseName('ko')).toBe('새 템플릿');
+	});
+
+	it('returns "new-template" for en', () => {
+		expect(defaultStarterBaseName('en')).toBe('new-template');
 	});
 });

@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [1.1.1] - 2026-05-14
+
+### Fixed
+- **ObsiDeep submenu disappearing on audio right-click after setting the Gemini key.** The file-menu callback is synchronous in Obsidian, but `buildAudioMenu` / `buildMarkdownMenu` were calling `await loadTemplates(...)` inside, so the `menu.addItem(...)` ran after the menu had already been rendered. The plugin now caches templates on the instance (`templatesCache`) and refreshes it on plugin load, on vault `create` / `modify` / `delete` / `rename` inside the templates folder, and when the Gemini key or templates folder setting changes. Menu callbacks read the cache synchronously.
+
+### Changed
+- **Built-in summary templates now localized.** First-install seeds the language set that matches the UI language: KO → `회의록.md` (favorite), `인터뷰.md`, `강의노트.md`; EN → `Meeting.md` (favorite), `Interview.md`, `Lecture.md`. The right-click menu and the resulting summary notes are in that language end-to-end. Each template body now also includes a guide comment block documenting every frontmatter field and every system placeholder, so the file is self-explanatory when opened.
+- **Starter template** (`Create new summary template` command) also localized per UI language, with the same guide comment block.
+- **README + README-ko** reframed around the audio → STT → AI summary pipeline. Menu labels updated to match the `ObsiDeep ▸` submenu structure. Gemini cost line and privacy notes added.
+
+### Migration
+- Users who already received the 1.1.0 English templates and switch UI language to Korean can run **"동의 모달 다시 보기"** to seed the Korean set alongside the English one. Filenames differ, so no collision.
+
 ## [1.1.0] - 2026-05-14
 
 ### Added

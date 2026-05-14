@@ -1,6 +1,7 @@
 import { Notice } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
 import { createStarterTemplate } from '../summary/template-starter';
+import { detectLang } from '../utils/i18n';
 import { NoticeDuration } from '../utils/constants';
 
 export function registerCreateTemplateCommand(plugin: DeepgramSttPlugin): void {
@@ -19,9 +20,11 @@ export function registerCreateTemplateCommand(plugin: DeepgramSttPlugin): void {
 async function runCreateTemplate(plugin: DeepgramSttPlugin): Promise<void> {
 	const t = plugin.t;
 	try {
+		const lang = detectLang(plugin.settings.uiLanguage);
 		const path = await createStarterTemplate(
 			plugin.app,
 			plugin.settings.templatesFolder,
+			lang,
 		);
 		await plugin.app.workspace.openLinkText(path, '', false);
 		new Notice(

@@ -122,6 +122,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.geminiApiKey = value.trim();
 						await this.plugin.saveSettings();
+						await this.plugin.refreshTemplatesCache();
 					});
 				text.inputEl.type = 'password';
 			});
@@ -163,6 +164,7 @@ export class DeepgramSettingTab extends PluginSettingTab {
 						this.plugin.settings.templatesFolder =
 							value.trim() || 'ObsiDeep/Templates';
 						await this.plugin.saveSettings();
+						await this.plugin.refreshTemplatesCache();
 					}),
 			);
 
