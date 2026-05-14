@@ -44,11 +44,38 @@ export function stripHtmlComments(body: string): string {
 	return body.replace(HTML_COMMENT_RE, '').replace(/\n{3,}/g, '\n\n').replace(/^\s+/, '');
 }
 
+const NOUN_END = '함됨임중료';
+const INLINE_BULLET_RE = new RegExp(
+	`([.!?;:)\\]"'\\u3001\\u3002\\uff0e${NOUN_END}])[ \\t]*-[ \\t]+`,
+	'g',
+);
+const INLINE_CHECKBOX_RE = new RegExp(
+	`([.!?;:)\\]"'\\u3001\\u3002\\uff0e${NOUN_END}])[ \\t]*-[ \\t]+(\\[[ xX]\\])[ \\t]+`,
+	'g',
+);
+const INLINE_BLOCKQUOTE_RE = new RegExp(
+	`([.!?;:)\\]"'\\u3001\\u3002\\uff0e${NOUN_END}])[ \\t]*>[ \\t]+`,
+	'g',
+);
+
+export function normalizeListNewlines(value: string): string {
+	if (!value) return value;
+	let v = value;
+	v = v.replace(INLINE_CHECKBOX_RE, '$1\n- $2 ');
+	v = v.replace(INLINE_BULLET_RE, '$1\n- ');
+	v = v.replace(INLINE_BLOCKQUOTE_RE, '$1\n> ');
+	return v;
+}
+
 export function renderBody(
 	template: TemplateMeta,
 	system: SystemPlaceholders,
 	ai: Record<string, string>,
 ): string {
+	const normalizedAi: Record<string, string> = {};
+	for (const [k, v] of Object.entries(ai)) {
+		normalizedAi[k] = normalizeListNewlines(v);
+	}
 	const lookup: Record<string, string> = {
 		transcript: system.transcript,
 		title: system.title,
@@ -58,7 +85,7 @@ export function renderBody(
 		language: system.language,
 		duration: system.duration,
 		speakers: system.speakers,
-		...ai,
+		...normalizedAi,
 	};
 	const cleaned = stripHtmlComments(template.body);
 	return cleaned.replace(TOKEN_RE, (match, key: string) => {
@@ -99,8 +126,13 @@ export function buildGeminiPrompt(
 	const placeholderHint = Object.entries(template.placeholders)
 		.map(([k, desc]) => (desc ? `- ${k}: ${desc}` : `- ${k}`))
 		.join('\n');
+	const formattingRule =
+		'\n\nFORMATTING RULES (apply to every field whose value is a list):\n' +
+		'- Each item MUST be on its own line, separated by a real newline character (\\n) in the JSON string value.\n' +
+		'- Never concatenate multiple bullets, checkboxes, or blockquotes on a single line (e.g., do NOT write "- item one.- item two"; write "- item one\\n- item two").\n' +
+		'- Every bulleted item starts with "- ", every checkbox with "- [ ] ", every blockquote with "> ".';
 	const systemPrompt =
-		`${template.prompt}${langInstruction}\n\nPopulate these JSON fields:\n${placeholderHint}`;
+		`${template.prompt}${langInstruction}${formattingRule}\n\nPopulate these JSON fields:\n${placeholderHint}`;
 	return { systemPrompt, userContent: system.transcript };
 }
 

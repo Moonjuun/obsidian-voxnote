@@ -61,14 +61,14 @@ export const BUILT_IN_TEMPLATES_KO: readonly BuiltInTemplate[] = [
 name: "회의록"
 favorite: true
 prompt: |
-  아래 회의 전사를 회의록 형식으로 한국어로 요약해줘. 모든 응답은 마크다운 형식.
-  - summary: 마크다운 불릿(\`- ...\`) 3-5개. 각 불릿은 한 문장.
-  - decisions: 결정 사항마다 한 줄 불릿(\`- ...\`). 결정이 없으면 빈 문자열.
-  - action_items: 마크다운 체크박스(\`- [ ] ...\`). 담당자가 언급되면 \`@이름\` 명시. 없으면 빈 문자열.
+  아래 회의 전사를 회의록 형식으로 한국어로 요약해줘. 모든 응답은 마크다운 형식이며, **명사형 종결어미체**(예: 결정함, 확인함, 논의됨, 공유됨, 예정임, 진행 중)를 사용한다. "~합니다 / ~습니다 / ~다"체는 사용 금지.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개. 각 불릿은 명사형 종결의 한 문장이며, 끝에는 마침표를 붙인다. 각 불릿은 반드시 실제 줄바꿈(\\n)으로 분리.
+  - decisions: 결정 사항마다 한 줄 불릿(\`- ...\`). 명사형 종결. 각 항목은 실제 줄바꿈으로 분리. 결정이 없으면 빈 문자열.
+  - action_items: 마크다운 체크박스(\`- [ ] ...\`). 담당자가 언급되면 \`@이름\` 명시. 명사형 종결. 각 항목은 실제 줄바꿈으로 분리. 없으면 빈 문자열.
 placeholders:
-  summary: "마크다운 불릿 목록 (- ...)"
-  decisions: "마크다운 불릿 목록 (- ...)"
-  action_items: "마크다운 체크박스 목록 (- [ ] ...)"
+  summary: "마크다운 불릿 목록 (- ...), 명사형 종결, 줄마다 새 줄"
+  decisions: "마크다운 불릿 목록 (- ...), 명사형 종결, 줄마다 새 줄"
+  action_items: "마크다운 체크박스 목록 (- [ ] ...), 줄마다 새 줄"
 ---
 ${KO_GUIDE}
 
@@ -93,13 +93,13 @@ name: "인터뷰"
 favorite: false
 prompt: |
   아래 인터뷰 전사를 한국어로 요약해줘. 모든 응답은 마크다운 형식.
-  - summary: 마크다운 불릿(\`- ...\`) 3-5개.
-  - topics: 다뤄진 주요 주제를 짧은 불릿(\`- ...\`)으로.
-  - key_quotes: 인터뷰이의 발언을 마크다운 인용문(\`> ...\`) 형식으로 3-7개. 가능한 원문 유지.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개. 각 불릿은 실제 줄바꿈(\\n)으로 분리.
+  - topics: 다뤄진 주요 주제를 짧은 불릿(\`- ...\`)으로. 각 항목은 새 줄.
+  - key_quotes: 인터뷰이의 발언을 마크다운 인용문(\`> ...\`) 형식으로 3-7개. 가능한 원문 유지. 각 인용은 새 줄.
 placeholders:
-  summary: "마크다운 불릿 목록 (- ...)"
-  topics: "마크다운 불릿 목록 (- ...)"
-  key_quotes: "마크다운 인용문 목록 (> ..., 3-7개)"
+  summary: "마크다운 불릿 목록 (- ...), 줄마다 새 줄"
+  topics: "마크다운 불릿 목록 (- ...), 줄마다 새 줄"
+  key_quotes: "마크다운 인용문 목록 (> ..., 3-7개), 줄마다 새 줄"
 ---
 ${KO_GUIDE}
 
@@ -124,13 +124,13 @@ name: "강의노트"
 favorite: false
 prompt: |
   아래 강의 전사를 학습용 노트로 한국어로 요약해줘. 모든 응답은 마크다운 형식.
-  - summary: 마크다운 불릿(\`- ...\`) 3-5개.
-  - key_concepts: 핵심 개념을 \`- **개념명**: 한 줄 설명\` 형식의 불릿으로.
-  - questions: 후속 학습 거리를 마크다운 불릿(\`- ...\`)으로.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개. 각 불릿은 실제 줄바꿈(\\n)으로 분리.
+  - key_concepts: 핵심 개념을 \`- **개념명**: 한 줄 설명\` 형식의 불릿으로. 각 항목은 새 줄.
+  - questions: 후속 학습 거리를 마크다운 불릿(\`- ...\`)으로. 각 항목은 새 줄.
 placeholders:
-  summary: "마크다운 불릿 목록 (- ...)"
-  key_concepts: "마크다운 불릿 (- **개념**: 설명 형식)"
-  questions: "마크다운 불릿 목록 (- ...)"
+  summary: "마크다운 불릿 목록 (- ...), 줄마다 새 줄"
+  key_concepts: "마크다운 불릿 (- **개념**: 설명), 줄마다 새 줄"
+  questions: "마크다운 불릿 목록 (- ...), 줄마다 새 줄"
 ---
 ${KO_GUIDE}
 
@@ -157,14 +157,14 @@ export const BUILT_IN_TEMPLATES_EN: readonly BuiltInTemplate[] = [
 name: "Meeting"
 favorite: true
 prompt: |
-  Summarize the transcript as meeting minutes. All responses must be markdown.
-  - summary: markdown bullets (\`- ...\`), 3-5 items, one sentence each.
-  - decisions: one-line markdown bullet (\`- ...\`) per decision. Empty string if none.
-  - action_items: markdown checkboxes (\`- [ ] ...\`). Include \`@owner\` when an owner is mentioned. Empty if none.
+  Summarize the transcript as meeting minutes. All responses must be markdown. Use a **concise note-style tone** — short past-tense or noun-phrase fragments (e.g., "Decided to ship by Friday.", "Reviewed Q2 roadmap.", "Pending: legal review."). Avoid full conversational sentences such as "We decided that we should..." or "The team discussed how...".
+  - summary: markdown bullets (\`- ...\`), 3-5 items, one short sentence each. Each bullet MUST be on its own line, separated by a real newline (\\n).
+  - decisions: one-line markdown bullet (\`- ...\`) per decision, note-style. Each on its own line. Empty string if none.
+  - action_items: markdown checkboxes (\`- [ ] ...\`). Include \`@owner\` when an owner is mentioned. Each on its own line. Empty if none.
 placeholders:
-  summary: "Markdown bullet list (- ...)"
-  decisions: "Markdown bullet list (- ...)"
-  action_items: "Markdown checkbox list (- [ ] ...)"
+  summary: "Markdown bullet list (- ...), concise note-style, one item per line"
+  decisions: "Markdown bullet list (- ...), one item per line"
+  action_items: "Markdown checkbox list (- [ ] ...), one item per line"
 ---
 ${EN_GUIDE}
 
@@ -189,13 +189,13 @@ name: "Interview"
 favorite: false
 prompt: |
   Summarize the interview transcript. All responses must be markdown.
-  - summary: markdown bullets (\`- ...\`), 3-5 items.
-  - topics: short markdown bullets (\`- ...\`) of themes covered.
-  - key_quotes: 3-7 quotes as markdown blockquotes (\`> ...\`). Preserve the speaker's exact wording.
+  - summary: markdown bullets (\`- ...\`), 3-5 items. Each bullet on its own line, separated by a real newline (\\n).
+  - topics: short markdown bullets (\`- ...\`) of themes covered. Each on its own line.
+  - key_quotes: 3-7 quotes as markdown blockquotes (\`> ...\`). Preserve the speaker's exact wording. Each quote on its own line.
 placeholders:
-  summary: "Markdown bullet list (- ...)"
-  topics: "Markdown bullet list (- ...)"
-  key_quotes: "Markdown blockquote list (> ..., 3-7 items)"
+  summary: "Markdown bullet list (- ...), one item per line"
+  topics: "Markdown bullet list (- ...), one item per line"
+  key_quotes: "Markdown blockquote list (> ..., 3-7 items), one quote per line"
 ---
 ${EN_GUIDE}
 
@@ -220,13 +220,13 @@ name: "Lecture"
 favorite: false
 prompt: |
   Summarize the lecture transcript for study purposes. All responses must be markdown.
-  - summary: markdown bullets (\`- ...\`), 3-5 items.
-  - key_concepts: markdown bullets formatted as \`- **concept**: one-line explanation\`.
-  - questions: markdown bullets (\`- ...\`) of open questions or follow-up topics.
+  - summary: markdown bullets (\`- ...\`), 3-5 items. Each bullet on its own line, separated by a real newline (\\n).
+  - key_concepts: markdown bullets formatted as \`- **concept**: one-line explanation\`. Each on its own line.
+  - questions: markdown bullets (\`- ...\`) of open questions or follow-up topics. Each on its own line.
 placeholders:
-  summary: "Markdown bullet list (- ...)"
-  key_concepts: "Markdown bullets (- **concept**: explanation)"
-  questions: "Markdown bullet list (- ...)"
+  summary: "Markdown bullet list (- ...), one item per line"
+  key_concepts: "Markdown bullets (- **concept**: explanation), one item per line"
+  questions: "Markdown bullet list (- ...), one item per line"
 ---
 ${EN_GUIDE}
 

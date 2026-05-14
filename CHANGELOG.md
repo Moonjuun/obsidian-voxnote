@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+### Fixed
+- **Summary list fields rendering as a single run-on paragraph.** Gemini was returning bullet/checkbox/blockquote values as one string with items glued together by `.- ` / `.- [ ] ` / `.> ` instead of real newlines, so Obsidian rendered the whole `summary` block as one bullet with the rest as inline body text. Two-part fix: (1) `buildGeminiPrompt` now appends a universal FORMATTING RULES block instructing the model to put every list item on its own line with a real `\n` separator and explicitly forbidding the `- one.- two` shape; (2) new `normalizeListNewlines()` defensively splits any inline `.- `, `.- [ ] `, `.> ` patterns — and Korean noun-form endings (`함 / 됨 / 임 / 중 / 료`) followed by `- ` — into newline-separated form before placeholder substitution. Applies to all six built-in templates and works retroactively for users who already seeded older templates (the rule is added in code, not in template content).
+
+### Changed
+- **회의록 (KO) tone switched to 명사형 종결어미체.** The default Korean meeting-minutes prompt now demands noun-form endings (`결정함`, `확인함`, `논의됨`, `공유됨`, `예정임`, `진행 중`) and explicitly forbids `~합니다 / ~습니다 / ~다`. Better fit for Korean business meeting-minutes convention — terser and more scannable.
+- **Meeting (EN) tone switched to concise note-style.** The default English meeting-minutes prompt now demands short past-tense / noun-phrase fragments ("Decided X.", "Reviewed Y.", "Pending: Z.") and discourages full conversational sentences.
+- All six built-in templates' prompts and placeholder descriptions now explicitly require one item per line, reinforcing the universal formatting rule for new installs that read the template prompt directly.
+
+### Migration
+- Existing users who already seeded their templates keep the run-on-line fix automatically (the engine-level rule + post-processing applies regardless of template content). To pick up the new tone changes, delete `회의록.md` / `Meeting.md` from `ObsiDeep/Templates/` and re-run **"동의 모달 다시 보기"**, or edit the prompts in place.
+
 ## [1.1.2] - 2026-05-14
 
 ### Fixed

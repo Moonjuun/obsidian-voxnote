@@ -57,7 +57,7 @@ The AI menus stay hidden until a key is set.
 ### Transcribe only
 
 1. Place an audio file (`mp3`, `m4a`, `mp4`, `wav`, `flac`, `ogg`, `opus`, `webm`, `aac`) into `ObsiDeep/Audio/`.
-2. **Right-click** the file → **`ObsiDeep ▸ STT만 추출`** (Transcribe only).
+2. **Right-click** the file → **`ObsiDeep ▸ Transcribe only`**.
 3. Enter a title → Enter.
 4. After ~1–2 minutes the transcribed note appears in `ObsiDeep/STT/` and opens automatically.
 
@@ -69,7 +69,7 @@ The same flow is available from the command palette (`Cmd+P` / `Ctrl+P`) → **"
 
 ### Transcribe + summarize in one go (AI summary set up)
 
-1. Right-click an audio file → **`ObsiDeep ▸ ⭐ STT + 요약: Meeting`** (favorite templates surface flat; others live under `AI 요약 ▸`).
+1. Right-click an audio file → **`ObsiDeep ▸ ⭐ Transcribe + AI summary: Meeting`** (favorite templates surface flat; others live under `AI summary ▸`).
 2. Enter a title.
 3. After STT finishes, the transcript is fed to Gemini with the template's prompt.
 4. Two notes appear: the transcript in `ObsiDeep/STT/`, the summary in `ObsiDeep/AI-Summaries/{title} (요약).md` with a `source: "[[...]]"` backlink to the transcript.
@@ -78,7 +78,7 @@ If STT fails, nothing else runs. If only the summary step fails, the transcript 
 
 ### Re-summarize an existing note
 
-Right-click any markdown note → **`ObsiDeep ▸ AI 요약: <template>`** — same flow, but the note's body is the input transcript. Useful for trying a different template, or summarizing notes that weren't produced by this plugin.
+Right-click any markdown note → **`ObsiDeep ▸ AI summary: <template>`** — same flow, but the note's body is the input transcript. Useful for trying a different template, or summarizing notes that weren't produced by this plugin.
 
 ### Output examples
 

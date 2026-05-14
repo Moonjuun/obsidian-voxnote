@@ -5,6 +5,7 @@ import {
 	buildSystemPlaceholders,
 	composeSummaryFile,
 	escapeYaml,
+	normalizeListNewlines,
 	renderBody,
 	stripHtmlComments,
 } from '../../src/summary/engine';
@@ -106,6 +107,57 @@ describe('stripHtmlComments', () => {
 	});
 });
 
+describe('normalizeListNewlines', () => {
+	it('splits inline bullets joined by ".- "', () => {
+		const input = '- A.- B.- C';
+		expect(normalizeListNewlines(input)).toBe('- A.\n- B.\n- C');
+	});
+
+	it('splits inline checkboxes joined by ".- [ ] "', () => {
+		const input = '- [ ] A.- [ ] B.- [ ] C';
+		expect(normalizeListNewlines(input)).toBe('- [ ] A.\n- [ ] B.\n- [ ] C');
+	});
+
+	it('splits inline blockquotes joined by ".> "', () => {
+		const input = '> A quote.> Another quote.';
+		expect(normalizeListNewlines(input)).toBe('> A quote.\n> Another quote.');
+	});
+
+	it('is idempotent on already-newlined lists', () => {
+		const input = '- A\n- B\n- C';
+		expect(normalizeListNewlines(input)).toBe('- A\n- B\n- C');
+	});
+
+	it('handles Korean noun-form endings without trailing period (함, 됨, 임, 중)', () => {
+		const input = '- 변동사항 공유됨- VNTG 가치 추진 중- BVC 전환 결정함';
+		expect(normalizeListNewlines(input)).toBe(
+			'- 변동사항 공유됨\n- VNTG 가치 추진 중\n- BVC 전환 결정함',
+		);
+	});
+
+	it('handles Korean sentences ending in period before bullet', () => {
+		const input = '- 포함됩니다.- VNTG는 핵심 가치를 삼습니다.- 회사는 BVC 추진합니다.';
+		expect(normalizeListNewlines(input)).toBe(
+			'- 포함됩니다.\n- VNTG는 핵심 가치를 삼습니다.\n- 회사는 BVC 추진합니다.',
+		);
+	});
+
+	it('handles mixed punctuation (?, !, ;)', () => {
+		expect(normalizeListNewlines('- Question?- Answer!- Note;- End')).toBe(
+			'- Question?\n- Answer!\n- Note;\n- End',
+		);
+	});
+
+	it('returns empty string unchanged', () => {
+		expect(normalizeListNewlines('')).toBe('');
+	});
+
+	it('does not split a single in-sentence dash', () => {
+		const input = 'Speakers met to discuss B2B-B2C migration plans.';
+		expect(normalizeListNewlines(input)).toBe(input);
+	});
+});
+
 describe('renderBody', () => {
 	const system = buildSystemPlaceholders({
 		transcript: 'TRANSCRIPT',
@@ -145,6 +197,15 @@ describe('renderBody', () => {
 		const tpl = mkTemplate({ body: '{{title}}' });
 		const out = renderBody(tpl, system, { title: 'from ai' });
 		expect(out).toBe('from ai');
+	});
+
+	it('normalizes inline-joined bullets in AI values before substitution', () => {
+		const tpl = mkTemplate({ body: '{{summary}}' });
+		const out = renderBody(tpl, system, {
+			summary: '- A.- B.- C',
+			decisions: '',
+		});
+		expect(out).toBe('- A.\n- B.\n- C');
 	});
 
 	it('strips HTML comments before substitution (no transcript leak in docs)', () => {
@@ -243,6 +304,13 @@ describe('buildGeminiPrompt', () => {
 	it('userContent is the transcript', () => {
 		const { userContent } = buildGeminiPrompt(mkTemplate(), system, 'English');
 		expect(userContent).toBe('TRANSCRIPT_TEXT');
+	});
+
+	it('includes universal formatting rule demanding one item per line', () => {
+		const { systemPrompt } = buildGeminiPrompt(mkTemplate(), system, 'Korean');
+		expect(systemPrompt).toContain('FORMATTING RULES');
+		expect(systemPrompt).toMatch(/real newline character/i);
+		expect(systemPrompt).toContain('- item one\\n- item two');
 	});
 });
 

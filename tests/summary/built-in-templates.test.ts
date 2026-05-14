@@ -90,6 +90,30 @@ describe('BUILT_IN_TEMPLATES_KO', () => {
 	it('uses Korean instructions in prompt', () => {
 		expect(BUILT_IN_TEMPLATES_KO[0]?.content).toContain('한국어');
 	});
+
+	it('회의록 prompt mandates 명사형 종결어미체 tone', () => {
+		const meeting = BUILT_IN_TEMPLATES_KO.find((t) => t.filename === '회의록.md');
+		expect(meeting?.content).toContain('명사형 종결어미체');
+	});
+});
+
+describe('built-in template formatting hints', () => {
+	it('every KO template instructs newline-separated items', () => {
+		for (const t of BUILT_IN_TEMPLATES_KO) {
+			expect(t.content).toMatch(/줄바꿈|새 줄/);
+		}
+	});
+
+	it('every EN template instructs newline-separated items', () => {
+		for (const t of BUILT_IN_TEMPLATES_EN) {
+			expect(t.content).toMatch(/own line|per line|newline/i);
+		}
+	});
+
+	it('EN Meeting prompt mandates note-style tone', () => {
+		const meeting = BUILT_IN_TEMPLATES_EN.find((t) => t.filename === 'Meeting.md');
+		expect(meeting?.content).toMatch(/note-style/i);
+	});
 });
 
 describe('getBuiltInTemplates', () => {

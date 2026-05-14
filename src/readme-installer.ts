@@ -59,7 +59,9 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
 2. **"Deepgram API 키"** 칸에 복사한 키 붙여넣기.
 3. **"검증"** 버튼 클릭 → \`✓ API 키 유효\` 메시지 확인.
 
-![플러그인 설정 탭](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
+![플러그인 설정 — Deepgram 키 (필수) + Gemini 키 (AI 요약용, 선택)](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
+
+> **(선택) AI 요약까지 쓰려면** — 같은 페이지의 **"AI 요약 (Gemini)"** 섹션에서 **"Gemini API 키"**에 [Google AI Studio](https://aistudio.google.com/apikey)에서 발급받은 키도 추가로 붙여넣으세요. Gemini 키가 비어있으면 AI 요약 메뉴는 표시되지 않고 STT 단독 도구로 동작합니다.
 
 ### 3단계 — 녹음 파일 넣고 변환 실행
 
@@ -69,13 +71,18 @@ const KO_README = `# ObsiDeep — Deepgram Meeting STT
 
    > 💡 Finder에서 직접 복사한 경우 옵시디언 좌측 사이드바에 파일이 바로 안 보일 수 있습니다. 그 때는 \`Cmd+P\` (Windows/Linux: \`Ctrl+P\`) → **"저장하지 않고 앱 새로고침"** 실행 후 다음 단계로.
 
-2. **변환 실행** — 옵시디언 좌측 사이드바에서 그 오디오 파일을 **우클릭 → "Transcribe with Deepgram"** (한국어 UI에서는 "Deepgram으로 회의록 추출")
+2. **변환 실행** — 사이드바에서 그 오디오 파일을 **우클릭 → \`ObsiDeep ▸\`** 서브메뉴에서 원하는 항목 선택:
+   - **\`STT만 추출\`** — STT 회의록만 생성 (Deepgram 키만 있으면 됨)
+   - **\`⭐ STT + AI 요약: 회의록\`** — STT + AI 요약을 한 번에 (Gemini 키 설정 시 노출)
+   - **\`AI 요약 ▸\`** — 즐겨찾기가 아닌 다른 템플릿(인터뷰·강의노트 등)
 
-![파일 우클릭 → Transcribe with Deepgram](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
+   기존 마크다운 노트를 우클릭하면 \`ObsiDeep ▸ ⭐ AI 요약: 회의록\`으로 **재요약**도 가능합니다.
 
-3. **제목 입력 → Enter** → 약 1~2분 후 \`STT/\` 폴더에 \`.md\` 회의록이 자동 생성·열림.
+![ObsiDeep 우클릭 서브메뉴 (예시: 마크다운 노트의 재요약 메뉴)](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
 
-> 명령 팔레트(\`Cmd+P\` / \`Ctrl+P\`)에서 "Transcribe audio → meeting note"로도 동일하게 실행할 수 있습니다.
+3. **제목 입력 → Enter** → 약 1~2분 후 \`STT/\` 폴더에 \`.md\` 회의록이 자동 생성·열림. AI 요약을 함께 실행했다면 \`AI-Summaries/\` 폴더에 요약 노트도 같이 생성됩니다.
+
+> 명령 팔레트(\`Cmd+P\` / \`Ctrl+P\`)에서 "회의록 추출 (Transcribe audio → meeting note)" 또는 "STT + AI 요약 (Transcribe and summarize)"으로도 동일하게 실행할 수 있습니다.
 
 ---
 
@@ -168,7 +175,9 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 2. Paste the key into **"Deepgram API key"**.
 3. Click **"Validate"** → you should see \`✓ API key is valid\`.
 
-![Plugin settings tab](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
+![Plugin settings — Deepgram key (required) + Gemini key (optional, for AI summary)](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img3.webp)
+
+> **(Optional) Enable AI summary too** — on the same page, scroll to the **"AI summary (Gemini)"** section and paste a [Google AI Studio](https://aistudio.google.com/apikey) key into **"Gemini API key"**. Leave it blank if you only want STT — the AI summary menu items stay hidden and the plugin acts as a pure STT tool.
 
 ### Step 3 — Drop a recording and transcribe
 
@@ -178,13 +187,18 @@ This folder is the auto-created workspace for the [Deepgram Meeting STT](https:/
 
    > 💡 If you copied via Finder/Explorer, Obsidian's left sidebar might not show the new file immediately. In that case, press \`Cmd+P\` (Windows/Linux: \`Ctrl+P\`) → **"Reload app without saving"** and continue.
 
-2. **Run transcription** — in Obsidian's left sidebar, **right-click** the audio file → **"Transcribe with Deepgram"** (label is localized; "Deepgram으로 회의록 추출" in Korean UI).
+2. **Run transcription** — in the sidebar, **right-click** the audio file → **\`ObsiDeep ▸\`** submenu and pick one:
+   - **\`Transcribe only\`** — STT transcript only (just needs a Deepgram key)
+   - **\`⭐ Transcribe + AI summary: Meeting\`** — STT + AI summary in one go (visible once a Gemini key is set)
+   - **\`AI summary ▸\`** — non-favorite templates (Interview, Lecture, etc.)
 
-![Right-click → Transcribe with Deepgram](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
+   You can also right-click any existing markdown note → \`ObsiDeep ▸ ⭐ AI summary: Meeting\` to **re-summarize** it.
 
-3. **Enter a title → press Enter** → after ~1–2 min a \`.md\` note appears in \`STT/\` and opens automatically.
+![ObsiDeep right-click submenu (example shows the re-summarize menu on a markdown note)](https://raw.githubusercontent.com/Moonjuun/obsidian-deepgram-stt/main/img/img4.webp)
 
-> The command palette (\`Cmd+P\` / \`Ctrl+P\`) → "Transcribe audio → meeting note" runs the same flow.
+3. **Enter a title → press Enter** → after ~1–2 min a \`.md\` note appears in \`STT/\` and opens automatically. If you ran the AI summary path, a matching summary note is created in \`AI-Summaries/\`.
+
+> The command palette (\`Cmd+P\` / \`Ctrl+P\`) → "Transcribe audio → meeting note" or "Transcribe and summarize" runs the same flows.
 
 ---
 
