@@ -6,6 +6,7 @@ import {
 	composeSummaryFile,
 	escapeYaml,
 	renderBody,
+	stripHtmlComments,
 } from '../../src/summary/engine';
 import type { TemplateMeta } from '../../src/summary/template-loader';
 
@@ -86,6 +87,25 @@ describe('buildSystemPlaceholders', () => {
 	});
 });
 
+describe('stripHtmlComments', () => {
+	it('removes a single-line comment', () => {
+		expect(stripHtmlComments('<!-- hi --> body')).toBe('body');
+	});
+
+	it('removes a multi-line comment', () => {
+		const input = '<!--\n  guide block\n  {{transcript}} - placeholder\n-->\n\n# Title';
+		expect(stripHtmlComments(input)).toBe('# Title');
+	});
+
+	it('collapses 3+ consecutive newlines', () => {
+		expect(stripHtmlComments('a\n\n\n\nb')).toBe('a\n\nb');
+	});
+
+	it('leaves content without comments untouched', () => {
+		expect(stripHtmlComments('a\n\nb')).toBe('a\n\nb');
+	});
+});
+
 describe('renderBody', () => {
 	const system = buildSystemPlaceholders({
 		transcript: 'TRANSCRIPT',
@@ -125,6 +145,16 @@ describe('renderBody', () => {
 		const tpl = mkTemplate({ body: '{{title}}' });
 		const out = renderBody(tpl, system, { title: 'from ai' });
 		expect(out).toBe('from ai');
+	});
+
+	it('strips HTML comments before substitution (no transcript leak in docs)', () => {
+		const tpl = mkTemplate({
+			body: '<!--\n  System placeholder docs:\n    {{transcript}} - full STT\n-->\n\n## Summary\n{{summary}}',
+		});
+		const out = renderBody(tpl, system, { summary: 'S', decisions: '' });
+		expect(out).not.toContain('TRANSCRIPT');
+		expect(out).not.toContain('<!--');
+		expect(out).toContain('## Summary\nS');
 	});
 });
 

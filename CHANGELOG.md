@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [1.1.2] - 2026-05-14
+
+### Fixed
+- **Summary output contaminated with template's guide-comment block + accidental transcript inside it.** The HTML comment we added inside built-in templates listed `{{transcript}}` and other tokens as documentation, but `renderBody`'s regex was substituting them blindly — so the entire STT transcript was being inlined into a `<!-- ... -->` block in the resulting summary file. Added `stripHtmlComments()` step before placeholder substitution; comments are now removed from the rendered output and their internal `{{...}}` references never substitute.
+
+### Changed
+- **All 6 built-in templates (KO + EN) hardened for list-shaped output.** Prompts now explicitly require markdown formatting; each placeholder description encodes the expected syntax (`- ...`, `- [ ] ...`, `> ...`, `- **concept**: ...`) so Gemini cannot drift into prose. Output is consistently bulleted / checkboxed / blockquoted for readability.
+- **Right-click menu wording: "STT + 요약" → "STT + AI 요약"** (both flat-favorite and submenu entries; same in English: "Transcribe + AI summary"). Command palette label updated to match.
+
 ## [1.1.1] - 2026-05-14
 
 ### Fixed

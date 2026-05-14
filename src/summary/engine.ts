@@ -38,6 +38,11 @@ export function buildSystemPlaceholders(
 }
 
 const TOKEN_RE = /\{\{(\w+)\}\}/g;
+const HTML_COMMENT_RE = /<!--[\s\S]*?-->/g;
+
+export function stripHtmlComments(body: string): string {
+	return body.replace(HTML_COMMENT_RE, '').replace(/\n{3,}/g, '\n\n').replace(/^\s+/, '');
+}
 
 export function renderBody(
 	template: TemplateMeta,
@@ -55,7 +60,8 @@ export function renderBody(
 		speakers: system.speakers,
 		...ai,
 	};
-	return template.body.replace(TOKEN_RE, (match, key: string) => {
+	const cleaned = stripHtmlComments(template.body);
+	return cleaned.replace(TOKEN_RE, (match, key: string) => {
 		return Object.prototype.hasOwnProperty.call(lookup, key) ? (lookup[key] ?? '') : match;
 	});
 }

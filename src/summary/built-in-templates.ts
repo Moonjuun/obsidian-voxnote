@@ -61,13 +61,14 @@ export const BUILT_IN_TEMPLATES_KO: readonly BuiltInTemplate[] = [
 name: "회의록"
 favorite: true
 prompt: |
-  아래 회의 전사를 회의록 형식으로 한국어로 요약해줘.
-  - decisions: 결정 사항마다 한 줄 불릿, 명확하게.
-  - action_items: 마크다운 체크박스 사용. 담당자가 언급되면 "@이름" 형식으로 명시.
+  아래 회의 전사를 회의록 형식으로 한국어로 요약해줘. 모든 응답은 마크다운 형식.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개. 각 불릿은 한 문장.
+  - decisions: 결정 사항마다 한 줄 불릿(\`- ...\`). 결정이 없으면 빈 문자열.
+  - action_items: 마크다운 체크박스(\`- [ ] ...\`). 담당자가 언급되면 \`@이름\` 명시. 없으면 빈 문자열.
 placeholders:
-  summary: "회의 논의 내용 3-5개 불릿 요약"
-  decisions: "결정 사항 불릿 목록"
-  action_items: "액션 아이템 체크박스 목록 (담당자 있으면 명시)"
+  summary: "마크다운 불릿 목록 (- ...)"
+  decisions: "마크다운 불릿 목록 (- ...)"
+  action_items: "마크다운 체크박스 목록 (- [ ] ...)"
 ---
 ${KO_GUIDE}
 
@@ -91,13 +92,14 @@ ${KO_GUIDE}
 name: "인터뷰"
 favorite: false
 prompt: |
-  아래 인터뷰 전사를 한국어로 요약해줘.
-  - key_quotes: 인터뷰이의 발언을 가능한 한 원문 그대로 유지.
-  - topics: 인터뷰에서 다뤄진 주요 주제를 짧은 불릿으로.
+  아래 인터뷰 전사를 한국어로 요약해줘. 모든 응답은 마크다운 형식.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개.
+  - topics: 다뤄진 주요 주제를 짧은 불릿(\`- ...\`)으로.
+  - key_quotes: 인터뷰이의 발언을 마크다운 인용문(\`> ...\`) 형식으로 3-7개. 가능한 원문 유지.
 placeholders:
-  summary: "인터뷰 전반에 대한 간단 요약"
-  key_quotes: "대표 발언 3-7개 (가능한 원문 유지)"
-  topics: "다뤄진 주제 불릿 목록"
+  summary: "마크다운 불릿 목록 (- ...)"
+  topics: "마크다운 불릿 목록 (- ...)"
+  key_quotes: "마크다운 인용문 목록 (> ..., 3-7개)"
 ---
 ${KO_GUIDE}
 
@@ -121,13 +123,14 @@ ${KO_GUIDE}
 name: "강의노트"
 favorite: false
 prompt: |
-  아래 강의 전사를 학습용 노트로 한국어로 요약해줘.
-  - key_concepts: 핵심 개념을 한 줄 설명과 함께 불릿으로.
-  - questions: 추가로 공부해볼 만한 질문 / 후속 학습 거리를 불릿으로.
+  아래 강의 전사를 학습용 노트로 한국어로 요약해줘. 모든 응답은 마크다운 형식.
+  - summary: 마크다운 불릿(\`- ...\`) 3-5개.
+  - key_concepts: 핵심 개념을 \`- **개념명**: 한 줄 설명\` 형식의 불릿으로.
+  - questions: 후속 학습 거리를 마크다운 불릿(\`- ...\`)으로.
 placeholders:
-  summary: "강의 전반에 대한 간단 요약"
-  key_concepts: "핵심 개념 불릿 + 한 줄 설명"
-  questions: "후속 질문 / 학습 거리 불릿"
+  summary: "마크다운 불릿 목록 (- ...)"
+  key_concepts: "마크다운 불릿 (- **개념**: 설명 형식)"
+  questions: "마크다운 불릿 목록 (- ...)"
 ---
 ${KO_GUIDE}
 
@@ -154,13 +157,14 @@ export const BUILT_IN_TEMPLATES_EN: readonly BuiltInTemplate[] = [
 name: "Meeting"
 favorite: true
 prompt: |
-  Summarize the transcript as meeting minutes.
-  - decisions: clear, one bullet per decision.
-  - action_items: use checkbox markdown; include "@owner" when an owner is mentioned.
+  Summarize the transcript as meeting minutes. All responses must be markdown.
+  - summary: markdown bullets (\`- ...\`), 3-5 items, one sentence each.
+  - decisions: one-line markdown bullet (\`- ...\`) per decision. Empty string if none.
+  - action_items: markdown checkboxes (\`- [ ] ...\`). Include \`@owner\` when an owner is mentioned. Empty if none.
 placeholders:
-  summary: "3-5 bullet overview of the discussion"
-  decisions: "Bullet list of decisions made"
-  action_items: "Checkbox list of action items (with owner if mentioned)"
+  summary: "Markdown bullet list (- ...)"
+  decisions: "Markdown bullet list (- ...)"
+  action_items: "Markdown checkbox list (- [ ] ...)"
 ---
 ${EN_GUIDE}
 
@@ -184,13 +188,14 @@ ${EN_GUIDE}
 name: "Interview"
 favorite: false
 prompt: |
-  Summarize the interview transcript.
-  - key_quotes should preserve the speaker's exact wording.
-  - topics is a short list of themes that came up.
+  Summarize the interview transcript. All responses must be markdown.
+  - summary: markdown bullets (\`- ...\`), 3-5 items.
+  - topics: short markdown bullets (\`- ...\`) of themes covered.
+  - key_quotes: 3-7 quotes as markdown blockquotes (\`> ...\`). Preserve the speaker's exact wording.
 placeholders:
-  summary: "Brief overview of the interview"
-  key_quotes: "3-7 representative quotes (preserved verbatim)"
-  topics: "Bullet list of topics covered"
+  summary: "Markdown bullet list (- ...)"
+  topics: "Markdown bullet list (- ...)"
+  key_quotes: "Markdown blockquote list (> ..., 3-7 items)"
 ---
 ${EN_GUIDE}
 
@@ -214,13 +219,14 @@ ${EN_GUIDE}
 name: "Lecture"
 favorite: false
 prompt: |
-  Summarize the lecture transcript for study purposes.
-  - key_concepts: main ideas, briefly explained.
-  - questions: open questions worth following up on.
+  Summarize the lecture transcript for study purposes. All responses must be markdown.
+  - summary: markdown bullets (\`- ...\`), 3-5 items.
+  - key_concepts: markdown bullets formatted as \`- **concept**: one-line explanation\`.
+  - questions: markdown bullets (\`- ...\`) of open questions or follow-up topics.
 placeholders:
-  summary: "Concise overview of the lecture"
-  key_concepts: "Bullet list of key concepts with one-line explanations"
-  questions: "Bullet list of open questions or things to follow up on"
+  summary: "Markdown bullet list (- ...)"
+  key_concepts: "Markdown bullets (- **concept**: explanation)"
+  questions: "Markdown bullet list (- ...)"
 ---
 ${EN_GUIDE}
 

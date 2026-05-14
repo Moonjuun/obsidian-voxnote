@@ -55,8 +55,8 @@ function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): voi
 				it
 					.setTitle(
 						plugin.t(
-							`⭐ STT + 요약: ${tpl.name}`,
-							`⭐ Transcribe + summary: ${tpl.name}`,
+							`⭐ STT + AI 요약: ${tpl.name}`,
+							`⭐ Transcribe + AI summary: ${tpl.name}`,
 						),
 					)
 					.setIcon('sparkles')
@@ -72,7 +72,12 @@ function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): voi
 				for (const tpl of others) {
 					aiSub.addItem((it) =>
 						it
-							.setTitle(`STT + ${tpl.name}`)
+							.setTitle(
+								plugin.t(
+									`STT + AI 요약: ${tpl.name}`,
+									`Transcribe + AI summary: ${tpl.name}`,
+								),
+							)
 							.onClick(() => askTitleThenTranscribeAndSummarize(plugin, file, tpl)),
 					);
 				}

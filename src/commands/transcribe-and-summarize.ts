@@ -17,7 +17,7 @@ export function registerTranscribeAndSummarizeCommand(plugin: DeepgramSttPlugin)
 		id: 'transcribe-and-summarize',
 		name: plugin.t(
 			'STT + AI 요약 (Transcribe and summarize)',
-			'Transcribe audio and summarize with AI',
+			'Transcribe + AI summary',
 		),
 		callback: () => {
 			if (!notifyIfBlocked(checkReady(plugin.settings), plugin.t)) return;
