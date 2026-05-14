@@ -1,11 +1,14 @@
 import type { App } from 'obsidian';
 import type { Lang } from './utils/i18n';
 import { installFeatures, installReadme, type FileInstallResult } from './readme-installer';
+import { seedBuiltInTemplates, type SeedResult } from './summary/built-in-templates';
 
 const GITIGNORE_PATH = '.gitignore';
 const ROOT_FOLDER = 'ObsiDeep';
 const AUDIO_SUBFOLDER = `${ROOT_FOLDER}/Audio`;
 const STT_SUBFOLDER = `${ROOT_FOLDER}/STT`;
+const TEMPLATES_SUBFOLDER = `${ROOT_FOLDER}/Templates`;
+const SUMMARIES_SUBFOLDER = `${ROOT_FOLDER}/AI-Summaries`;
 const COMMENT = '# Deepgram Meeting STT — protect API key + meeting recordings & notes from vault git sync';
 
 export type GitignoreResult = 'added' | 'partial' | 'exists' | 'no-gitignore' | 'error';
@@ -16,6 +19,7 @@ export interface ConsentSideEffectsResult {
 	folders: FolderResult;
 	readme: FileInstallResult;
 	features: FileInstallResult;
+	templates: SeedResult;
 }
 
 export async function applyConsentSideEffects(app: App, lang: Lang): Promise<ConsentSideEffectsResult> {
@@ -25,7 +29,8 @@ export async function applyConsentSideEffects(app: App, lang: Lang): Promise<Con
 	]);
 	const readme = await installReadme(app, lang);
 	const features = await installFeatures(app, lang);
-	return { gitignore, folders, readme, features };
+	const templates = await seedBuiltInTemplates(app, TEMPLATES_SUBFOLDER);
+	return { gitignore, folders, readme, features, templates };
 }
 
 async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
@@ -55,7 +60,13 @@ async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 }
 
 async function ensureFolders(app: App): Promise<FolderResult> {
-	const targets = [ROOT_FOLDER, AUDIO_SUBFOLDER, STT_SUBFOLDER];
+	const targets = [
+		ROOT_FOLDER,
+		AUDIO_SUBFOLDER,
+		STT_SUBFOLDER,
+		TEMPLATES_SUBFOLDER,
+		SUMMARIES_SUBFOLDER,
+	];
 	try {
 		let createdCount = 0;
 		for (const path of targets) {

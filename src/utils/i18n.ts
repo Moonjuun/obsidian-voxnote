@@ -23,3 +23,7 @@ export function detectLang(setting: UiLang): Lang {
 export function makeT(lang: Lang): T {
 	return (ko, en) => (lang === 'ko' ? ko : en);
 }
+
+export function languageLabel(lang: Lang): string {
+	return lang === 'ko' ? 'Korean' : 'English';
+}

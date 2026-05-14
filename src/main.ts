@@ -14,6 +14,10 @@ import { friendlyMessage } from './utils/errors';
 import { registerTranscribeToNoteCommand } from './commands/transcribe-to-note';
 import { registerTranscribeDebugCommand } from './commands/transcribe-debug';
 import { registerRenameSpeakerCommand } from './commands/rename-speaker';
+import { registerSummarizeNoteCommand } from './commands/summarize-note';
+import { registerTranscribeAndSummarizeCommand } from './commands/transcribe-and-summarize';
+import { registerCreateTemplateCommand } from './commands/create-template';
+import { registerFileMenus } from './menu-registration';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
@@ -61,6 +65,10 @@ export default class DeepgramSttPlugin extends Plugin {
 		registerTranscribeToNoteCommand(this);
 		registerTranscribeDebugCommand(this);
 		registerRenameSpeakerCommand(this);
+		registerSummarizeNoteCommand(this);
+		registerTranscribeAndSummarizeCommand(this);
+		registerCreateTemplateCommand(this);
+		registerFileMenus(this);
 	}
 
 	onunload(): void {
@@ -158,8 +166,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'created':
 				messages.push(
 					t(
-						'✓ ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/ 포함).',
-						'✓ Created ObsiDeep/ (with Audio/ and STT/).',
+						'✓ ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/, Templates/, AI-Summaries/ 포함).',
+						'✓ Created ObsiDeep/ (with Audio/, STT/, Templates/, AI-Summaries/).',
 					),
 				);
 				break;
@@ -251,6 +259,35 @@ export default class DeepgramSttPlugin extends Plugin {
 					t(
 						'⚠ ObsiDeep/FEATURES.md 생성 실패.',
 						'⚠ Failed to create ObsiDeep/FEATURES.md.',
+					),
+				);
+				break;
+		}
+
+		switch (result.templates) {
+			case 'seeded':
+				messages.push(
+					t(
+						'✓ 기본 요약 템플릿 3개를 Templates/ 폴더에 추가했습니다.',
+						'✓ Seeded 3 starter summary templates into Templates/.',
+					),
+				);
+				break;
+			case 'partial':
+				messages.push(
+					t(
+						'✓ Templates/ 폴더에 누락된 기본 템플릿을 보강했습니다.',
+						'✓ Filled in missing starter templates in Templates/.',
+					),
+				);
+				break;
+			case 'exists':
+				break;
+			case 'error':
+				messages.push(
+					t(
+						'⚠ 기본 요약 템플릿 생성에 실패했습니다.',
+						'⚠ Failed to seed starter summary templates.',
 					),
 				);
 				break;

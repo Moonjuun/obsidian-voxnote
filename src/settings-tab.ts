@@ -3,6 +3,7 @@ import type DeepgramSttPlugin from './main';
 import { validateApiKey } from './deepgram';
 import type { UiLang } from './utils/i18n';
 import { compareSemver, fetchLatestRelease, UpdateCheckError } from './update-checker';
+import type { GeminiModel } from './settings';
 
 const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-deepgram-stt/releases';
 
@@ -95,6 +96,93 @@ export class DeepgramSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.templatePath)
 					.onChange(async (value) => {
 						this.plugin.settings.templatePath = value.trim();
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		// ─── AI summary (Gemini) ────────────────────────────────────
+		new Setting(containerEl)
+			.setName(t('AI 요약 (Gemini)', 'AI summary (Gemini)'))
+			.setHeading();
+
+		new Setting(containerEl)
+			.setName(t('Gemini API 키', 'Gemini API key'))
+			.setDesc(
+				t(
+					'Google AI Studio에서 발급한 키. 비워두면 STT만 동작하고 AI 요약 메뉴는 숨겨집니다.',
+					'API key from Google AI Studio. Leave blank to use STT only; AI menus stay hidden.',
+				),
+			)
+			.addText((text) => {
+				text
+					.setPlaceholder(
+						t('Gemini API 키 붙여넣기 (선택)', 'Paste your Gemini API key (optional)'),
+					)
+					.setValue(this.plugin.settings.geminiApiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.geminiApiKey = value.trim();
+						await this.plugin.saveSettings();
+					});
+				text.inputEl.type = 'password';
+			});
+
+		new Setting(containerEl)
+			.setName(t('Gemini 모델', 'Gemini model'))
+			.addDropdown((dd) =>
+				dd
+					.addOption(
+						'gemini-2.5-flash',
+						t('gemini-2.5-flash (빠르고 저렴, 권장)', 'gemini-2.5-flash (fast & cheap, recommended)'),
+					)
+					.addOption(
+						'gemini-2.5-pro',
+						t('gemini-2.5-pro (정확도 우선)', 'gemini-2.5-pro (higher quality)'),
+					)
+					.setValue(this.plugin.settings.geminiModel)
+					.onChange(async (value) => {
+						this.plugin.settings.geminiModel = value as GeminiModel;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName(t('템플릿 폴더', 'Templates folder'))
+			.setDesc(
+				t(
+					'요약 템플릿(.md)이 있는 폴더. 기본값: ObsiDeep/Templates',
+					'Folder containing summary templates (.md). Default: ObsiDeep/Templates',
+				),
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder(
+						t('예: ObsiDeep/Templates', 'e.g. ObsiDeep/Templates'),
+					)
+					.setValue(this.plugin.settings.templatesFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.templatesFolder =
+							value.trim() || 'ObsiDeep/Templates';
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName(t('요약 저장 폴더', 'Summaries folder'))
+			.setDesc(
+				t(
+					'AI 요약 결과를 저장할 폴더. 기본값: ObsiDeep/AI-Summaries',
+					'Folder to save AI summary notes. Default: ObsiDeep/AI-Summaries',
+				),
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder(
+						t('예: ObsiDeep/AI-Summaries', 'e.g. ObsiDeep/AI-Summaries'),
+					)
+					.setValue(this.plugin.settings.summariesFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.summariesFolder =
+							value.trim() || 'ObsiDeep/AI-Summaries';
 						await this.plugin.saveSettings();
 					}),
 			);

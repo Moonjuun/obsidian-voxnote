@@ -1,16 +1,12 @@
-import { Menu, Notice, TAbstractFile, TFile } from 'obsidian';
+import { Notice, TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
 import { AudioSuggestModal } from '../modals/audio-suggest-modal';
 import { TitleInputModal } from '../modals/title-input-modal';
-import { formatDuration, isAudioFile } from '../utils/audio-utils';
+import { formatDuration } from '../utils/audio-utils';
 import { createTranscriptNote } from '../note-writer';
 import { checkReady, notifyIfBlocked } from '../utils/guards';
 import { NoticeDuration } from '../utils/constants';
 
-/**
- * Register the primary "Transcribe audio → meeting note" command
- * and the equivalent right-click menu item on audio files.
- */
 export function registerTranscribeToNoteCommand(plugin: DeepgramSttPlugin): void {
 	plugin.addCommand({
 		id: 'transcribe-to-note',
@@ -25,21 +21,6 @@ export function registerTranscribeToNoteCommand(plugin: DeepgramSttPlugin): void
 			}).open();
 		},
 	});
-
-	plugin.registerEvent(
-		plugin.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
-			if (!(file instanceof TFile) || !isAudioFile(file)) return;
-			menu.addItem((item) =>
-				item
-					.setTitle(plugin.t('Deepgram으로 회의록 추출', 'Transcribe with Deepgram'))
-					.setIcon('mic')
-					.onClick(() => {
-						if (!notifyIfBlocked(checkReady(plugin.settings), plugin.t)) return;
-						askTitleAndTranscribe(plugin, file);
-					}),
-			);
-		}),
-	);
 }
 
 function askTitleAndTranscribe(plugin: DeepgramSttPlugin, file: TFile): void {
@@ -48,7 +29,7 @@ function askTitleAndTranscribe(plugin: DeepgramSttPlugin, file: TFile): void {
 	}).open();
 }
 
-async function runTranscribeToNote(
+export async function runTranscribeToNote(
 	plugin: DeepgramSttPlugin,
 	file: TFile,
 	title: string,

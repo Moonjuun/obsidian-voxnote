@@ -10,10 +10,11 @@ An Obsidian plugin that transcribes meeting recordings with the [Deepgram](https
 
 - **Right-click → transcribe**: pick any audio file from the vault sidebar (or run the command palette) and the transcription lands in a new markdown note
 - **Per-speaker diarization** with `[HH:MM:SS]` segment timestamps
-- **Optional custom templates** with token substitution
+- **AI summary (optional, Gemini)**: drop template files into `ObsiDeep/Templates/` to summarize any transcript (or any note) into a structured summary, written to `ObsiDeep/AI-Summaries/` with a backlink. STT works fine without a Gemini key — AI menus stay hidden.
+- **Custom output templates** with token substitution
 - **Bilingual UI** (Korean / English / auto-follow Obsidian locale)
 - **Zero Retention by default** — Deepgram discards audio + transcripts after processing (plan-dependent)
-- **Auto-managed workspace**: creates `ObsiDeep/` (Audio/, STT/) at the vault root and writes vault `.gitignore` rules so recordings and your API key stay out of vault git sync
+- **Auto-managed workspace**: creates `ObsiDeep/` (Audio/, STT/, Templates/, AI-Summaries/) at the vault root, seeds 3 starter summary templates, and writes vault `.gitignore` rules so recordings and your API key stay out of vault git sync
 - **Mobile compatible** — works on Obsidian for iOS / Android
 
 ## Install
@@ -77,6 +78,15 @@ Good morning, let's start with the status updates.
 Sure, I'll go first.
 ```
 
+### AI summary (optional)
+
+1. Settings → Deepgram Meeting STT → **"Gemini API key"** → paste a key from [Google AI Studio](https://aistudio.google.com/apikey)
+2. On first consent, 3 starter templates appear in `ObsiDeep/Templates/` (`Meeting.md` is marked `favorite: true`, `Interview.md`, `Lecture.md`)
+3. Right-click an audio file → **`ObsiDeep ▸ STT + 요약: Meeting`** to run STT and AI summary in one go — STT note in `ObsiDeep/STT/`, summary in `ObsiDeep/AI-Summaries/{title} (요약).md` with a backlink
+4. Right-click an existing markdown note → **`ObsiDeep ▸ AI 요약: Meeting`** to re-summarize with any other template
+
+Edit a template's frontmatter to add or rename AI placeholders, change the prompt, or toggle `favorite`. The command palette also has **"Create new summary template"** which scaffolds a starter file with all system placeholders documented.
+
 ### Rename speakers
 
 Speakers are labelled `Speaker 1`, `Speaker 2` by default. To replace with real names:
@@ -103,6 +113,10 @@ Every occurrence in both the body and the `speakers` frontmatter array is rewrit
 | Deepgram model | `nova-3` (latest) / `nova-2` (stable) | `nova-3` |
 | Speaker diarization | Produce per-speaker transcripts | `true` |
 | Zero Retention | Ask Deepgram to discard data after processing | `true` |
+| Gemini API key | Optional. Enables the AI summary menus | (none) |
+| Gemini model | `gemini-2.5-flash` (fast/cheap) / `gemini-2.5-pro` (higher quality) | `gemini-2.5-flash` |
+| Templates folder | Where to find summary templates | `ObsiDeep/Templates` |
+| Summaries folder | Where AI summary notes are written | `ObsiDeep/AI-Summaries` |
 
 See [FEATURES.md](FEATURES.md) for the full template token reference, accuracy guide (audio quality, speaker count, recording-room checklist), mobile usage notes, and update check.
 

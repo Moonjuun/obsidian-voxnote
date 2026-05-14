@@ -1,5 +1,28 @@
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-14
+
+### Added
+- **AI summary (Gemini)** — optional feature, fully gated on a Gemini API key.
+  - File-based templates in `ObsiDeep/Templates/` (frontmatter declares `prompt`, `placeholders`, `favorite`); favorites surface as top-level menu items, the rest sit in an `AI 요약 ▸` submenu.
+  - System placeholders filled by code: `{{transcript}}`, `{{title}}`, `{{date}}`, `{{datetime}}`, `{{source}}`, `{{language}}`, `{{duration}}`, `{{speakers}}`. AI placeholders declared per template, filled by Gemini 2.5 structured output (JSON mode).
+  - Three commands: **"STT + AI 요약 (Transcribe and summarize)"**, **"현재 노트를 AI로 요약 (Summarize current note with AI)"**, **"새 요약 템플릿 만들기 (Create new summary template)"**.
+  - Right-click submenu (`ObsiDeep ▸ ...`) on audio files (STT only / STT + favorite summaries / submenu of other templates) and on markdown notes (re-summarize with any template).
+  - Summary notes saved to `ObsiDeep/AI-Summaries/{title} (요약).md` with `source: "[[...]]"` backlink and `template:` metadata.
+  - Three starter templates seeded on first consent: `Meeting.md` (favorite), `Interview.md`, `Lecture.md`.
+  - Two folders auto-created at consent time: `Templates/`, `AI-Summaries/`.
+- Settings tab: new **"AI 요약 (Gemini)"** section (api key, model dropdown, templates folder, summaries folder).
+
+### Changed
+- Existing audio file menu item `"Transcribe with Deepgram"` moved under the new `ObsiDeep ▸` submenu (now `STT만 추출`). The command palette entry is unchanged.
+- `MenuItem.setSubmenu()` typing added via module augmentation (Obsidian d.ts gap).
+
+### Tests
+- 67 new vitest cases across `providers/gemini`, `template-loader`, `summary-engine`, `summary-runner`, `template-starter`, `built-in-templates`. Total: 98 passing.
+
+### Safe to upgrade
+- STT-only flow is unchanged. With no Gemini key set, no AI menus appear and no new behavior triggers.
+
 ## [1.0.0] - 2026-05-12
 
 ### Summary

@@ -7,6 +7,7 @@
 - [정확도 가이드 (오디오 품질·화자 수)](#정확도-가이드)
 - [화자 이름 정리 (Rename speaker)](#화자-이름-정리)
 - [템플릿 토큰](#템플릿-토큰)
+- [AI 요약 (Gemini)](#ai-요약-gemini)
 - [업데이트 확인](#업데이트-확인)
 - [모바일에서 사용](#모바일에서-사용)
 
@@ -96,6 +97,90 @@ speakers: {{speakers_list}}
 
 {{transcript}}
 ```
+
+---
+
+## AI 요약 (Gemini)
+
+STT만 사용해도 충분하지만, Gemini API 키를 등록하면 원하는 양식으로 요약된 두 번째 노트를 동시에 생성할 수 있습니다.
+
+### 설정
+
+1. [Google AI Studio](https://aistudio.google.com/apikey)에서 API 키 발급
+2. 설정 → Deepgram Meeting STT → **"Gemini API 키"**에 붙여넣기
+3. 모델은 기본 `gemini-2.5-flash` (빠르고 저렴). 더 높은 품질이 필요하면 `gemini-2.5-pro`로 전환.
+
+키가 비어있으면 AI 관련 메뉴는 보이지 않고 기존 STT 흐름만 동작합니다.
+
+### 동작 방식
+
+- **템플릿 폴더** (`ObsiDeep/Templates/`, 변경 가능): 요약 양식을 정의하는 마크다운 파일들. 처음 설치 시 `Meeting.md`(favorite), `Interview.md`, `Lecture.md` 3개가 자동 생성됩니다.
+- **요약 폴더** (`ObsiDeep/AI-Summaries/`): 요약 결과 노트가 `{제목} (요약).md` 이름으로 저장됩니다. frontmatter에 원본 STT 노트로의 `source: "[[...]]"` 백링크가 자동 삽입됩니다.
+
+### 우클릭 메뉴
+
+오디오 파일 우클릭 → **ObsiDeep ▸**
+- **STT만 추출** — 기존 흐름
+- **⭐ STT + 요약: Meeting** — favorite 템플릿은 평면으로 노출
+- **AI 요약 ▸** — 그 외 템플릿들은 서브메뉴
+
+기존 마크다운 노트 우클릭 → **ObsiDeep ▸ AI 요약: {template}** — STT 노트(또는 임의의 노트)를 새 템플릿으로 다시 요약할 수 있습니다.
+
+### 템플릿 파일 형식
+
+```markdown
+---
+name: "Meeting"
+favorite: true
+prompt: |
+  Summarize the transcript as meeting minutes.
+  - decisions: clear, one bullet per decision.
+  - action_items: use checkbox markdown; include owner name when present.
+placeholders:
+  summary: "3-5 bullet overview of the discussion"
+  decisions: "Bullet list of decisions made"
+  action_items: "Checkbox list of action items (with owner if mentioned)"
+---
+# {{title}}
+
+> Source: {{source}} · {{date}} · {{duration}}
+
+## Summary
+{{summary}}
+
+## Decisions
+{{decisions}}
+
+## Action Items
+{{action_items}}
+```
+
+- `prompt` — Gemini에게 보내는 지시문. 응답 언어는 UI 언어를 따라 자동으로 추가됩니다.
+- `placeholders` — Gemini가 채울 키와 그 설명. Gemini 2.5의 structured output(JSON mode)으로 한 번에 채워집니다.
+- `favorite: true` — 우클릭 메뉴 평면에 노출. 여러 개 가능.
+- 본문에서 `{{key}}` 형태로 placeholder를 사용. 시스템 placeholder도 함께 쓸 수 있음.
+
+### 시스템 placeholder (코드가 채움)
+
+| 토큰 | 치환 결과 |
+|---|---|
+| `{{transcript}}` | STT 결과 본문 (요약 명령에서는 입력으로도 사용됨) |
+| `{{title}}` | 사용자 입력 제목 |
+| `{{date}}` | `YYYY-MM-DD` |
+| `{{datetime}}` | `YYYY-MM-DD HH:MM` |
+| `{{source}}` | 원본 STT 노트로의 `[[wikilink]]` |
+| `{{language}}` | UI 언어 라벨 (예: `Korean`) |
+| `{{duration}}` | `HH:MM:SS` 또는 `MM:SS` |
+| `{{speakers}}` | 등장 화자 목록 (콤마 구분) |
+
+### 새 템플릿 만들기
+
+명령 팔레트 → **"새 요약 템플릿 만들기 (Create new summary template)"** 를 실행하면 모든 시스템 placeholder가 주석으로 정리된 스타터 파일이 `Templates/` 폴더에 생성되어 바로 열립니다.
+
+### 실패 시 동작
+
+- **STT 실패**: 전체 abort. 요약 단계 실행 안 함.
+- **요약 실패**: STT 노트는 살리고 요약만 Notice로 에러 표시. Gemini가 잘못된 JSON을 반환하면 자동으로 1회 재시도합니다.
 
 ---
 

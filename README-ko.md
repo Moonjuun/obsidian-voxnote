@@ -5,6 +5,7 @@
 - 한국어 회의 / 화자 분리(Diarize) / 마크다운 자동 포맷
 - 파일 우클릭 또는 명령 팔레트에서 한 번에 변환
 - 외부 템플릿 지원 (frontmatter / 본문 자유 커스텀)
+- **AI 요약 (옵션, Gemini)** — `ObsiDeep/Templates/` 폴더에 템플릿(.md)을 두면 우클릭 한 번으로 원하는 양식의 요약 노트를 자동 생성. STT 단독으로도 사용 가능 (Gemini 키 없으면 AI 메뉴는 자동 숨김).
 
 > 🇺🇸 English: [README.md](README.md)
 
@@ -85,6 +86,19 @@ ObsiDeep/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 
 
 ---
 
+## AI 요약 (옵션)
+
+1. **설정 → Deepgram Meeting STT → "Gemini API 키"**에 [Google AI Studio](https://aistudio.google.com/apikey)에서 발급한 키 붙여넣기.
+2. 처음 동의하면 `ObsiDeep/Templates/` 폴더에 기본 템플릿 3개가 자동 생성됩니다 — `Meeting.md` (favorite), `Interview.md`, `Lecture.md`.
+3. 오디오 파일 우클릭 → **`ObsiDeep ▸ STT + 요약: Meeting`** → STT 노트는 `ObsiDeep/STT/`에, 요약 노트는 `ObsiDeep/AI-Summaries/{제목} (요약).md`에 자동 저장 + 원본 백링크 포함.
+4. 기존 마크다운 노트 우클릭 → **`ObsiDeep ▸ AI 요약: Meeting`** → 다른 템플릿으로 다시 요약 가능.
+
+템플릿 파일의 frontmatter를 열어 prompt나 placeholders, `favorite` 여부를 자유롭게 수정하면 됩니다. 명령 팔레트의 **"새 요약 템플릿 만들기"**를 실행하면 모든 시스템 placeholder가 주석으로 정리된 스타터 파일이 만들어집니다.
+
+Gemini 키가 비어있으면 AI 관련 메뉴는 표시되지 않고 STT만 동작합니다.
+
+---
+
 ## 화자 이름 정리
 
 회의록의 frontmatter `speakers` 항목은 기본적으로 `화자 1`, `화자 2` 같은 익명 라벨로 채워집니다. 실제 이름으로 바꿔두면 검색·추적이 쉬워집니다.
@@ -121,6 +135,10 @@ ObsiDeep/              ← 통째로 .gitignore 됨 (git sync 시 외부 유출 
 | Deepgram 모델 | `nova-3` (최신) / `nova-2` | `nova-3` |
 | 화자 분리 (Diarize) | 화자별로 분리된 transcript 생성 | `true` |
 | Zero Retention | Deepgram 측 데이터 보관 비활성화 (요금제 조건) | `true` |
+| Gemini API 키 | (옵션) AI 요약 메뉴를 활성화 | (없음) |
+| Gemini 모델 | `gemini-2.5-flash` (빠르고 저렴) / `gemini-2.5-pro` (정확도 우선) | `gemini-2.5-flash` |
+| 템플릿 폴더 | 요약 템플릿(.md)이 들어있는 폴더 | `ObsiDeep/Templates` |
+| 요약 저장 폴더 | AI 요약 결과를 저장할 폴더 | `ObsiDeep/AI-Summaries` |
 
 ---
 
