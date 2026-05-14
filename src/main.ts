@@ -24,6 +24,7 @@ export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
 	templatesCache: TemplateMeta[] = [];
 	private consentModalOpen = false;
+	private settingTab: DeepgramSettingTab | null = null;
 
 	get t(): T {
 		return makeT(detectLang(this.settings.uiLanguage));
@@ -32,7 +33,8 @@ export default class DeepgramSttPlugin extends Plugin {
 	async onload(): Promise<void> {
 		await this.loadSettings();
 
-		this.addSettingTab(new DeepgramSettingTab(this.app, this));
+		this.settingTab = new DeepgramSettingTab(this.app, this);
+		this.addSettingTab(this.settingTab);
 
 		if (!this.settings.consentAcknowledged) {
 			this.app.workspace.onLayoutReady(() => {
@@ -120,6 +122,7 @@ export default class DeepgramSttPlugin extends Plugin {
 
 	onunload(): void {
 		this.consentModalOpen = false;
+		this.settingTab = null;
 	}
 
 	async loadSettings(): Promise<void> {
@@ -184,6 +187,7 @@ export default class DeepgramSttPlugin extends Plugin {
 				this.settings.consentAcknowledged = true;
 				await this.saveSettings();
 				await this.runConsentSideEffects();
+				this.settingTab?.display();
 			},
 			(acknowledged: boolean) => {
 				this.consentModalOpen = false;
@@ -196,6 +200,7 @@ export default class DeepgramSttPlugin extends Plugin {
 						10000,
 					);
 				}
+				this.settingTab?.display();
 			},
 		).open();
 	}

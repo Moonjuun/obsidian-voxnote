@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [1.1.5] - 2026-05-14
+
+### Fixed
+- **Consent banner styling overpowered the rest of the settings page.** v1.1.4 shipped the banner with a solid red background that filled the row edge-to-edge and visually dominated the page. Re-styled as a subtle muted-background card with a thin left-accent stripe in `--text-warning`, matching Obsidian's native callout/admonition pattern. The CTA button is left-aligned and the description hides the empty `setting-item-info` slot so the row is compact.
+- **Dismiss-without-acknowledge Notice could fire twice.** `ConsentModal.onClose` had no guard against re-entry — depending on how Obsidian routed Esc / click-outside / explicit `close()` calls, the close callback could fire twice and surface two stacked toasts. Added a `closeFired` flag so the callback fires at most once per modal lifetime.
+- **Settings tab didn't re-render after acknowledging.** After clicking "동의하고 시작" the modal closed but the warning banner stayed visible (because `PluginSettingTab.display()` only runs on tab activation, not on internal state change) — making users think nothing happened and re-click the banner button, which fires `showConsentAgain()` and resets `consentAcknowledged` back to false, creating a loop. The plugin now stores a reference to the settings tab and calls `display()` once after the consent flow finishes (both acknowledge and dismiss paths) so the banner correctly disappears / reappears in sync with state.
+- **Hardened the acknowledge button against double-clicks and side-effect errors.** Added an `inFlight` guard plus an `acknowledged` early-return so rapid repeated clicks no longer queue multiple `onAcknowledge` invocations; the button visibly disables and changes to "진행 중..." during processing; and `onAcknowledge` is wrapped in a try/catch/finally so an exception inside `applyConsentSideEffects` can no longer strand the modal in an open state — `close()` always runs.
+
 ## [1.1.4] - 2026-05-14
 
 ### Added

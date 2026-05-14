@@ -6,6 +6,8 @@ export class ConsentModal extends Modal {
 	private readonly onCloseCallback?: (acknowledged: boolean) => void;
 	private readonly t: T;
 	private acknowledged = false;
+	private inFlight = false;
+	private closeFired = false;
 
 	constructor(
 		app: App,
@@ -65,14 +67,25 @@ export class ConsentModal extends Modal {
 				.setButtonText(t('동의하고 시작', 'I agree, get started'))
 				.setCta()
 				.onClick(async () => {
+					if (this.inFlight || this.acknowledged) return;
+					this.inFlight = true;
 					this.acknowledged = true;
-					await this.onAcknowledge();
-					this.close();
+					btn.setDisabled(true).setButtonText(t('진행 중...', 'Processing...'));
+					try {
+						await this.onAcknowledge();
+					} catch (e) {
+						console.error('[ObsiDeep] consent side effects failed:', e);
+					} finally {
+						this.inFlight = false;
+						this.close();
+					}
 				}),
 		);
 	}
 
 	onClose() {
+		if (this.closeFired) return;
+		this.closeFired = true;
 		this.contentEl.empty();
 		this.onCloseCallback?.(this.acknowledged);
 	}
