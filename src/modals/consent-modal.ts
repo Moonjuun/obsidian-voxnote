@@ -3,14 +3,15 @@ import type { T } from '../utils/i18n';
 
 export class ConsentModal extends Modal {
 	private readonly onAcknowledge: () => Promise<void> | void;
-	private readonly onCloseCallback?: () => void;
+	private readonly onCloseCallback?: (acknowledged: boolean) => void;
 	private readonly t: T;
+	private acknowledged = false;
 
 	constructor(
 		app: App,
 		t: T,
 		onAcknowledge: () => Promise<void> | void,
-		onCloseCallback?: () => void,
+		onCloseCallback?: (acknowledged: boolean) => void,
 	) {
 		super(app);
 		this.t = t;
@@ -64,6 +65,7 @@ export class ConsentModal extends Modal {
 				.setButtonText(t('동의하고 시작', 'I agree, get started'))
 				.setCta()
 				.onClick(async () => {
+					this.acknowledged = true;
 					await this.onAcknowledge();
 					this.close();
 				}),
@@ -72,6 +74,6 @@ export class ConsentModal extends Modal {
 
 	onClose() {
 		this.contentEl.empty();
-		this.onCloseCallback?.();
+		this.onCloseCallback?.(this.acknowledged);
 	}
 }

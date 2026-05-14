@@ -10,8 +10,8 @@ export function friendlyMessage(err: DeepgramApiError, t: T): string {
 	switch (err.status) {
 		case 401:
 			return t(
-				'⚠ API 키 인증 실패\n설정 → Deepgram Meeting STT에서 키를 다시 확인하세요.',
-				'⚠ API key auth failed\nCheck Settings → Deepgram Meeting STT and re-validate the key.',
+				'⚠ API 키 인증 실패\n설정 → ObsiDeep에서 키를 다시 확인하세요.',
+				'⚠ API key auth failed\nCheck Settings → ObsiDeep and re-validate the key.',
 			);
 		case 413:
 			return t(

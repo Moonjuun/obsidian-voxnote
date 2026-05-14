@@ -1,4 +1,4 @@
-# Deepgram Meeting STT
+# ObsiDeep — Meeting Transcription & AI Summary
 
 An Obsidian plugin that turns meeting recordings into Markdown notes — **speech-to-text via [Deepgram](https://deepgram.com)** with per-speaker timestamps, plus an **optional AI summary** step via Google Gemini that drops a structured digest next to the transcript.
 
@@ -21,7 +21,7 @@ An Obsidian plugin that turns meeting recordings into Markdown notes — **speec
 ## Install
 
 1. **Settings → Community plugins → Browse**
-2. Search for **"Deepgram Meeting STT"**
+2. Search for **"ObsiDeep"**
 3. Install + Enable
 
 ## Setup
@@ -38,7 +38,7 @@ On first enable, a one-time consent modal explains what's sent to Deepgram and a
 
    ![Create API Key dialog](img/img2.webp)
 
-3. Paste into **Settings → Deepgram Meeting STT → "Deepgram API key"** → click **Validate**.
+3. Paste into **Settings → ObsiDeep → "Deepgram API key"** → click **Validate**.
 
    ![Plugin settings tab](img/img3.webp)
 
@@ -47,7 +47,7 @@ On first enable, a one-time consent modal explains what's sent to Deepgram and a
 Leave this blank if you only want STT. To enable AI summary:
 
 1. Open [Google AI Studio → API keys](https://aistudio.google.com/apikey) and create one.
-2. Paste into **Settings → Deepgram Meeting STT → "Gemini API key"**.
+2. Paste into **Settings → ObsiDeep → "Gemini API key"**.
 3. Pick a model — `gemini-2.5-flash` (default, fast & cheap) or `gemini-2.5-pro` (higher quality).
 
 The AI menus stay hidden until a key is set.

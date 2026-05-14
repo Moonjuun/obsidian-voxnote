@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-deepgram-stt",
-	"version": "1.1.3",
-	"description": "Obsidian plugin for meeting transcription via Deepgram API.",
+	"version": "1.1.4",
+	"description": "Obsidian plugin: Deepgram STT + Gemini AI summary for meeting recordings.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

@@ -9,7 +9,7 @@ const AUDIO_SUBFOLDER = `${ROOT_FOLDER}/Audio`;
 const STT_SUBFOLDER = `${ROOT_FOLDER}/STT`;
 const TEMPLATES_SUBFOLDER = `${ROOT_FOLDER}/Templates`;
 const SUMMARIES_SUBFOLDER = `${ROOT_FOLDER}/AI-Summaries`;
-const COMMENT = '# Deepgram Meeting STT — protect API key + meeting recordings & notes from vault git sync';
+const COMMENT = '# ObsiDeep — protect API key + meeting recordings & notes from vault git sync';
 
 export type GitignoreResult = 'added' | 'partial' | 'exists' | 'no-gitignore' | 'error';
 export type FolderResult = 'created' | 'partial' | 'exists' | 'error';

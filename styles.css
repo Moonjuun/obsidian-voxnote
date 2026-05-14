@@ -1,8 +1,26 @@
-/*
+.obsideep-consent-banner {
+	margin: 12px 0 24px;
+	padding: 12px 16px;
+	border: 1px solid var(--background-modifier-error-border, var(--text-error));
+	border-left: 4px solid var(--text-error);
+	border-radius: 6px;
+	background: var(--background-modifier-error-hover, rgba(255, 80, 80, 0.08));
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.obsideep-consent-banner-title {
+	font-weight: 600;
+	margin-bottom: 4px;
+	color: var(--text-error);
+}
 
-If your plugin does not need CSS, delete this file.
+.obsideep-consent-banner-body {
+	margin: 4px 0 8px;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+}
 
-*/
+.obsideep-consent-banner .setting-item {
+	border: none;
+	padding: 4px 0 0;
+}

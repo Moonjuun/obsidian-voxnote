@@ -1,5 +1,20 @@
 ## [Unreleased]
 
+## [1.1.4] - 2026-05-14
+
+### Added
+- **Consent-not-completed recovery UX.** Closing the first-run consent modal without clicking "I agree" used to leave the workspace in an uninitialized state with no surfaced way to recover — users could click into Settings, paste an API key, and never realize the `ObsiDeep/` folders + `.gitignore` rules hadn't been applied. Two changes: (1) **dismissed-without-acknowledge Notice** — when the modal is closed via Esc / click-outside, a 10s Notice explains the workspace wasn't created and points to the two recovery paths; (2) **warning banner at the top of the settings tab** when `consentAcknowledged === false` — red-bordered card with a "Re-open consent modal" CTA button (also styled in `styles.css`). The existing command-palette command `"동의 모달 다시 보기" / "Reset consent (show notice again)"` is unchanged but is now properly discoverable.
+
+### Changed
+- **Plugin renamed: "Deepgram Meeting STT" → "ObsiDeep — Meeting Transcription & AI Summary".** The old name only signalled STT and didn't reflect the AI summary path that the plugin has shipped since 1.1.0; the vault workspace was already branded "ObsiDeep", so the display name now matches. **`id` is unchanged** (`deepgram-meeting-stt`), so existing installs migrate cleanly — settings, API keys, and Community Plugins update flow all carry over. The id stays for backwards compatibility with obsidian-releases registration; only the display name changes.
+- **Vault README + FEATURES (`ObsiDeep/README.md`, `ObsiDeep/FEATURES.md`) refreshed end-to-end.** Folder layout section now includes `Templates/` and `AI-Summaries/` (previously only `Audio/` + `STT/`). Cost section reframed as Deepgram + Gemini combined. **FEATURES gained a full "AI summary (Gemini)" section** documenting setup, flows (audio → STT+summary, re-summarize existing notes), built-in templates table, template file format, system placeholders, scaffold command, and failure behavior — bringing it to parity with the GitHub `FEATURES.md` which already covered this.
+- Plugin-loaded toast, key-auth error notice, gitignore comment, and all "Settings → Deepgram Meeting STT" references updated to "ObsiDeep".
+
+### Migration
+- Existing 1.1.3 users: display name updates automatically on next Community Plugins refresh; no action needed. **Vault README/FEATURES inside existing vaults will NOT auto-update** (the installer is "create if not exists"). To pick up the new content: delete `ObsiDeep/README.md` + `ObsiDeep/FEATURES.md` and run the **"동의 모달 다시 보기"** command — the files will be re-seeded with the new content. Settings, API keys, and templates are untouched by this.
+
+## [1.1.3] - 2026-05-14
+
 ### Fixed
 - **Summary list fields rendering as a single run-on paragraph.** Gemini was returning bullet/checkbox/blockquote values as one string with items glued together by `.- ` / `.- [ ] ` / `.> ` instead of real newlines, so Obsidian rendered the whole `summary` block as one bullet with the rest as inline body text. Two-part fix: (1) `buildGeminiPrompt` now appends a universal FORMATTING RULES block instructing the model to put every list item on its own line with a real `\n` separator and explicitly forbidding the `- one.- two` shape; (2) new `normalizeListNewlines()` defensively splits any inline `.- `, `.- [ ] `, `.> ` patterns — and Korean noun-form endings (`함 / 됨 / 임 / 중 / 료`) followed by `- ` — into newline-separated form before placeholder substitution. Applies to all six built-in templates and works retroactively for users who already seeded older templates (the rule is added in code, not in template content).
 

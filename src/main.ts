@@ -47,8 +47,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			callback: () => {
 				new Notice(
 					this.t(
-						'Deepgram Meeting STT — 플러그인이 로드되었습니다.',
-						'Deepgram Meeting STT — plugin loaded!',
+						'ObsiDeep — 플러그인이 로드되었습니다.',
+						'ObsiDeep — plugin loaded!',
 					),
 				);
 			},
@@ -185,8 +185,17 @@ export default class DeepgramSttPlugin extends Plugin {
 				await this.saveSettings();
 				await this.runConsentSideEffects();
 			},
-			() => {
+			(acknowledged: boolean) => {
 				this.consentModalOpen = false;
+				if (!acknowledged) {
+					new Notice(
+						this.t(
+							'동의가 완료되지 않아 ObsiDeep 폴더가 생성되지 않았습니다.\n설정 → ObsiDeep 상단의 "동의 모달 다시 보기" 버튼, 또는 명령 팔레트의 "동의 모달 다시 보기"로 다시 열 수 있습니다.',
+							'Consent not completed — the ObsiDeep workspace folders were not created.\nRe-open via Settings → ObsiDeep (banner at the top) or the command palette ("Reset consent").',
+						),
+						10000,
+					);
+				}
 			},
 		).open();
 	}
@@ -199,7 +208,7 @@ export default class DeepgramSttPlugin extends Plugin {
 		this.notifyConsentResult(result);
 	}
 
-	private async showConsentAgain(): Promise<void> {
+	async showConsentAgain(): Promise<void> {
 		this.settings.consentAcknowledged = false;
 		await this.saveSettings();
 		this.openConsentModal();

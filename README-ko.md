@@ -1,4 +1,4 @@
-# Deepgram Meeting STT
+# ObsiDeep — Meeting Transcription & AI Summary
 
 옵시디언 안에서 회의 녹음을 마크다운 노트로 변환하는 플러그인. **[Deepgram](https://deepgram.com) STT로 화자 분리·시간 세그먼트 포함 회의록을 만들고**, **선택적으로 Google Gemini로 구조화된 요약 노트까지** 같이 떨어뜨립니다.
 
@@ -25,14 +25,14 @@
 ### 방법 1 — Obsidian Community Plugins (권장)
 
 1. 옵시디언 설정 → Community plugins → Browse
-2. **"Deepgram Meeting STT"** 검색
+2. **"ObsiDeep"** 검색
 3. Install + Enable
 
 ### 방법 2 — 수동
 
 1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
 2. 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt/` 폴더(없으면 생성)에 3개 파일 복사.
-3. 옵시디언 재시작 → Community plugins → "Deepgram Meeting STT" 활성화.
+3. 옵시디언 재시작 → Community plugins → "ObsiDeep" 활성화.
 
 ---
 

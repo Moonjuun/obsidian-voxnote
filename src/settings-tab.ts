@@ -15,10 +15,39 @@ export class DeepgramSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	private renderConsentBanner(containerEl: HTMLElement): void {
+		const t = this.plugin.t;
+		const banner = containerEl.createDiv({ cls: 'obsideep-consent-banner' });
+		banner.createEl('div', {
+			cls: 'obsideep-consent-banner-title',
+			text: t(
+				'⚠ 동의가 완료되지 않았습니다',
+				'⚠ Consent not completed',
+			),
+		});
+		banner.createEl('p', {
+			cls: 'obsideep-consent-banner-body',
+			text: t(
+				'ObsiDeep/ 작업 공간(Audio·STT·Templates·AI-Summaries 폴더)과 vault .gitignore 보호 룰이 아직 생성되지 않았습니다. 동의 모달을 다시 열어 확인 후 진행해주세요.',
+				'The ObsiDeep/ workspace (Audio · STT · Templates · AI-Summaries folders) and vault .gitignore protection rules have not been created yet. Re-open the consent modal to continue.',
+			),
+		});
+		new Setting(banner).addButton((btn) =>
+			btn
+				.setButtonText(t('동의 모달 다시 보기', 'Re-open consent modal'))
+				.setCta()
+				.onClick(() => void this.plugin.showConsentAgain()),
+		);
+	}
+
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		const t = this.plugin.t;
+
+		if (!this.plugin.settings.consentAcknowledged) {
+			this.renderConsentBanner(containerEl);
+		}
 
 		// ─── General ─────────────────────────────────────────────────
 		new Setting(containerEl).setName(t('일반', 'General')).setHeading();
