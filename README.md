@@ -2,7 +2,7 @@
 
 An Obsidian plugin that turns meeting recordings into Markdown notes — **speech-to-text via [Deepgram](https://deepgram.com)** with per-speaker timestamps, plus an **optional AI summary** step via Google Gemini that drops a structured digest next to the transcript.
 
-> 🇰🇷 한국어 가이드: [README-ko.md](README-ko.md)
+> 🇰🇷 한국어 가이드: [README-ko.md](https://github.com/Moonjuun/obsidian-voxnote/blob/main/README-ko.md)
 
 > **Migrating from "Deepgram Meeting STT"?** The plugin was relisted as **VoxNote** in v2.0.0 (id `voxnote`). The old listing has been withdrawn from the Obsidian community directory, so the old plugin will not auto-update to 2.0.0. To switch: uninstall the old plugin → search "VoxNote" in Community plugins → install → re-enter your Deepgram + Gemini API keys. Your `VoxNote/` vault folder (recordings, transcripts, templates, summaries) is untouched.
 
