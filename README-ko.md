@@ -4,6 +4,8 @@
 
 > 🇺🇸 English: [README.md](README.md)
 
+> **"Deepgram Meeting STT" 에서 옮겨오시는 분께** — v2.0.0 부터 플러그인이 **VoxNote** (id `voxnote`)로 재등록되었습니다. 기존 listing 은 마켓에서 내려갔기 때문에 자동 업데이트로 2.0.0 을 받지 못합니다. 이전 방법: 기존 플러그인 제거 → Community plugins 에서 **"VoxNote" 검색** → 설치 → Deepgram·Gemini API 키 재입력. vault 의 `VoxNote/` 폴더(녹음·STT·템플릿·요약본)는 그대로 유지됩니다.
+
 ---
 
 ## 핵심 기능
@@ -31,7 +33,7 @@
 ### 방법 2 — 수동
 
 1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
-2. 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt/` 폴더(없으면 생성)에 3개 파일 복사.
+2. 본인 vault의 `.obsidian/plugins/voxnote/` 폴더(없으면 생성)에 3개 파일 복사.
 3. 옵시디언 재시작 → Community plugins → "VoxNote" 활성화.
 
 ---
@@ -271,7 +273,7 @@ Gemini API 사용은 Google의 [Gemini API 약관](https://ai.google.dev/gemini-
 
 ### API 키 + 회의 녹음 자동 보호
 
-- API 키는 vault 내 `.obsidian/plugins/deepgram-meeting-stt/data.json`에 **평문 JSON으로 저장**됩니다.
+- API 키는 vault 내 `.obsidian/plugins/voxnote/data.json`에 **평문 JSON으로 저장**됩니다.
 - 첫 실행 모달에서 동의 시 vault `.gitignore`에 자동 보호 룰을 추가합니다.
 - 회의 참석자에게 **녹음 및 외부 API 전송에 대한 사전 동의**를 받으시는 것을 권장합니다.
 

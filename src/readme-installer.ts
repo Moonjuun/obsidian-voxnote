@@ -115,7 +115,7 @@ Deepgram은 다음 보안·규제 표준을 준수합니다:
 ### vault 측 보호
 
 - 이 폴더(\`VoxNote/\`)는 vault \`.gitignore\`에 등록되어 git에 올라가지 않습니다.
-- API 키 파일(\`.obsidian/plugins/deepgram-meeting-stt/data.json\`)도 \`.gitignore\`로 보호.
+- API 키 파일(\`.obsidian/plugins/voxnote/data.json\`)도 \`.gitignore\`로 보호.
 
 ### 권장 사항
 
@@ -231,7 +231,7 @@ The plugin sends \`dg-zero-retention: true\` to Deepgram by default.
 ### Vault-side protection
 
 - This \`VoxNote/\` folder is added to your vault's \`.gitignore\`, so its contents never enter vault git sync.
-- Your API key (\`.obsidian/plugins/deepgram-meeting-stt/data.json\`) is excluded the same way.
+- Your API key (\`.obsidian/plugins/voxnote/data.json\`) is excluded the same way.
 
 ### Recommendations
 

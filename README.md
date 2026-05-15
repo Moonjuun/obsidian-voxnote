@@ -4,6 +4,8 @@ An Obsidian plugin that turns meeting recordings into Markdown notes — **speec
 
 > 🇰🇷 한국어 가이드: [README-ko.md](README-ko.md)
 
+> **Migrating from "Deepgram Meeting STT"?** The plugin was relisted as **VoxNote** in v2.0.0 (id `voxnote`). The old listing has been withdrawn from the Obsidian community directory, so the old plugin will not auto-update to 2.0.0. To switch: uninstall the old plugin → search "VoxNote" in Community plugins → install → re-enter your Deepgram + Gemini API keys. Your `VoxNote/` vault folder (recordings, transcripts, templates, summaries) is untouched.
+
 ---
 
 ## What you get
@@ -200,7 +202,7 @@ See [FEATURES.md](FEATURES.md) for the full placeholder reference, AI summary de
 ## Security & Privacy
 
 - Audio is sent to Deepgram over HTTPS for processing. Transcript text is sent to Gemini *only* if you trigger an AI summary.
-- Your API keys are stored locally as plain JSON in `.obsidian/plugins/deepgram-meeting-stt/data.json` (Obsidian plugin standard). The plugin auto-adds this path to your vault's `.gitignore`.
+- Your API keys are stored locally as plain JSON in `.obsidian/plugins/voxnote/data.json` (Obsidian plugin standard). The plugin auto-adds this path to your vault's `.gitignore`.
 - The `VoxNote/` folder is also auto-added to `.gitignore` so recordings, transcripts, and summaries never enter vault git sync.
 - Deepgram complies with **GDPR / SOC 2 Type II / HIPAA (with BAA) / CCPA**. See [Deepgram Trust Center](https://trust.deepgram.com) and [Privacy Policy](https://deepgram.com/privacy).
 - **Zero Retention** is on by default for Deepgram. Guaranteed immediate effect on Growth or higher Deepgram plans; free / Pay-as-you-go tier may still retain data per standard policy (~30 days).

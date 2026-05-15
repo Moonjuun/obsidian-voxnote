@@ -35,7 +35,7 @@ export async function applyConsentSideEffects(app: App, lang: Lang): Promise<Con
 
 async function ensureGitignoreRules(app: App): Promise<GitignoreResult> {
 	const rules = [
-		`${app.vault.configDir}/plugins/deepgram-meeting-stt/data.json`,
+		`${app.vault.configDir}/plugins/voxnote/data.json`,
 		`${ROOT_FOLDER}/`,
 		`${ROOT_FOLDER}/README.md`,
 		`${ROOT_FOLDER}/FEATURES.md`,

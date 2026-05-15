@@ -1,12 +1,32 @@
 ## [Unreleased]
 
-## [1.1.6] - 2026-05-15
+## [2.0.0] - 2026-05-15
+
+### Breaking
+- **Plugin re-listed under new id `voxnote` (was `deepgram-meeting-stt`).** The Obsidian community directory does not allow renaming the catalog display name of an already-registered plugin via self-service editing, and PR-based updates to `obsidian-releases` have been deprecated. To complete the rebrand from "Deepgram Meeting STT" to "VoxNote", the old listing was withdrawn from the directory and the plugin was re-submitted as a new entry under id `voxnote`.
+
+### Migration (REQUIRED for existing v1.x users)
+v1.x users on `deepgram-meeting-stt` **will not receive 2.0.0 as an automatic update** — Obsidian treats it as an unrelated plugin because the id changed. To switch:
+
+1. In Obsidian → Settings → Community plugins, **uninstall** the old "Deepgram Meeting STT" plugin (it may already show as "removed" / unavailable after the old listing was withdrawn).
+2. **Search for "VoxNote"** in Community plugins → Browse, and install it.
+3. **Re-enter your API keys** (Deepgram + Gemini if used) — the data.json path moved from `.obsidian/plugins/deepgram-meeting-stt/data.json` to `.obsidian/plugins/voxnote/data.json` and Obsidian does not migrate it automatically.
+4. Your vault data (the `VoxNote/` workspace folder: Audio, STT, Templates, AI-Summaries) is **untouched** — it sits at the vault root, not under `.obsidian/plugins/`, so re-installing finds your existing recordings, transcripts, templates, and summaries as-is.
+
+Functionally 2.0.0 ships the same feature set as the never-released 1.1.6 work below (consent recovery UX + VoxNote rebrand + Deepgram/ → VoxNote/ folder migration). The only reason for the major version bump is the id change.
+
+### Why the id changed
+v1.1.6 was rejected by the Obsidian automated review pipeline because the catalog `name` field (still "Deepgram Meeting STT" in `community-plugins.json`) did not match the new `manifest.json` name ("VoxNote — Meeting Transcription & AI Summary"). A prior attempt to rebrand to "ObsiDeep" was also rejected for containing parts of the "Obsidian" trademark. Submitting as a fresh `voxnote` listing was the only path forward — the alternative (a maintainer-side `community-plugins.json` edit) requires Obsidian staff action that this plugin's user-volume did not justify chasing.
+
+## [1.1.6] - 2026-05-15 (never publicly released)
+
+> Note: 1.1.6 was tagged on GitHub but the corresponding directory submission was withdrawn before merge in favor of the 2.0.0 re-listing above. The changes below are functionally shipped under 2.0.0.
 
 ### Added
 - **Consent-not-completed recovery UX.** Closing the first-run consent modal without clicking "I agree" used to leave the workspace in an uninitialized state with no surfaced way to recover — users could click into Settings, paste an API key, and never realize the `VoxNote/` folders + `.gitignore` rules hadn't been applied. Two changes: (1) **dismissed-without-acknowledge Notice** — when the modal is closed via Esc / click-outside, a 10s Notice explains the workspace wasn't created and points to the two recovery paths; (2) **warning banner at the top of the settings tab** when `consentAcknowledged === false` — muted-background card with a "Re-open consent modal" CTA button (also styled in `styles.css`). The existing command-palette command `"동의 모달 다시 보기" / "Reset consent (show notice again)"` is unchanged but is now properly discoverable.
 
 ### Changed
-- **Plugin renamed: "Deepgram Meeting STT" → "VoxNote — Meeting Transcription & AI Summary".** The old name only signalled STT and didn't reflect the AI summary path that the plugin has shipped since 1.1.0; the display name now reflects both capabilities. **`id` is unchanged** (`deepgram-meeting-stt`), so existing installs migrate cleanly — settings, API keys, and Community Plugins update flow all carry over. The id stays for backwards compatibility with obsidian-releases registration; only the display name changes.
+- **Plugin renamed: "Deepgram Meeting STT" → "VoxNote — Meeting Transcription & AI Summary".** The old name only signalled STT and didn't reflect the AI summary path that the plugin has shipped since 1.1.0; the display name now reflects both capabilities. At the time of the 1.1.6 tag the plugin `id` was kept as `deepgram-meeting-stt`; under 2.0.0 the id changed to `voxnote` (see Breaking above).
 - **Vault workspace folder renamed: `Deepgram/` → `VoxNote/`.** The auto-created vault folder (containing `Audio/`, `STT/`, `Templates/`, `AI-Summaries/`) now uses the new brand name. Default settings (`savedFolder`, `templatesFolder`, `summariesFolder`) point at `VoxNote/...`. The `.gitignore` rule added to the vault is updated accordingly.
 - **Vault README + FEATURES (`VoxNote/README.md`, `VoxNote/FEATURES.md`) refreshed end-to-end.** Folder layout section now includes `Templates/` and `AI-Summaries/` (previously only `Audio/` + `STT/`). Cost section reframed as Deepgram + Gemini combined. **FEATURES gained a full "AI summary (Gemini)" section** documenting setup, flows (audio → STT+summary, re-summarize existing notes), built-in templates table, template file format, system placeholders, scaffold command, and failure behavior — bringing it to parity with the GitHub `FEATURES.md` which already covered this.
 - Plugin-loaded toast, key-auth error notice, gitignore comment, settings tab descriptions, and right-click submenu label all updated to "VoxNote".
