@@ -1,7 +1,7 @@
 import { requestUrl } from 'obsidian';
 
 const RELEASES_LATEST_URL =
-	'https://api.github.com/repos/Moonjuun/obsidian-deepgram-stt/releases/latest';
+	'https://api.github.com/repos/Moonjuun/obsidian-voxnote/releases/latest';
 
 export interface LatestRelease {
 	tag: string;

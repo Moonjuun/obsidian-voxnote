@@ -5,7 +5,7 @@ import type { UiLang } from './utils/i18n';
 import { compareSemver, fetchLatestRelease, UpdateCheckError } from './update-checker';
 import type { GeminiModel } from './settings';
 
-const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-deepgram-stt/releases';
+const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-voxnote/releases';
 
 export class DeepgramSettingTab extends PluginSettingTab {
 	plugin: DeepgramSttPlugin;

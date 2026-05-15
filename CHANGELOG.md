@@ -178,8 +178,8 @@ v1.1.6 was rejected by the Obsidian automated review pipeline because the catalo
   `{{audio_link}}`, `{{language}}`, `{{model}}`).
 - 네트워크/5xx/429 오류 1회 자동 재시도 + 상황별 안내 메시지.
 
-[Unreleased]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.5.4...1.0.0
-[0.3.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.2.1...0.3.0
-[0.2.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/compare/0.1.0...0.2.0
-[0.1.0]: https://github.com/Moonjuun/obsidian-deepgram-stt/releases/tag/0.1.0
+[Unreleased]: https://github.com/Moonjuun/obsidian-voxnote/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/Moonjuun/obsidian-voxnote/compare/0.5.4...1.0.0
+[0.3.0]: https://github.com/Moonjuun/obsidian-voxnote/compare/0.2.1...0.3.0
+[0.2.0]: https://github.com/Moonjuun/obsidian-voxnote/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/Moonjuun/obsidian-voxnote/releases/tag/0.1.0

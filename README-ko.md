@@ -32,7 +32,7 @@
 
 ### 방법 2 — 수동
 
-1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
+1. [Releases](https://github.com/Moonjuun/obsidian-voxnote/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
 2. 본인 vault의 `.obsidian/plugins/voxnote/` 폴더(없으면 생성)에 3개 파일 복사.
 3. 옵시디언 재시작 → Community plugins → "VoxNote" 활성화.
 
