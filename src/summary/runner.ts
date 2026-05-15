@@ -64,7 +64,7 @@ export async function resolveSummaryPath(
 	title: string,
 ): Promise<string> {
 	const sanitized = sanitizeFilename(title);
-	const baseFolder = (summariesFolder || 'ObsiDeep/AI-Summaries').replace(/\/+$/, '');
+	const baseFolder = (summariesFolder || 'VoxNote/AI-Summaries').replace(/\/+$/, '');
 	const baseName = `${sanitized} (요약)`;
 	let path = normalizePath(`${baseFolder}/${baseName}.md`);
 	let counter = 2;

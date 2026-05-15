@@ -35,7 +35,7 @@ function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): voi
 	const others = templates.filter((t) => !t.favorite);
 
 	menu.addItem((item) => {
-		item.setTitle(plugin.t('ObsiDeep', 'ObsiDeep')).setIcon('mic');
+		item.setTitle(plugin.t('VoxNote', 'VoxNote')).setIcon('mic');
 		const submenu = item.setSubmenu();
 
 		submenu.addItem((it) =>
@@ -94,7 +94,7 @@ function buildMarkdownMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): 
 	const others = templates.filter((t) => !t.favorite);
 
 	menu.addItem((item) => {
-		item.setTitle(plugin.t('ObsiDeep', 'ObsiDeep')).setIcon('sparkles');
+		item.setTitle(plugin.t('VoxNote', 'VoxNote')).setIcon('sparkles');
 		const submenu = item.setSubmenu();
 
 		for (const tpl of favorites) {

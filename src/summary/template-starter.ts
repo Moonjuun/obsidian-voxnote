@@ -13,7 +13,7 @@ placeholders:
   key_points: "핵심 포인트 불릿"
 ---
 <!--
-ObsiDeep AI 요약 템플릿입니다.
+VoxNote AI 요약 템플릿입니다.
 
 frontmatter 필드:
   name:         우클릭 메뉴에 표시될 이름
@@ -54,7 +54,7 @@ placeholders:
   key_points: "Bullet list of key points"
 ---
 <!--
-ObsiDeep AI summary template.
+VoxNote AI summary template.
 
 Frontmatter fields:
   name:         Display name in the right-click menu.
@@ -97,7 +97,7 @@ export async function resolveStarterPath(
 	templatesFolder: string,
 	baseName: string,
 ): Promise<string> {
-	const folder = (templatesFolder || 'ObsiDeep/Templates').replace(/\/+$/, '');
+	const folder = (templatesFolder || 'VoxNote/Templates').replace(/\/+$/, '');
 	const safeBase =
 		(baseName || 'new-template').replace(/[\\/:*?"<>|]/g, '_').trim() || 'new-template';
 	let path = normalizePath(`${folder}/${safeBase}.md`);

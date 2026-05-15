@@ -49,15 +49,15 @@ export class ConsentModal extends Modal {
 		});
 		ul.createEl('li', {
 			text: t(
-				'동의 시 vault 루트에 ObsiDeep/ 폴더가 자동 생성되고 .gitignore 보호 룰이 추가됩니다.',
-				'On consent, an ObsiDeep/ folder is auto-created at the vault root and .gitignore protection rules are added.',
+				'동의 시 vault 루트에 VoxNote/ 폴더가 자동 생성되고 .gitignore 보호 룰이 추가됩니다.',
+				'On consent, an VoxNote/ folder is auto-created at the vault root and .gitignore protection rules are added.',
 			),
 		});
 
 		contentEl.createEl('p', {
 			text: t(
-				'자세한 사용법은 동의 후 생성되는 ObsiDeep/README.md를 참고해주세요.',
-				'For detailed usage, see ObsiDeep/README.md (created after consent).',
+				'자세한 사용법은 동의 후 생성되는 VoxNote/README.md를 참고해주세요.',
+				'For detailed usage, see VoxNote/README.md (created after consent).',
 			),
 			attr: { style: 'margin-top: 12px; opacity: 0.8;' },
 		});
@@ -74,7 +74,7 @@ export class ConsentModal extends Modal {
 					try {
 						await this.onAcknowledge();
 					} catch (e) {
-						console.error('[ObsiDeep] consent side effects failed:', e);
+						console.error('[VoxNote] consent side effects failed:', e);
 					} finally {
 						this.inFlight = false;
 						this.close();

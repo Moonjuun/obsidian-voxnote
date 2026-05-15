@@ -1,25 +1,27 @@
 ## [Unreleased]
 
-## [1.1.5] - 2026-05-14
+## [1.1.6] - 2026-05-15
+
+### Added
+- **Consent-not-completed recovery UX.** Closing the first-run consent modal without clicking "I agree" used to leave the workspace in an uninitialized state with no surfaced way to recover — users could click into Settings, paste an API key, and never realize the `VoxNote/` folders + `.gitignore` rules hadn't been applied. Two changes: (1) **dismissed-without-acknowledge Notice** — when the modal is closed via Esc / click-outside, a 10s Notice explains the workspace wasn't created and points to the two recovery paths; (2) **warning banner at the top of the settings tab** when `consentAcknowledged === false` — muted-background card with a "Re-open consent modal" CTA button (also styled in `styles.css`). The existing command-palette command `"동의 모달 다시 보기" / "Reset consent (show notice again)"` is unchanged but is now properly discoverable.
+
+### Changed
+- **Plugin renamed: "Deepgram Meeting STT" → "VoxNote — Meeting Transcription & AI Summary".** The old name only signalled STT and didn't reflect the AI summary path that the plugin has shipped since 1.1.0; the display name now reflects both capabilities. **`id` is unchanged** (`deepgram-meeting-stt`), so existing installs migrate cleanly — settings, API keys, and Community Plugins update flow all carry over. The id stays for backwards compatibility with obsidian-releases registration; only the display name changes.
+- **Vault workspace folder renamed: `Deepgram/` → `VoxNote/`.** The auto-created vault folder (containing `Audio/`, `STT/`, `Templates/`, `AI-Summaries/`) now uses the new brand name. Default settings (`savedFolder`, `templatesFolder`, `summariesFolder`) point at `VoxNote/...`. The `.gitignore` rule added to the vault is updated accordingly.
+- **Vault README + FEATURES (`VoxNote/README.md`, `VoxNote/FEATURES.md`) refreshed end-to-end.** Folder layout section now includes `Templates/` and `AI-Summaries/` (previously only `Audio/` + `STT/`). Cost section reframed as Deepgram + Gemini combined. **FEATURES gained a full "AI summary (Gemini)" section** documenting setup, flows (audio → STT+summary, re-summarize existing notes), built-in templates table, template file format, system placeholders, scaffold command, and failure behavior — bringing it to parity with the GitHub `FEATURES.md` which already covered this.
+- Plugin-loaded toast, key-auth error notice, gitignore comment, settings tab descriptions, and right-click submenu label all updated to "VoxNote".
 
 ### Fixed
-- **Consent banner styling overpowered the rest of the settings page.** v1.1.4 shipped the banner with a solid red background that filled the row edge-to-edge and visually dominated the page. Re-styled as a subtle muted-background card with a thin left-accent stripe in `--text-warning`, matching Obsidian's native callout/admonition pattern. The CTA button is left-aligned and the description hides the empty `setting-item-info` slot so the row is compact.
+- **Consent banner styled as a subtle muted-background card** with a thin left-accent stripe in `--text-warning`, matching Obsidian's native callout/admonition pattern. The CTA button is left-aligned and the description hides the empty `setting-item-info` slot so the row stays compact.
 - **Dismiss-without-acknowledge Notice could fire twice.** `ConsentModal.onClose` had no guard against re-entry — depending on how Obsidian routed Esc / click-outside / explicit `close()` calls, the close callback could fire twice and surface two stacked toasts. Added a `closeFired` flag so the callback fires at most once per modal lifetime.
 - **Settings tab didn't re-render after acknowledging.** After clicking "동의하고 시작" the modal closed but the warning banner stayed visible (because `PluginSettingTab.display()` only runs on tab activation, not on internal state change) — making users think nothing happened and re-click the banner button, which fires `showConsentAgain()` and resets `consentAcknowledged` back to false, creating a loop. The plugin now stores a reference to the settings tab and calls `display()` once after the consent flow finishes (both acknowledge and dismiss paths) so the banner correctly disappears / reappears in sync with state.
 - **Hardened the acknowledge button against double-clicks and side-effect errors.** Added an `inFlight` guard plus an `acknowledged` early-return so rapid repeated clicks no longer queue multiple `onAcknowledge` invocations; the button visibly disables and changes to "진행 중..." during processing; and `onAcknowledge` is wrapped in a try/catch/finally so an exception inside `applyConsentSideEffects` can no longer strand the modal in an open state — `close()` always runs.
 
-## [1.1.4] - 2026-05-14
-
-### Added
-- **Consent-not-completed recovery UX.** Closing the first-run consent modal without clicking "I agree" used to leave the workspace in an uninitialized state with no surfaced way to recover — users could click into Settings, paste an API key, and never realize the `ObsiDeep/` folders + `.gitignore` rules hadn't been applied. Two changes: (1) **dismissed-without-acknowledge Notice** — when the modal is closed via Esc / click-outside, a 10s Notice explains the workspace wasn't created and points to the two recovery paths; (2) **warning banner at the top of the settings tab** when `consentAcknowledged === false` — red-bordered card with a "Re-open consent modal" CTA button (also styled in `styles.css`). The existing command-palette command `"동의 모달 다시 보기" / "Reset consent (show notice again)"` is unchanged but is now properly discoverable.
-
-### Changed
-- **Plugin renamed: "Deepgram Meeting STT" → "ObsiDeep — Meeting Transcription & AI Summary".** The old name only signalled STT and didn't reflect the AI summary path that the plugin has shipped since 1.1.0; the vault workspace was already branded "ObsiDeep", so the display name now matches. **`id` is unchanged** (`deepgram-meeting-stt`), so existing installs migrate cleanly — settings, API keys, and Community Plugins update flow all carry over. The id stays for backwards compatibility with obsidian-releases registration; only the display name changes.
-- **Vault README + FEATURES (`ObsiDeep/README.md`, `ObsiDeep/FEATURES.md`) refreshed end-to-end.** Folder layout section now includes `Templates/` and `AI-Summaries/` (previously only `Audio/` + `STT/`). Cost section reframed as Deepgram + Gemini combined. **FEATURES gained a full "AI summary (Gemini)" section** documenting setup, flows (audio → STT+summary, re-summarize existing notes), built-in templates table, template file format, system placeholders, scaffold command, and failure behavior — bringing it to parity with the GitHub `FEATURES.md` which already covered this.
-- Plugin-loaded toast, key-auth error notice, gitignore comment, and all "Settings → Deepgram Meeting STT" references updated to "ObsiDeep".
-
 ### Migration
-- Existing 1.1.3 users: display name updates automatically on next Community Plugins refresh; no action needed. **Vault README/FEATURES inside existing vaults will NOT auto-update** (the installer is "create if not exists"). To pick up the new content: delete `ObsiDeep/README.md` + `ObsiDeep/FEATURES.md` and run the **"동의 모달 다시 보기"** command — the files will be re-seeded with the new content. Settings, API keys, and templates are untouched by this.
+- Existing 1.1.3 users: the display name updates automatically on next Community Plugins refresh; no action needed for that. **However, the vault workspace folder is NOT auto-migrated.** Your existing `Deepgram/` folder will stay where it is — the plugin will create a fresh `VoxNote/` folder on next consent flow. To migrate your data:
+  - **Option A (recommended for active users):** in Settings → VoxNote, change the three folder paths (Saved folder, Templates folder, Summaries folder) from `VoxNote/...` back to your existing `Deepgram/...` paths. The plugin will continue using your old folder transparently.
+  - **Option B:** rename `Deepgram/` → `VoxNote/` in your vault (Obsidian's file explorer or your OS), then either reopen the plugin or run **"동의 모달 다시 보기"** to re-seed `README.md` / `FEATURES.md` inside.
+  - Settings, API keys, and templates inside the renamed folder are untouched either way.
 
 ## [1.1.3] - 2026-05-14
 
@@ -32,7 +34,7 @@
 - All six built-in templates' prompts and placeholder descriptions now explicitly require one item per line, reinforcing the universal formatting rule for new installs that read the template prompt directly.
 
 ### Migration
-- Existing users who already seeded their templates keep the run-on-line fix automatically (the engine-level rule + post-processing applies regardless of template content). To pick up the new tone changes, delete `회의록.md` / `Meeting.md` from `ObsiDeep/Templates/` and re-run **"동의 모달 다시 보기"**, or edit the prompts in place.
+- Existing users who already seeded their templates keep the run-on-line fix automatically (the engine-level rule + post-processing applies regardless of template content). To pick up the new tone changes, delete `회의록.md` / `Meeting.md` from `VoxNote/Templates/` and re-run **"동의 모달 다시 보기"**, or edit the prompts in place.
 
 ## [1.1.2] - 2026-05-14
 
@@ -46,12 +48,12 @@
 ## [1.1.1] - 2026-05-14
 
 ### Fixed
-- **ObsiDeep submenu disappearing on audio right-click after setting the Gemini key.** The file-menu callback is synchronous in Obsidian, but `buildAudioMenu` / `buildMarkdownMenu` were calling `await loadTemplates(...)` inside, so the `menu.addItem(...)` ran after the menu had already been rendered. The plugin now caches templates on the instance (`templatesCache`) and refreshes it on plugin load, on vault `create` / `modify` / `delete` / `rename` inside the templates folder, and when the Gemini key or templates folder setting changes. Menu callbacks read the cache synchronously.
+- **VoxNote submenu disappearing on audio right-click after setting the Gemini key.** The file-menu callback is synchronous in Obsidian, but `buildAudioMenu` / `buildMarkdownMenu` were calling `await loadTemplates(...)` inside, so the `menu.addItem(...)` ran after the menu had already been rendered. The plugin now caches templates on the instance (`templatesCache`) and refreshes it on plugin load, on vault `create` / `modify` / `delete` / `rename` inside the templates folder, and when the Gemini key or templates folder setting changes. Menu callbacks read the cache synchronously.
 
 ### Changed
 - **Built-in summary templates now localized.** First-install seeds the language set that matches the UI language: KO → `회의록.md` (favorite), `인터뷰.md`, `강의노트.md`; EN → `Meeting.md` (favorite), `Interview.md`, `Lecture.md`. The right-click menu and the resulting summary notes are in that language end-to-end. Each template body now also includes a guide comment block documenting every frontmatter field and every system placeholder, so the file is self-explanatory when opened.
 - **Starter template** (`Create new summary template` command) also localized per UI language, with the same guide comment block.
-- **README + README-ko** reframed around the audio → STT → AI summary pipeline. Menu labels updated to match the `ObsiDeep ▸` submenu structure. Gemini cost line and privacy notes added.
+- **README + README-ko** reframed around the audio → STT → AI summary pipeline. Menu labels updated to match the `VoxNote ▸` submenu structure. Gemini cost line and privacy notes added.
 
 ### Migration
 - Users who already received the 1.1.0 English templates and switch UI language to Korean can run **"동의 모달 다시 보기"** to seed the Korean set alongside the English one. Filenames differ, so no collision.
@@ -60,17 +62,17 @@
 
 ### Added
 - **AI summary (Gemini)** — optional feature, fully gated on a Gemini API key.
-  - File-based templates in `ObsiDeep/Templates/` (frontmatter declares `prompt`, `placeholders`, `favorite`); favorites surface as top-level menu items, the rest sit in an `AI 요약 ▸` submenu.
+  - File-based templates in `VoxNote/Templates/` (frontmatter declares `prompt`, `placeholders`, `favorite`); favorites surface as top-level menu items, the rest sit in an `AI 요약 ▸` submenu.
   - System placeholders filled by code: `{{transcript}}`, `{{title}}`, `{{date}}`, `{{datetime}}`, `{{source}}`, `{{language}}`, `{{duration}}`, `{{speakers}}`. AI placeholders declared per template, filled by Gemini 2.5 structured output (JSON mode).
   - Three commands: **"STT + AI 요약 (Transcribe and summarize)"**, **"현재 노트를 AI로 요약 (Summarize current note with AI)"**, **"새 요약 템플릿 만들기 (Create new summary template)"**.
-  - Right-click submenu (`ObsiDeep ▸ ...`) on audio files (STT only / STT + favorite summaries / submenu of other templates) and on markdown notes (re-summarize with any template).
-  - Summary notes saved to `ObsiDeep/AI-Summaries/{title} (요약).md` with `source: "[[...]]"` backlink and `template:` metadata.
+  - Right-click submenu (`VoxNote ▸ ...`) on audio files (STT only / STT + favorite summaries / submenu of other templates) and on markdown notes (re-summarize with any template).
+  - Summary notes saved to `VoxNote/AI-Summaries/{title} (요약).md` with `source: "[[...]]"` backlink and `template:` metadata.
   - Three starter templates seeded on first consent: `Meeting.md` (favorite), `Interview.md`, `Lecture.md`.
   - Two folders auto-created at consent time: `Templates/`, `AI-Summaries/`.
 - Settings tab: new **"AI 요약 (Gemini)"** section (api key, model dropdown, templates folder, summaries folder).
 
 ### Changed
-- Existing audio file menu item `"Transcribe with Deepgram"` moved under the new `ObsiDeep ▸` submenu (now `STT만 추출`). The command palette entry is unchanged.
+- Existing audio file menu item `"Transcribe with Deepgram"` moved under the new `VoxNote ▸` submenu (now `STT만 추출`). The command palette entry is unchanged.
 - `MenuItem.setSubmenu()` typing added via module augmentation (Obsidian d.ts gap).
 
 ### Tests
@@ -87,7 +89,7 @@
 
 ### Changed
 - `obsidianmd/ui/sentence-case` ESLint 룰 다시 활성화 후 통과.
-  - 설정 탭의 의미 없는 placeholder를 의미 있는 안내 텍스트(`Paste your Deepgram API key`, `e.g. ObsiDeep/STT`)로 교체.
+  - 설정 탭의 의미 없는 placeholder를 의미 있는 안내 텍스트(`Paste your Deepgram API key`, `e.g. VoxNote/STT`)로 교체.
 - FEATURES 문서에 **"모바일에서 사용"** 섹션 추가 — iOS/Android에서의 입력 방식 차이 안내 (드래그앤드롭 → 공유, 우클릭 → long-press 등).
 
 ### Verified for submission
@@ -120,25 +122,25 @@
 
 ### Added
 - **다국어 (i18n)**: 한국어 / 영어 / 자동(옵시디언 locale 따름) 지원. 설정 → "UI 언어"에서 즉시 전환. 모든 modal, settings, command, Notice가 자동으로 해당 언어로 전환됩니다.
-- **ObsiDeep/README.md 자동 생성**: 동의 시 폴더 안에 사용 가이드 README 자동 작성 (사용자 언어에 맞춰 한/영). 시작하기 3단계(가입→API 키→파일 넣기), 회의록 추출 흐름, 보안/GDPR/Zero Retention, 비용 안내 포함.
+- **VoxNote/README.md 자동 생성**: 동의 시 폴더 안에 사용 가이드 README 자동 작성 (사용자 언어에 맞춰 한/영). 시작하기 3단계(가입→API 키→파일 넣기), 회의록 추출 흐름, 보안/GDPR/Zero Retention, 비용 안내 포함.
 
 ### Changed
-- **동의 모달 축약**: 다섯 줄 안내 → 핵심 세 줄로 줄임. 자세한 사용법은 ObsiDeep/README.md로 위임.
+- **동의 모달 축약**: 다섯 줄 안내 → 핵심 세 줄로 줄임. 자세한 사용법은 VoxNote/README.md로 위임.
 - 모든 사용자 노출 텍스트를 인라인 i18n으로 분기.
 - **Zero Retention 기본값 `false` → `true`**: 신규 사용자는 보수적 보안 정책으로 시작. Growth 이상 요금제에서 즉시 적용. 기존 사용자의 설정값은 유지됩니다.
-- README/ObsiDeep README의 보안 섹션에 Deepgram GDPR / SOC 2 / HIPAA / CCPA / DPA 준수 정보, Zero Retention 작동 조건, Trust Center 링크 추가.
+- README/VoxNote README의 보안 섹션에 Deepgram GDPR / SOC 2 / HIPAA / CCPA / DPA 준수 정보, Zero Retention 작동 조건, Trust Center 링크 추가.
 
 ## [0.2.0] - 2026-05-12
 
 ### Added
-- 첫 실행 동의 시 vault 루트에 **`ObsiDeep/` 폴더 자동 생성** — 그 안에 `Audio/` (녹음 파일 권장 위치)와 `STT/` (회의록 노트 기본 저장 위치) 하위 폴더 함께 생성.
-- vault `.gitignore`에 `ObsiDeep/` 룰 자동 추가 (data.json과 함께) → 회의 녹음·회의록 통째로 vault git sync에서 보호.
+- 첫 실행 동의 시 vault 루트에 **`VoxNote/` 폴더 자동 생성** — 그 안에 `Audio/` (녹음 파일 권장 위치)와 `STT/` (회의록 노트 기본 저장 위치) 하위 폴더 함께 생성.
+- vault `.gitignore`에 `VoxNote/` 룰 자동 추가 (data.json과 함께) → 회의 녹음·회의록 통째로 vault git sync에서 보호.
 - 명령어 **"동의 모달 다시 보기 (consent reset)"** 추가 — 의도적으로 모달을 다시 띄워 새 안내 확인·폴더 재생성 가능.
 
 ### Changed
-- 기본 `savedFolder` 값을 `STT` → `ObsiDeep/STT`로 변경 (신규 사용자 한정. 기존 사용자는 본인 설정값 유지).
+- 기본 `savedFolder` 값을 `STT` → `VoxNote/STT`로 변경 (신규 사용자 한정. 기존 사용자는 본인 설정값 유지).
 - 동의 후 부수 효과를 `applyConsentSideEffects`로 통합. 결과 Notice가 폴더 생성·gitignore 갱신 상태를 분리해서 보고.
-- consent 모달 안내문 + README 사용법 섹션을 `ObsiDeep/` 구조 중심으로 재작성.
+- consent 모달 안내문 + README 사용법 섹션을 `VoxNote/` 구조 중심으로 재작성.
 
 ## [0.1.0] - 2026-05-12
 

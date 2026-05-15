@@ -49,8 +49,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			callback: () => {
 				new Notice(
 					this.t(
-						'ObsiDeep — 플러그인이 로드되었습니다.',
-						'ObsiDeep — plugin loaded!',
+						'VoxNote — 플러그인이 로드되었습니다.',
+						'VoxNote — plugin loaded!',
 					),
 				);
 			},
@@ -100,13 +100,13 @@ export default class DeepgramSttPlugin extends Plugin {
 				this.settings.templatesFolder,
 			);
 		} catch (e) {
-			console.warn('[ObsiDeep] failed to refresh templates cache:', e);
+			console.warn('[VoxNote] failed to refresh templates cache:', e);
 			this.templatesCache = [];
 		}
 	}
 
 	private onTemplateMaybeChanged(file: TAbstractFile, oldPath?: string): void {
-		const folder = (this.settings.templatesFolder || 'ObsiDeep/Templates').replace(
+		const folder = (this.settings.templatesFolder || 'VoxNote/Templates').replace(
 			/\/+$/,
 			'',
 		);
@@ -194,8 +194,8 @@ export default class DeepgramSttPlugin extends Plugin {
 				if (!acknowledged) {
 					new Notice(
 						this.t(
-							'동의가 완료되지 않아 ObsiDeep 폴더가 생성되지 않았습니다.\n설정 → ObsiDeep 상단의 "동의 모달 다시 보기" 버튼, 또는 명령 팔레트의 "동의 모달 다시 보기"로 다시 열 수 있습니다.',
-							'Consent not completed — the ObsiDeep workspace folders were not created.\nRe-open via Settings → ObsiDeep (banner at the top) or the command palette ("Reset consent").',
+							'동의가 완료되지 않아 VoxNote 폴더가 생성되지 않았습니다.\n설정 → VoxNote 상단의 "동의 모달 다시 보기" 버튼, 또는 명령 팔레트의 "동의 모달 다시 보기"로 다시 열 수 있습니다.',
+							'Consent not completed — the VoxNote workspace folders were not created.\nRe-open via Settings → VoxNote (banner at the top) or the command palette ("Reset consent").',
 						),
 						10000,
 					);
@@ -227,14 +227,14 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'created':
 				messages.push(
 					t(
-						'✓ ObsiDeep/ 폴더를 생성했습니다 (Audio/, STT/, Templates/, AI-Summaries/ 포함).',
-						'✓ Created ObsiDeep/ (with Audio/, STT/, Templates/, AI-Summaries/).',
+						'✓ VoxNote/ 폴더를 생성했습니다 (Audio/, STT/, Templates/, AI-Summaries/ 포함).',
+						'✓ Created VoxNote/ (with Audio/, STT/, Templates/, AI-Summaries/).',
 					),
 				);
 				break;
 			case 'partial':
 				messages.push(
-					t('✓ ObsiDeep 폴더 구조를 보강했습니다.', '✓ Repaired ObsiDeep folder structure.'),
+					t('✓ VoxNote 폴더 구조를 보강했습니다.', '✓ Repaired VoxNote folder structure.'),
 				);
 				break;
 			case 'exists':
@@ -242,8 +242,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'error':
 				messages.push(
 					t(
-						'⚠ ObsiDeep/ 폴더 자동 생성에 실패했습니다.',
-						'⚠ Failed to auto-create ObsiDeep/.',
+						'⚠ VoxNote/ 폴더 자동 생성에 실패했습니다.',
+						'⚠ Failed to auto-create VoxNote/.',
 					),
 				);
 				break;
@@ -290,8 +290,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'created':
 				messages.push(
 					t(
-						'✓ ObsiDeep/README.md 안내 파일을 생성했습니다.',
-						'✓ Created ObsiDeep/README.md with usage guide.',
+						'✓ VoxNote/README.md 안내 파일을 생성했습니다.',
+						'✓ Created VoxNote/README.md with usage guide.',
 					),
 				);
 				break;
@@ -299,7 +299,7 @@ export default class DeepgramSttPlugin extends Plugin {
 				break;
 			case 'error':
 				messages.push(
-					t('⚠ ObsiDeep/README.md 생성 실패.', '⚠ Failed to create ObsiDeep/README.md.'),
+					t('⚠ VoxNote/README.md 생성 실패.', '⚠ Failed to create VoxNote/README.md.'),
 				);
 				break;
 		}
@@ -308,8 +308,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'created':
 				messages.push(
 					t(
-						'✓ ObsiDeep/FEATURES.md 기능 가이드를 생성했습니다.',
-						'✓ Created ObsiDeep/FEATURES.md with feature guides.',
+						'✓ VoxNote/FEATURES.md 기능 가이드를 생성했습니다.',
+						'✓ Created VoxNote/FEATURES.md with feature guides.',
 					),
 				);
 				break;
@@ -318,8 +318,8 @@ export default class DeepgramSttPlugin extends Plugin {
 			case 'error':
 				messages.push(
 					t(
-						'⚠ ObsiDeep/FEATURES.md 생성 실패.',
-						'⚠ Failed to create ObsiDeep/FEATURES.md.',
+						'⚠ VoxNote/FEATURES.md 생성 실패.',
+						'⚠ Failed to create VoxNote/FEATURES.md.',
 					),
 				);
 				break;

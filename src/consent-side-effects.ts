@@ -4,12 +4,12 @@ import { installFeatures, installReadme, type FileInstallResult } from './readme
 import { seedBuiltInTemplates, type SeedResult } from './summary/built-in-templates';
 
 const GITIGNORE_PATH = '.gitignore';
-const ROOT_FOLDER = 'ObsiDeep';
+const ROOT_FOLDER = 'VoxNote';
 const AUDIO_SUBFOLDER = `${ROOT_FOLDER}/Audio`;
 const STT_SUBFOLDER = `${ROOT_FOLDER}/STT`;
 const TEMPLATES_SUBFOLDER = `${ROOT_FOLDER}/Templates`;
 const SUMMARIES_SUBFOLDER = `${ROOT_FOLDER}/AI-Summaries`;
-const COMMENT = '# ObsiDeep — protect API key + meeting recordings & notes from vault git sync';
+const COMMENT = '# VoxNote — protect API key + meeting recordings & notes from vault git sync';
 
 export type GitignoreResult = 'added' | 'partial' | 'exists' | 'no-gitignore' | 'error';
 export type FolderResult = 'created' | 'partial' | 'exists' | 'error';

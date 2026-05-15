@@ -22,7 +22,7 @@ export interface DeepgramSettings {
 
 export const DEFAULT_SETTINGS: DeepgramSettings = {
 	apiKey: '',
-	savedFolder: 'ObsiDeep/STT',
+	savedFolder: 'VoxNote/STT',
 	templatePath: '',
 	language: 'ko',
 	model: 'nova-3',
@@ -32,6 +32,6 @@ export const DEFAULT_SETTINGS: DeepgramSettings = {
 	uiLanguage: 'auto',
 	geminiApiKey: '',
 	geminiModel: 'gemini-2.5-flash',
-	templatesFolder: 'ObsiDeep/Templates',
-	summariesFolder: 'ObsiDeep/AI-Summaries',
+	templatesFolder: 'VoxNote/Templates',
+	summariesFolder: 'VoxNote/AI-Summaries',
 };

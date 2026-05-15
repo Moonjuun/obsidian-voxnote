@@ -7,7 +7,7 @@ export interface BuiltInTemplate {
 }
 
 const KO_GUIDE = `<!--
-ObsiDeep AI 요약 템플릿입니다.
+VoxNote AI 요약 템플릿입니다.
 
 frontmatter 필드:
   name:         우클릭 메뉴에 표시될 이름
@@ -31,7 +31,7 @@ frontmatter 필드:
 -->`;
 
 const EN_GUIDE = `<!--
-ObsiDeep AI summary template.
+VoxNote AI summary template.
 
 Frontmatter fields:
   name:         Display name in the right-click menu.
@@ -257,7 +257,7 @@ export async function seedBuiltInTemplates(
 	templatesFolder: string,
 	lang: Lang,
 ): Promise<SeedResult> {
-	const folder = (templatesFolder || 'ObsiDeep/Templates').replace(/\/+$/, '');
+	const folder = (templatesFolder || 'VoxNote/Templates').replace(/\/+$/, '');
 	const templates = getBuiltInTemplates(lang);
 	try {
 		if (!(await app.vault.adapter.exists(folder))) {

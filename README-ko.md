@@ -1,4 +1,4 @@
-# ObsiDeep — Meeting Transcription & AI Summary
+# VoxNote — Meeting Transcription & AI Summary
 
 옵시디언 안에서 회의 녹음을 마크다운 노트로 변환하는 플러그인. **[Deepgram](https://deepgram.com) STT로 화자 분리·시간 세그먼트 포함 회의록을 만들고**, **선택적으로 Google Gemini로 구조화된 요약 노트까지** 같이 떨어뜨립니다.
 
@@ -10,8 +10,8 @@
 
 - **오디오 → 회의록**: vault에 녹음 파일을 넣고 우클릭 → 제목 입력 → 화자별 `[HH:MM:SS]` 타임스탬프가 붙은 마크다운 노트가 생성됩니다.
 - **오디오 → 회의록 → AI 요약 (옵션)**: 한 번의 우클릭으로 STT 노트와 구조화된 요약 노트(액션 아이템·결정사항·핵심 인용 등 템플릿이 정의한 항목)를 동시에 생성. 요약 노트엔 원본 STT로의 백링크가 자동 삽입됩니다.
-- **파일 기반 요약 템플릿**: `ObsiDeep/Templates/` 폴더의 `.md` 파일이 곧 템플릿. frontmatter에 `prompt`와 `placeholders`(키-설명 맵)를 정의하면 Gemini가 그 스키마에 맞춰 JSON으로 응답하고, 본문의 `{{key}}`에 치환되어 들어갑니다. favorite으로 표시한 템플릿은 우클릭 메뉴 평면에 노출, 나머지는 `AI 요약 ▸` 서브메뉴에 정리됩니다. 첫 실행 시 `Meeting` / `Interview` / `Lecture` 3개가 자동 시드됩니다.
-- **작업 공간 자동 관리**: vault 루트에 `ObsiDeep/` (Audio · STT · Templates · AI-Summaries) 폴더를 자동 생성하고, `.gitignore`에 보호 룰을 추가해 녹음·API 키·요약본이 git sync에 절대 들어가지 않습니다.
+- **파일 기반 요약 템플릿**: `VoxNote/Templates/` 폴더의 `.md` 파일이 곧 템플릿. frontmatter에 `prompt`와 `placeholders`(키-설명 맵)를 정의하면 Gemini가 그 스키마에 맞춰 JSON으로 응답하고, 본문의 `{{key}}`에 치환되어 들어갑니다. favorite으로 표시한 템플릿은 우클릭 메뉴 평면에 노출, 나머지는 `AI 요약 ▸` 서브메뉴에 정리됩니다. 첫 실행 시 `Meeting` / `Interview` / `Lecture` 3개가 자동 시드됩니다.
+- **작업 공간 자동 관리**: vault 루트에 `VoxNote/` (Audio · STT · Templates · AI-Summaries) 폴더를 자동 생성하고, `.gitignore`에 보호 룰을 추가해 녹음·API 키·요약본이 git sync에 절대 들어가지 않습니다.
 - **이중 언어 UI**: 한국어 / 영어 / 옵시디언 locale 자동 감지.
 - **Zero Retention 기본 ON** — Deepgram 서버에 데이터 보관 비활성화 요청. AI 요약은 완전 옵션이며 Gemini 키가 없으면 관련 메뉴 자체가 표시되지 않습니다.
 - **모바일 호환** — iOS / Android 옵시디언에서도 동작.
@@ -25,20 +25,20 @@
 ### 방법 1 — Obsidian Community Plugins (권장)
 
 1. 옵시디언 설정 → Community plugins → Browse
-2. **"ObsiDeep"** 검색
+2. **"VoxNote"** 검색
 3. Install + Enable
 
 ### 방법 2 — 수동
 
 1. [Releases](https://github.com/Moonjuun/obsidian-deepgram-stt/releases) 최신 버전에서 `main.js`, `manifest.json`, `styles.css` 다운로드.
 2. 본인 vault의 `.obsidian/plugins/deepgram-meeting-stt/` 폴더(없으면 생성)에 3개 파일 복사.
-3. 옵시디언 재시작 → Community plugins → "ObsiDeep" 활성화.
+3. 옵시디언 재시작 → Community plugins → "VoxNote" 활성화.
 
 ---
 
 ## 셋업
 
-플러그인을 처음 활성화하면 동의 모달이 뜨면서 Deepgram에 무엇이 전송되는지 안내합니다. 동의 시 vault 루트에 `ObsiDeep/` 작업 공간이 자동 생성됩니다 — `Audio/`, `STT/`, `Templates/`(시드 템플릿 3개 포함), `AI-Summaries/`. `.gitignore`에는 녹음·API 키 보호 룰이 자동 추가됩니다.
+플러그인을 처음 활성화하면 동의 모달이 뜨면서 Deepgram에 무엇이 전송되는지 안내합니다. 동의 시 vault 루트에 `VoxNote/` 작업 공간이 자동 생성됩니다 — `Audio/`, `STT/`, `Templates/`(시드 템플릿 3개 포함), `AI-Summaries/`. `.gitignore`에는 녹음·API 키 보호 룰이 자동 추가됩니다.
 
 ### 1. Deepgram API 키 (STT 필수)
 
@@ -70,9 +70,9 @@ STT만 사용할 거면 비워두면 됩니다. AI 요약을 활성화하려면:
 
 ### 0. 회의 녹음 파일을 vault에 넣기
 
-`ObsiDeep/Audio/`로 넣는 방법:
-- **드래그앤드롭**: Finder에서 옵시디언 창의 `ObsiDeep/Audio/`로 드래그
-- **Finder 직접 복사**: vault 폴더의 `ObsiDeep/Audio/` 안에 파일 복사
+`VoxNote/Audio/`로 넣는 방법:
+- **드래그앤드롭**: Finder에서 옵시디언 창의 `VoxNote/Audio/`로 드래그
+- **Finder 직접 복사**: vault 폴더의 `VoxNote/Audio/` 안에 파일 복사
 
 > 💡 Finder에서 직접 복사한 경우 옵시디언 사이드바에 즉시 안 보일 수 있습니다. `Cmd+P` (Windows: `Ctrl+P`) → **"저장하지 않고 앱 새로고침"** 실행 후 다시 확인하세요.
 
@@ -82,30 +82,30 @@ STT만 사용할 거면 비워두면 됩니다. AI 요약을 활성화하려면:
 
 ### 1. STT만 추출
 
-1. `ObsiDeep/Audio/`의 파일을 사이드바에서 우클릭 → **`ObsiDeep ▸ STT만 추출`**.
+1. `VoxNote/Audio/`의 파일을 사이드바에서 우클릭 → **`VoxNote ▸ STT만 추출`**.
 2. 회의록 제목 입력 → Enter.
-3. 1~2분 후 `ObsiDeep/STT/`에 회의록이 생성되어 자동으로 열립니다.
+3. 1~2분 후 `VoxNote/STT/`에 회의록이 생성되어 자동으로 열립니다.
 
-![우클릭 → ObsiDeep 서브메뉴](img/img4.webp)
+![우클릭 → VoxNote 서브메뉴](img/img4.webp)
 
 명령 팔레트(`Cmd+P` / `Ctrl+P`)에서도 동일하게 **"회의록 추출 (Transcribe audio → meeting note)"**로 실행할 수 있습니다.
 
 ### 2. STT + AI 요약 한 번에 (Gemini 키 설정 시)
 
-1. 오디오 파일 우클릭 → **`ObsiDeep ▸ ⭐ STT + AI 요약: 회의록`** (favorite 템플릿은 평면 노출, 나머지는 `AI 요약 ▸` 서브메뉴).
+1. 오디오 파일 우클릭 → **`VoxNote ▸ ⭐ STT + AI 요약: 회의록`** (favorite 템플릿은 평면 노출, 나머지는 `AI 요약 ▸` 서브메뉴).
 2. 제목 입력.
 3. STT 결과가 그대로 Gemini로 흘러가 템플릿의 prompt에 맞게 요약됩니다.
-4. **두 개의 노트가 생성됩니다** — STT는 `ObsiDeep/STT/`에, 요약은 `ObsiDeep/AI-Summaries/{제목} (요약).md`에. 요약 노트 frontmatter엔 `source: "[[...]]"`로 원본 STT 백링크가 자동 삽입됩니다.
+4. **두 개의 노트가 생성됩니다** — STT는 `VoxNote/STT/`에, 요약은 `VoxNote/AI-Summaries/{제목} (요약).md`에. 요약 노트 frontmatter엔 `source: "[[...]]"`로 원본 STT 백링크가 자동 삽입됩니다.
 
 STT가 실패하면 요약 단계는 실행되지 않습니다. STT는 성공했는데 요약만 실패하면 STT 노트는 살아남고 Notice로 에러가 안내됩니다.
 
 ### 3. 기존 노트를 다른 템플릿으로 다시 요약
 
-기존 마크다운 노트 우클릭 → **`ObsiDeep ▸ ⭐ AI 요약: 회의록`** (favorite 템플릿) 또는 **`ObsiDeep ▸ AI 요약 ▸ <템플릿>`** (그 외). 노트 본문이 입력 transcript가 되고, 새 요약 파일이 `AI-Summaries/`에 추가됩니다. 다른 템플릿으로 같은 회의를 재요약하거나, 이 플러그인이 만들지 않은 노트를 요약할 때 유용합니다.
+기존 마크다운 노트 우클릭 → **`VoxNote ▸ ⭐ AI 요약: 회의록`** (favorite 템플릿) 또는 **`VoxNote ▸ AI 요약 ▸ <템플릿>`** (그 외). 노트 본문이 입력 transcript가 되고, 새 요약 파일이 `AI-Summaries/`에 추가됩니다. 다른 템플릿으로 같은 회의를 재요약하거나, 이 플러그인이 만들지 않은 노트를 요약할 때 유용합니다.
 
 ### 출력 예시
 
-회의록 (`ObsiDeep/STT/...`):
+회의록 (`VoxNote/STT/...`):
 
 ```markdown
 ---
@@ -114,7 +114,7 @@ type: meeting
 tags: [meeting, stt]
 duration: 28m 41s
 language: ko
-source: [[ObsiDeep/Audio/standup.m4a]]
+source: [[VoxNote/Audio/standup.m4a]]
 speakers: ["화자 1", "화자 2"]
 ---
 
@@ -127,11 +127,11 @@ speakers: ["화자 1", "화자 2"]
 네, 제가 먼저 할게요.
 ```
 
-요약 (`ObsiDeep/AI-Summaries/...`, `Meeting` 템플릿):
+요약 (`VoxNote/AI-Summaries/...`, `Meeting` 템플릿):
 
 ```markdown
 ---
-source: "[[ObsiDeep/STT/Stand-up 2026-05-13]]"
+source: "[[VoxNote/STT/Stand-up 2026-05-13]]"
 template: "Meeting"
 date: 2026-05-13
 language: Korean
@@ -139,7 +139,7 @@ type: ai-summary
 ---
 # Stand-up 2026-05-13
 
-> Source: [[ObsiDeep/STT/Stand-up 2026-05-13]] · 2026-05-13 · 28:41
+> Source: [[VoxNote/STT/Stand-up 2026-05-13]] · 2026-05-13 · 28:41
 
 ## Summary
 - ...
@@ -153,7 +153,7 @@ type: ai-summary
 
 ### 4. 템플릿 직접 만들고 고치기
 
-`ObsiDeep/Templates/`의 어떤 `.md` 파일이든 열어서 frontmatter를 편집하면 됩니다:
+`VoxNote/Templates/`의 어떤 `.md` 파일이든 열어서 frontmatter를 편집하면 됩니다:
 
 ```markdown
 ---
@@ -218,7 +218,7 @@ placeholders:
 |---|---|---|
 | UI 언어 | 플러그인 UI 언어 (한국어/영어/자동) | `auto` |
 | Deepgram API 키 | STT 변환에 필요. 로컬 `data.json`에 저장 | (없음) |
-| 회의록 저장 폴더 | vault 내 상대 경로 | `ObsiDeep/STT` |
+| 회의록 저장 폴더 | vault 내 상대 경로 | `VoxNote/STT` |
 | 템플릿 경로 | STT 노트 템플릿 (.md). 비우면 내장 템플릿 | (빈 값) |
 | 회의 언어 | `ko` / `en` / `auto` (자동 감지) | `ko` |
 | Deepgram 모델 | `nova-3` (최신) / `nova-2` | `nova-3` |
@@ -226,8 +226,8 @@ placeholders:
 | Zero Retention | Deepgram 측 데이터 보관 비활성화 (요금제 조건) | `true` |
 | Gemini API 키 | (옵션) AI 요약 메뉴를 활성화 | (없음) |
 | Gemini 모델 | `gemini-2.5-flash` (빠르고 저렴) / `gemini-2.5-pro` (정확도 우선) | `gemini-2.5-flash` |
-| 템플릿 폴더 | 요약 템플릿(.md)이 들어있는 폴더 | `ObsiDeep/Templates` |
-| 요약 저장 폴더 | AI 요약 결과를 저장할 폴더 | `ObsiDeep/AI-Summaries` |
+| 템플릿 폴더 | 요약 템플릿(.md)이 들어있는 폴더 | `VoxNote/Templates` |
+| 요약 저장 폴더 | AI 요약 결과를 저장할 폴더 | `VoxNote/AI-Summaries` |
 
 ---
 

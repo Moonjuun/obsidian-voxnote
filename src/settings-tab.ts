@@ -28,8 +28,8 @@ export class DeepgramSettingTab extends PluginSettingTab {
 		banner.createEl('p', {
 			cls: 'obsideep-consent-banner-body',
 			text: t(
-				'ObsiDeep/ 작업 공간(Audio·STT·Templates·AI-Summaries 폴더)과 vault .gitignore 보호 룰이 아직 생성되지 않았습니다. 동의 모달을 다시 열어 확인 후 진행해주세요.',
-				'The ObsiDeep/ workspace (Audio · STT · Templates · AI-Summaries folders) and vault .gitignore protection rules have not been created yet. Re-open the consent modal to continue.',
+				'VoxNote/ 작업 공간(Audio·STT·Templates·AI-Summaries 폴더)과 vault .gitignore 보호 룰이 아직 생성되지 않았습니다. 동의 모달을 다시 열어 확인 후 진행해주세요.',
+				'The VoxNote/ workspace (Audio · STT · Templates · AI-Summaries folders) and vault .gitignore protection rules have not been created yet. Re-open the consent modal to continue.',
 			),
 		});
 		new Setting(banner).addButton((btn) =>
@@ -105,13 +105,13 @@ export class DeepgramSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName(t('회의록 저장 폴더', 'Note folder'))
-			.setDesc(t('vault 내 상대 경로. 없으면 자동 생성. 기본값: ObsiDeep/STT', 'Vault-relative path. Auto-created if missing. Default: ObsiDeep/STT'))
+			.setDesc(t('vault 내 상대 경로. 없으면 자동 생성. 기본값: VoxNote/STT', 'Vault-relative path. Auto-created if missing. Default: VoxNote/STT'))
 			.addText((text) =>
 				text
-					.setPlaceholder(t('예: ObsiDeep/STT', 'e.g. ObsiDeep/STT'))
+					.setPlaceholder(t('예: VoxNote/STT', 'e.g. VoxNote/STT'))
 					.setValue(this.plugin.settings.savedFolder)
 					.onChange(async (value) => {
-						this.plugin.settings.savedFolder = value.trim() || 'ObsiDeep/STT';
+						this.plugin.settings.savedFolder = value.trim() || 'VoxNote/STT';
 						await this.plugin.saveSettings();
 					}),
 			);
@@ -179,19 +179,19 @@ export class DeepgramSettingTab extends PluginSettingTab {
 			.setName(t('템플릿 폴더', 'Templates folder'))
 			.setDesc(
 				t(
-					'요약 템플릿(.md)이 있는 폴더. 기본값: ObsiDeep/Templates',
-					'Folder containing summary templates (.md). Default: ObsiDeep/Templates',
+					'요약 템플릿(.md)이 있는 폴더. 기본값: VoxNote/Templates',
+					'Folder containing summary templates (.md). Default: VoxNote/Templates',
 				),
 			)
 			.addText((text) =>
 				text
 					.setPlaceholder(
-						t('예: ObsiDeep/Templates', 'e.g. ObsiDeep/Templates'),
+						t('예: VoxNote/Templates', 'e.g. VoxNote/Templates'),
 					)
 					.setValue(this.plugin.settings.templatesFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.templatesFolder =
-							value.trim() || 'ObsiDeep/Templates';
+							value.trim() || 'VoxNote/Templates';
 						await this.plugin.saveSettings();
 						await this.plugin.refreshTemplatesCache();
 					}),
@@ -201,19 +201,19 @@ export class DeepgramSettingTab extends PluginSettingTab {
 			.setName(t('요약 저장 폴더', 'Summaries folder'))
 			.setDesc(
 				t(
-					'AI 요약 결과를 저장할 폴더. 기본값: ObsiDeep/AI-Summaries',
-					'Folder to save AI summary notes. Default: ObsiDeep/AI-Summaries',
+					'AI 요약 결과를 저장할 폴더. 기본값: VoxNote/AI-Summaries',
+					'Folder to save AI summary notes. Default: VoxNote/AI-Summaries',
 				),
 			)
 			.addText((text) =>
 				text
 					.setPlaceholder(
-						t('예: ObsiDeep/AI-Summaries', 'e.g. ObsiDeep/AI-Summaries'),
+						t('예: VoxNote/AI-Summaries', 'e.g. VoxNote/AI-Summaries'),
 					)
 					.setValue(this.plugin.settings.summariesFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.summariesFolder =
-							value.trim() || 'ObsiDeep/AI-Summaries';
+							value.trim() || 'VoxNote/AI-Summaries';
 						await this.plugin.saveSettings();
 					}),
 			);

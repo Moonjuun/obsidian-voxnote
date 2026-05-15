@@ -157,6 +157,6 @@ export async function runTranscribeAndSummarize(
 			),
 			NoticeDuration.Error,
 		);
-		console.error('[ObsiDeep] summary failed after STT:', e);
+		console.error('[VoxNote] summary failed after STT:', e);
 	}
 }

@@ -85,33 +85,33 @@ describe('resolveSummaryPath', () => {
 		const app = makeApp();
 		const path = await resolveSummaryPath(
 			app as unknown as Parameters<typeof resolveSummaryPath>[0],
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			'My Meeting',
 		);
-		expect(path).toBe('ObsiDeep/AI-Summaries/My Meeting (요약).md');
+		expect(path).toBe('VoxNote/AI-Summaries/My Meeting (요약).md');
 	});
 
 	it('adds (2) suffix on collision', async () => {
-		const app = makeApp(['ObsiDeep/AI-Summaries/Foo (요약).md']);
+		const app = makeApp(['VoxNote/AI-Summaries/Foo (요약).md']);
 		const path = await resolveSummaryPath(
 			app as unknown as Parameters<typeof resolveSummaryPath>[0],
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			'Foo',
 		);
-		expect(path).toBe('ObsiDeep/AI-Summaries/Foo (요약) (2).md');
+		expect(path).toBe('VoxNote/AI-Summaries/Foo (요약) (2).md');
 	});
 
 	it('increments counter to (3) on double collision', async () => {
 		const app = makeApp([
-			'ObsiDeep/AI-Summaries/Foo (요약).md',
-			'ObsiDeep/AI-Summaries/Foo (요약) (2).md',
+			'VoxNote/AI-Summaries/Foo (요약).md',
+			'VoxNote/AI-Summaries/Foo (요약) (2).md',
 		]);
 		const path = await resolveSummaryPath(
 			app as unknown as Parameters<typeof resolveSummaryPath>[0],
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			'Foo',
 		);
-		expect(path).toBe('ObsiDeep/AI-Summaries/Foo (요약) (3).md');
+		expect(path).toBe('VoxNote/AI-Summaries/Foo (요약) (3).md');
 	});
 });
 
@@ -142,20 +142,20 @@ describe('runSummary', () => {
 		const result = await runSummary(
 			app as unknown as Parameters<typeof runSummary>[0],
 			provider,
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			{
 				template: makeTemplate(),
 				transcript: 'TRANSCRIPT',
 				title: 'Meeting',
-				sourcePath: 'ObsiDeep/STT/Meeting.md',
+				sourcePath: 'VoxNote/STT/Meeting.md',
 				uiLanguageLabel: 'Korean',
 				now: new Date('2026-05-14T14:30:00'),
 			},
 		);
-		expect(result.path).toBe('ObsiDeep/AI-Summaries/Meeting (요약).md');
+		expect(result.path).toBe('VoxNote/AI-Summaries/Meeting (요약).md');
 		expect(result.content).toContain('## Summary\nS');
 		expect(result.content).toContain('## Decisions\nD');
-		expect(result.content).toContain('source: "[[ObsiDeep/STT/Meeting.md]]"');
+		expect(result.content).toContain('source: "[[VoxNote/STT/Meeting.md]]"');
 		expect(app.vault.create).toHaveBeenCalledWith(result.path, result.content);
 	});
 
@@ -165,7 +165,7 @@ describe('runSummary', () => {
 		await runSummary(
 			app as unknown as Parameters<typeof runSummary>[0],
 			provider,
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			{
 				template: makeTemplate(),
 				transcript: 'x',
@@ -174,7 +174,7 @@ describe('runSummary', () => {
 				uiLanguageLabel: 'English',
 			},
 		);
-		expect(app.vault.createFolder).toHaveBeenCalledWith('ObsiDeep/AI-Summaries');
+		expect(app.vault.createFolder).toHaveBeenCalledWith('VoxNote/AI-Summaries');
 	});
 
 	it('propagates provider error', async () => {
@@ -187,7 +187,7 @@ describe('runSummary', () => {
 			runSummary(
 				app as unknown as Parameters<typeof runSummary>[0],
 				failing,
-				'ObsiDeep/AI-Summaries',
+				'VoxNote/AI-Summaries',
 				{
 					template: makeTemplate(),
 					transcript: '',
@@ -206,7 +206,7 @@ describe('runSummary', () => {
 		await runSummary(
 			app as unknown as Parameters<typeof runSummary>[0],
 			provider,
-			'ObsiDeep/AI-Summaries',
+			'VoxNote/AI-Summaries',
 			{
 				template: makeTemplate(),
 				transcript: 'TRANSCRIPT_BODY',

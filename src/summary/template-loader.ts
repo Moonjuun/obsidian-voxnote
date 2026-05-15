@@ -134,7 +134,7 @@ export async function loadTemplates(
 			const meta = parseTemplate(raw, child.name, child.path, yaml);
 			if (meta) out.push(meta);
 		} catch (e) {
-			console.warn(`[ObsiDeep] failed to read template ${child.path}:`, e);
+			console.warn(`[VoxNote] failed to read template ${child.path}:`, e);
 		}
 	}
 

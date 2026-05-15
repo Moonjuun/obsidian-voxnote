@@ -132,24 +132,24 @@ describe('seedBuiltInTemplates', () => {
 		const app = makeApp();
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			lang,
 		);
 		expect(result).toBe('seeded');
-		expect(app.vault.createFolder).toHaveBeenCalledWith('ObsiDeep/Templates');
+		expect(app.vault.createFolder).toHaveBeenCalledWith('VoxNote/Templates');
 		expect(app.vault.create).toHaveBeenCalledTimes(expected.length);
 	});
 
 	it('returns exists when all KO templates already present', async () => {
 		const app = makeApp([
-			'ObsiDeep/Templates',
-			'ObsiDeep/Templates/회의록.md',
-			'ObsiDeep/Templates/인터뷰.md',
-			'ObsiDeep/Templates/강의노트.md',
+			'VoxNote/Templates',
+			'VoxNote/Templates/회의록.md',
+			'VoxNote/Templates/인터뷰.md',
+			'VoxNote/Templates/강의노트.md',
 		]);
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'ko',
 		);
 		expect(result).toBe('exists');
@@ -158,12 +158,12 @@ describe('seedBuiltInTemplates', () => {
 
 	it('returns partial when only some EN templates present', async () => {
 		const app = makeApp([
-			'ObsiDeep/Templates',
-			'ObsiDeep/Templates/Meeting.md',
+			'VoxNote/Templates',
+			'VoxNote/Templates/Meeting.md',
 		]);
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'en',
 		);
 		expect(result).toBe('partial');
@@ -175,7 +175,7 @@ describe('seedBuiltInTemplates', () => {
 		app.vault.create.mockRejectedValueOnce(new Error('disk full'));
 		const result = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'en',
 		);
 		expect(result).toBe('error');
@@ -185,12 +185,12 @@ describe('seedBuiltInTemplates', () => {
 		const app = makeApp();
 		const first = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'en',
 		);
 		const second = await seedBuiltInTemplates(
 			app as unknown as Parameters<typeof seedBuiltInTemplates>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'ko',
 		);
 		expect(first).toBe('seeded');

@@ -39,53 +39,53 @@ describe('resolveStarterPath', () => {
 		const app = makeApp();
 		const path = await resolveStarterPath(
 			app as unknown as Parameters<typeof resolveStarterPath>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'meeting',
 		);
-		expect(path).toBe('ObsiDeep/Templates/meeting.md');
+		expect(path).toBe('VoxNote/Templates/meeting.md');
 	});
 
 	it('adds (2) suffix on collision', async () => {
-		const app = makeApp(['ObsiDeep/Templates/meeting.md']);
+		const app = makeApp(['VoxNote/Templates/meeting.md']);
 		const path = await resolveStarterPath(
 			app as unknown as Parameters<typeof resolveStarterPath>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'meeting',
 		);
-		expect(path).toBe('ObsiDeep/Templates/meeting (2).md');
+		expect(path).toBe('VoxNote/Templates/meeting (2).md');
 	});
 
 	it('increments to (3) on multiple collisions', async () => {
 		const app = makeApp([
-			'ObsiDeep/Templates/x.md',
-			'ObsiDeep/Templates/x (2).md',
+			'VoxNote/Templates/x.md',
+			'VoxNote/Templates/x (2).md',
 		]);
 		const path = await resolveStarterPath(
 			app as unknown as Parameters<typeof resolveStarterPath>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'x',
 		);
-		expect(path).toBe('ObsiDeep/Templates/x (3).md');
+		expect(path).toBe('VoxNote/Templates/x (3).md');
 	});
 
 	it('sanitizes unsafe characters in baseName', async () => {
 		const app = makeApp();
 		const path = await resolveStarterPath(
 			app as unknown as Parameters<typeof resolveStarterPath>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'foo/bar:baz',
 		);
-		expect(path).toBe('ObsiDeep/Templates/foo_bar_baz.md');
+		expect(path).toBe('VoxNote/Templates/foo_bar_baz.md');
 	});
 
 	it('falls back to new-template when name is empty', async () => {
 		const app = makeApp();
 		const path = await resolveStarterPath(
 			app as unknown as Parameters<typeof resolveStarterPath>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'   ',
 		);
-		expect(path).toBe('ObsiDeep/Templates/new-template.md');
+		expect(path).toBe('VoxNote/Templates/new-template.md');
 	});
 });
 
@@ -94,12 +94,12 @@ describe('createStarterTemplate', () => {
 		const app = makeApp();
 		const path = await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'en',
 			'meeting',
 		);
-		expect(path).toBe('ObsiDeep/Templates/meeting.md');
-		expect(app.vault.createFolder).toHaveBeenCalledWith('ObsiDeep/Templates');
+		expect(path).toBe('VoxNote/Templates/meeting.md');
+		expect(app.vault.createFolder).toHaveBeenCalledWith('VoxNote/Templates');
 		expect(app.vault.create).toHaveBeenCalledWith(path, getStarterTemplate('en'));
 	});
 
@@ -107,7 +107,7 @@ describe('createStarterTemplate', () => {
 		const app = makeApp();
 		await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'ko',
 			'meeting',
 		);
@@ -119,21 +119,21 @@ describe('createStarterTemplate', () => {
 		const app = makeApp();
 		const path = await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'ko',
 		);
-		expect(path).toBe('ObsiDeep/Templates/새 템플릿.md');
+		expect(path).toBe('VoxNote/Templates/새 템플릿.md');
 	});
 
 	it('uses (2) suffix when file already exists', async () => {
-		const app = makeApp(['ObsiDeep/Templates/meeting.md', 'ObsiDeep/Templates']);
+		const app = makeApp(['VoxNote/Templates/meeting.md', 'VoxNote/Templates']);
 		const path = await createStarterTemplate(
 			app as unknown as Parameters<typeof createStarterTemplate>[0],
-			'ObsiDeep/Templates',
+			'VoxNote/Templates',
 			'en',
 			'meeting',
 		);
-		expect(path).toBe('ObsiDeep/Templates/meeting (2).md');
+		expect(path).toBe('VoxNote/Templates/meeting (2).md');
 	});
 });
 
