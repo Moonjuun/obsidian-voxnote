@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-deepgram-stt",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Obsidian plugin: Deepgram STT + Gemini AI summary for meeting recordings.",
 	"main": "main.js",
 	"type": "module",
