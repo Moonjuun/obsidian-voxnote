@@ -30,6 +30,10 @@ frontmatter 필드:
   {{language}}    - UI 언어 라벨
   {{duration}}    - 회의 길이
   {{speakers}}    - 화자 목록 (콤마 구분)
+
+생성되는 요약 노트의 frontmatter에는 source / template / date / language /
+type: ai-summary / tags: [voxnote/summary] 가 자동으로 박혀, STT의
+#voxnote/transcript 와 함께 그래프뷰에서 #voxnote 허브로 묶입니다.
 -->
 
 # {{title}}
@@ -71,6 +75,11 @@ System placeholders (filled by the plugin, not the AI):
   {{language}}    - UI language label
   {{duration}}    - meeting length
   {{speakers}}    - speaker list (comma separated)
+
+The generated summary note's frontmatter automatically gets source / template /
+date / language / type: ai-summary / tags: [voxnote/summary] written by the
+plugin code. Together with the STT note's #voxnote/transcript tag, both cluster
+under the single #voxnote hub in graph view.
 -->
 
 # {{title}}

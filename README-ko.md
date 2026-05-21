@@ -14,6 +14,7 @@
 - **오디오 → 회의록 → AI 요약 (옵션)**: 한 번의 우클릭으로 STT 노트와 구조화된 요약 노트(액션 아이템·결정사항·핵심 인용 등 템플릿이 정의한 항목)를 동시에 생성. 요약 노트엔 원본 STT로의 백링크가 자동 삽입됩니다.
 - **파일 기반 요약 템플릿**: `VoxNote/Templates/` 폴더의 `.md` 파일이 곧 템플릿. frontmatter에 `prompt`와 `placeholders`(키-설명 맵)를 정의하면 Gemini가 그 스키마에 맞춰 JSON으로 응답하고, 본문의 `{{key}}`에 치환되어 들어갑니다. favorite으로 표시한 템플릿은 우클릭 메뉴 평면에 노출, 나머지는 `AI 요약 ▸` 서브메뉴에 정리됩니다. 첫 실행 시 `Meeting` / `Interview` / `Lecture` 3개가 자동 시드됩니다.
 - **작업 공간 자동 관리**: vault 루트에 `VoxNote/` (Audio · STT · Templates · AI-Summaries) 폴더를 자동 생성하고, `.gitignore`에 보호 룰을 추가해 녹음·API 키·요약본이 git sync에 절대 들어가지 않습니다.
+- **그래프뷰 친화적**: 모든 결과 노트가 계층 태그(`#voxnote/transcript` STT / `#voxnote/summary` AI 요약)로 분류되어, 회의 세션이 따로 떠다니지 않고 단일 `#voxnote` 허브에 자동으로 군집화됩니다.
 - **이중 언어 UI**: 한국어 / 영어 / 옵시디언 locale 자동 감지.
 - **Zero Retention 기본 ON** — Deepgram 서버에 데이터 보관 비활성화 요청. AI 요약은 완전 옵션이며 Gemini 키가 없으면 관련 메뉴 자체가 표시되지 않습니다.
 - **모바일 호환** — iOS / Android 옵시디언에서도 동작.
@@ -113,7 +114,7 @@ STT가 실패하면 요약 단계는 실행되지 않습니다. STT는 성공했
 ---
 date: 2026-05-13
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: 28m 41s
 language: ko
 source: [[VoxNote/Audio/standup.m4a]]
@@ -138,6 +139,7 @@ template: "Meeting"
 date: 2026-05-13
 language: Korean
 type: ai-summary
+tags: [voxnote/summary]
 ---
 # Stand-up 2026-05-13
 

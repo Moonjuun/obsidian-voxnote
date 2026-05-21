@@ -8,6 +8,7 @@
 - [화자 이름 정리 (Rename speaker)](#화자-이름-정리)
 - [템플릿 토큰](#템플릿-토큰)
 - [AI 요약 (Gemini)](#ai-요약-gemini)
+- [그래프뷰 클러스터링](#그래프뷰-클러스터링)
 - [업데이트 확인](#업데이트-확인)
 - [모바일에서 사용](#모바일에서-사용)
 
@@ -86,7 +87,7 @@ STT 정확도는 **녹음 환경의 영향을 크게 받습니다**. 좋은 회�
 ---
 date: {{date}}
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: {{duration}}
 language: {{language}}
 source: {{audio_link}}
@@ -97,6 +98,8 @@ speakers: {{speakers_list}}
 
 {{transcript}}
 ```
+
+> `voxnote/transcript` 계층 태그는 그래프뷰에서 모든 STT 노트가 단일 `#voxnote` 허브 아래로 묶이게 합니다. 본인 워크플로우에 맞춰 `meeting`·`stt` 등을 추가해도 군집화는 그대로 동작합니다.
 
 ---
 
@@ -181,6 +184,49 @@ placeholders:
 
 - **STT 실패**: 전체 abort. 요약 단계 실행 안 함.
 - **요약 실패**: STT 노트는 살리고 요약만 Notice로 에러 표시. Gemini가 잘못된 JSON을 반환하면 자동으로 1회 재시도합니다.
+
+---
+
+## 그래프뷰 클러스터링
+
+옵시디언 그래프뷰에서 VoxNote 결과 노트들이 산발적으로 떠 보이지 않도록, 모든 생성물에 **계층 태그**가 자동으로 박힙니다.
+
+| 노트 종류 | 태그 | 위치 |
+|---|---|---|
+| STT 회의록 | `voxnote/transcript` | `VoxNote/STT/...` |
+| AI 요약 | `voxnote/summary` | `VoxNote/AI-Summaries/...` |
+| 가이드 문서 (`VoxNote/README.md`·`FEATURES.md`) | `voxnote/docs` | `VoxNote/` 루트 |
+
+옵시디언은 계층 태그의 부모(`voxnote`)를 자동으로 그래프 노드로 만들기 때문에:
+
+```
+       #voxnote (hub)
+        ├── #voxnote/transcript ── STT 노트들
+        ├── #voxnote/summary    ── AI 요약 노트들
+        └── #voxnote/docs       ── README·FEATURES (가이드)
+```
+
+요약 → STT 백링크(`source` frontmatter + 본문 `> 출처: [[...]]`)가 같은 세션끼리 추가로 묶어주므로, 한 회의 단위가 두 노드의 짝으로 그래프에 떠오릅니다.
+
+### 가이드 문서(README·FEATURES) 숨기는 법
+
+자동 생성된 `VoxNote/README.md`·`VoxNote/FEATURES.md`는 정적 가이드 문서라 그래프에서 보일 필요가 없을 수 있습니다. 옵시디언 설정 → **그래프뷰 → Filters → Search** 에 다음 한 줄을 추가하세요:
+
+```
+-tag:#voxnote/docs
+```
+
+`voxnote/docs` 태그가 박힌 노드가 그래프에서 완전히 사라집니다. 첨부파일 토글이나 다른 필터는 그대로 유지됩니다.
+
+### 그래프뷰 표시 팁
+
+- **그래프뷰 우측 패널** → **필터 → 태그** 검색에 `voxnote`를 넣으면 VoxNote 결과만 따로 떠올라 깔끔하게 볼 수 있습니다.
+- **첨부파일 보기**를 켜면 STT의 `source: [[...Audio/file.m4a]]` 링크가 살아나서 `Audio → STT → 요약` 3노드 사슬이 됩니다 (기본은 첨부파일이 숨겨져 있어 사슬이 끊어진 것처럼 보임).
+- **로컬 그래프**에서 한 노트 기준으로 보면 같은 세션의 STT·요약·오디오만 표시됩니다.
+
+### 기존 노트 일괄 적용
+
+플러그인은 **새로 생성되는** 노트에만 태그를 박습니다. 이전에 생성한 노트는 그대로 두거나, 직접 frontmatter에 `tags: [voxnote/transcript]` (또는 `voxnote/summary`, `voxnote/docs`)를 추가하면 그래프 허브에 합류합니다. 특히 v2.0.1 이전에 동의 모달을 통과해서 받은 `VoxNote/README.md`·`VoxNote/FEATURES.md`는 frontmatter가 없으므로, `voxnote/docs` 태그로 숨기고 싶다면 두 파일 맨 위에 `---\ntags: [voxnote/docs]\n---` 블록을 직접 한 번 추가하시면 됩니다.
 
 ---
 

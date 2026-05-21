@@ -27,7 +27,11 @@ async function installFile(app: App, path: string, content: string): Promise<Fil
 
 // ─── README — 시작·보안·비용 중심 ─────────────────────────────────────
 
-const KO_README = `# VoxNote — Meeting Transcription & AI Summary
+const KO_README = `---
+tags: [voxnote/docs]
+---
+
+# VoxNote — Meeting Transcription & AI Summary
 
 이 폴더는 [VoxNote](https://github.com/Moonjuun/obsidian-voxnote) 플러그인이 자동 생성한 작업 공간입니다. **사용 중 자주 보는 기능 가이드는 같은 폴더의 [[FEATURES]] 파일에 모아두었습니다.**
 
@@ -145,7 +149,11 @@ Deepgram 무료 $200 크레딧 + Gemini 무료 티어로 일반적인 사용량�
 - **이슈/제안**: [GitHub Issues](https://github.com/Moonjuun/obsidian-voxnote/issues)
 `;
 
-const EN_README = `# VoxNote — Meeting Transcription & AI Summary
+const EN_README = `---
+tags: [voxnote/docs]
+---
+
+# VoxNote — Meeting Transcription & AI Summary
 
 This folder is the auto-created workspace for the [VoxNote](https://github.com/Moonjuun/obsidian-voxnote) plugin. **Day-to-day feature guides live in [[FEATURES]] in this same folder.**
 
@@ -263,7 +271,11 @@ The free $200 Deepgram credit + Gemini's free tier cover a lot of typical usage.
 
 // ─── FEATURES — 기능별 가이드 ─────────────────────────────────────────
 
-const KO_FEATURES = `# 기능 & 가이드
+const KO_FEATURES = `---
+tags: [voxnote/docs]
+---
+
+# 기능 & 가이드
 
 이 파일은 plugin의 **기능별 상세 가이드** 모음입니다. 처음 시작·설치 정보는 [[README]]에 있고, 여기는 사용 중 자주 참고할 내용을 모았습니다. 새 기능이 추가되면 이 파일에 섹션이 늘어납니다.
 
@@ -273,6 +285,7 @@ const KO_FEATURES = `# 기능 & 가이드
 - [화자 이름 정리](#화자-이름-정리)
 - [STT 템플릿 토큰](#stt-템플릿-토큰)
 - [AI 요약 (Gemini)](#ai-요약-gemini)
+- [그래프뷰 클러스터링](#그래프뷰-클러스터링)
 - [모바일에서 사용](#모바일에서-사용)
 - [업데이트 확인](#업데이트-확인)
 
@@ -351,7 +364,7 @@ STT 정확도는 **녹음 환경의 영향을 크게 받습니다**. 좋은 회�
 ---
 date: {{date}}
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: {{duration}}
 language: {{language}}
 source: {{audio_link}}
@@ -362,6 +375,8 @@ speakers: {{speakers_list}}
 
 {{transcript}}
 \`\`\`
+
+> \`voxnote/transcript\` 계층 태그는 그래프뷰에서 STT 노트들을 \`#voxnote\` 허브 아래로 묶기 위한 키입니다. 본인 워크플로우에 맞춰 \`meeting\`·\`stt\` 등을 추가해도 됩니다.
 
 ---
 
@@ -462,6 +477,49 @@ placeholders:
 
 ---
 
+## 그래프뷰 클러스터링
+
+옵시디언 그래프뷰에서 VoxNote 결과 노트들이 산발적으로 떠 보이지 않도록, 모든 생성물에 **계층 태그**가 자동으로 박힙니다.
+
+| 노트 종류 | 태그 | 위치 |
+|---|---|---|
+| STT 회의록 | \`voxnote/transcript\` | \`VoxNote/STT/...\` |
+| AI 요약 | \`voxnote/summary\` | \`VoxNote/AI-Summaries/...\` |
+| 가이드 문서 (이 README·FEATURES) | \`voxnote/docs\` | \`VoxNote/\` 루트 |
+
+옵시디언이 계층 태그의 부모(\`voxnote\`)를 자동으로 그래프 노드로 만들기 때문에:
+
+\`\`\`
+       #voxnote (hub)
+        ├── #voxnote/transcript ── STT 노트들
+        ├── #voxnote/summary    ── AI 요약 노트들
+        └── #voxnote/docs       ── README·FEATURES (가이드)
+\`\`\`
+
+요약 → STT 백링크(\`source\` frontmatter + 본문 \`> 출처: [[...]]\`)가 같은 세션끼리 추가로 묶어주므로, 한 회의 단위가 두 노드의 짝으로 그래프에 떠오릅니다.
+
+### 가이드 문서(README·FEATURES) 숨기는 법
+
+이 두 파일은 STT/요약과 무관한 정적 문서라 그래프에서 지우고 싶을 수 있습니다. 옵시디언 설정 → **그래프뷰 → Filters → Search** 에 다음을 입력하세요:
+
+\`\`\`
+-tag:#voxnote/docs
+\`\`\`
+
+이러면 \`voxnote/docs\` 태그가 박힌 노드들은 그래프에서 완전히 사라집니다. 첨부파일·고립 노드 토글 등 다른 설정은 그대로 유지됩니다.
+
+### 그래프뷰 표시 팁
+
+- **그래프뷰 우측 패널 → 필터 → 태그** 검색에 \`voxnote\`를 넣으면 VoxNote 결과만 따로 떠올라 깔끔하게 볼 수 있습니다.
+- **첨부파일 보기**를 켜면 STT의 \`source: [[...Audio/file.m4a]]\` 링크가 살아나서 \`Audio → STT → 요약\` 3노드 사슬이 됩니다 (기본은 첨부파일이 숨겨져 있어 사슬이 끊어진 것처럼 보임).
+- **로컬 그래프**에서 한 노트 기준으로 보면 같은 세션의 STT·요약·오디오만 표시됩니다.
+
+### 기존 노트 일괄 적용
+
+플러그인은 새로 생성되는 노트에만 태그를 박습니다. 이전에 생성한 노트는 그대로 두거나, 직접 frontmatter에 \`tags: [voxnote/transcript]\` (또는 \`voxnote/summary\`)를 추가하면 그래프 허브에 합류합니다.
+
+---
+
 ## 모바일에서 사용
 
 이 플러그인은 옵시디언 **iOS / Android에서도 동작**합니다. 데스크톱과 거의 동일하되 입력 방식이 다릅니다:
@@ -489,7 +547,11 @@ placeholders:
 Community Plugins로 설치한 경우 옵시디언이 새 버전을 자동으로 안내하므로 이 버튼은 보조 진입점입니다.
 `;
 
-const EN_FEATURES = `# Features & Guides
+const EN_FEATURES = `---
+tags: [voxnote/docs]
+---
+
+# Features & Guides
 
 This file collects **per-feature guides** for the plugin. Onboarding / install lives in [[README]]; this file covers day-to-day usage. New features get a section added here as they ship.
 
@@ -499,6 +561,7 @@ This file collects **per-feature guides** for the plugin. Onboarding / install l
 - [Renaming speakers](#renaming-speakers)
 - [STT template tokens](#stt-template-tokens)
 - [AI summary (Gemini)](#ai-summary-gemini)
+- [Graph-view clustering](#graph-view-clustering)
 - [Mobile usage](#mobile-usage)
 - [Update check](#update-check)
 
@@ -577,7 +640,7 @@ Built-in default template (when no template path is set):
 ---
 date: {{date}}
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: {{duration}}
 language: {{language}}
 source: {{audio_link}}
@@ -588,6 +651,8 @@ speakers: {{speakers_list}}
 
 {{transcript}}
 \`\`\`
+
+> The \`voxnote/transcript\` hierarchical tag is what clusters STT notes under the shared \`#voxnote\` hub in graph view. You can layer extra free-text tags (\`meeting\`, \`stt\`, etc.) without breaking that clustering.
 
 ---
 
@@ -685,6 +750,49 @@ Command palette → **"Create new summary template"** scaffolds a starter file i
 
 - **STT fails** → abort the whole flow. Summary step is skipped.
 - **Summary fails only** → the STT note is preserved; the summary error is shown as a Notice. If Gemini returns invalid JSON the plugin auto-retries once.
+
+---
+
+## Graph-view clustering
+
+To keep VoxNote output from drifting as isolated nodes in Obsidian's graph view, every generated note carries a **hierarchical tag**.
+
+| Note kind | Tag | Location |
+|---|---|---|
+| STT transcript | \`voxnote/transcript\` | \`VoxNote/STT/...\` |
+| AI summary | \`voxnote/summary\` | \`VoxNote/AI-Summaries/...\` |
+| Guide docs (this README · FEATURES) | \`voxnote/docs\` | \`VoxNote/\` root |
+
+Obsidian promotes the shared parent (\`voxnote\`) into a graph node automatically, so:
+
+\`\`\`
+       #voxnote (hub)
+        ├── #voxnote/transcript ── STT notes
+        ├── #voxnote/summary    ── AI summary notes
+        └── #voxnote/docs       ── README · FEATURES (guides)
+\`\`\`
+
+The summary → STT backlink (\`source\` frontmatter + body \`> Source: [[...]]\`) keeps a session's pair tightly joined as well.
+
+### Hide the guide docs (README · FEATURES)
+
+These two files are static documentation, not session output. If you don't want them in your graph, open Obsidian's **Settings → Graph view → Filters → Search** and add:
+
+\`\`\`
+-tag:#voxnote/docs
+\`\`\`
+
+That removes any node tagged with \`voxnote/docs\` from the graph while leaving attachments and other filters untouched.
+
+### Display tips
+
+- **Right panel → Filter → Tags** in graph view: type \`voxnote\` to focus on VoxNote-produced nodes only.
+- **Toggle attachments on** to reveal the STT note's \`source: [[...Audio/file.m4a]]\` link, completing the \`Audio → STT → summary\` chain (attachments are hidden by default in graph view).
+- **Local graph** on any single note shows only its session — transcript, summary, and (with attachments on) the audio file.
+
+### Apply to existing notes
+
+The plugin only stamps the new tags on **newly created** notes. Older notes stay as-is; if you want them in the hub too, add \`tags: [voxnote/transcript]\` (or \`voxnote/summary\`) to their frontmatter manually.
 
 ---
 

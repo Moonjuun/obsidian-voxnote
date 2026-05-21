@@ -255,6 +255,11 @@ describe('buildSummaryFrontmatter', () => {
 		const fm = buildSummaryFrontmatter(mkTemplate(), noSource);
 		expect(fm).not.toContain('source:');
 	});
+
+	it('includes voxnote/summary tag for graph view clustering', () => {
+		const fm = buildSummaryFrontmatter(mkTemplate(), system);
+		expect(fm).toContain('tags: [voxnote/summary]');
+	});
 });
 
 describe('composeSummaryFile', () => {

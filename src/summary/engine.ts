@@ -103,6 +103,7 @@ export function buildSummaryFrontmatter(
 	if (system.date) lines.push(`date: ${system.date}`);
 	if (system.language) lines.push(`language: ${system.language}`);
 	lines.push('type: ai-summary');
+	lines.push('tags: [voxnote/summary]');
 	lines.push('---', '');
 	return lines.join('\n');
 }

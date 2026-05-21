@@ -14,6 +14,7 @@ An Obsidian plugin that turns meeting recordings into Markdown notes — **speec
 - **Audio → transcript → AI summary** (optional): in the same right-click, also produce a structured summary note (action items, decisions, key quotes — whatever the template says) backlinked to the transcript.
 - **File-based summary templates** under `VoxNote/Templates/`. Each `.md` declares its own prompt and output skeleton with `{{placeholders}}`; you edit them like any other note. Favorites surface as flat menu items; the rest sit in an `AI 요약 ▸` submenu. Three starters are seeded on first run (`Meeting`, `Interview`, `Lecture`).
 - **Workspace stays clean**: `VoxNote/` (Audio · STT · Templates · AI-Summaries) is auto-created at the vault root, and `.gitignore` rules are added so recordings and your API keys never enter vault git sync.
+- **Graph-view friendly**: every generated note is tagged with a hierarchical `#voxnote/transcript` (STT) or `#voxnote/summary` (AI summary), so all VoxNote output clusters around a single `#voxnote` hub instead of floating as isolated pairs.
 - **Bilingual UI** — Korean / English / auto-follow Obsidian locale.
 - **Zero Retention by default** for Deepgram; AI summary is fully optional and gated on having a Gemini key set.
 - **Mobile compatible** — works on Obsidian for iOS / Android.
@@ -90,7 +91,7 @@ Transcript (`VoxNote/STT/...`):
 ---
 date: 2026-05-13
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: 28m 41s
 language: ko
 source: [[VoxNote/Audio/standup.m4a]]
@@ -115,6 +116,7 @@ template: "Meeting"
 date: 2026-05-13
 language: Korean
 type: ai-summary
+tags: [voxnote/summary]
 ---
 # Stand-up 2026-05-13
 

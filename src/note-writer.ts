@@ -6,7 +6,7 @@ import { formatDuration } from './utils/audio-utils';
 const DEFAULT_TEMPLATE = `---
 date: {{date}}
 type: meeting
-tags: [meeting, stt]
+tags: [voxnote/transcript]
 duration: {{duration}}
 language: {{language}}
 source: {{audio_link}}

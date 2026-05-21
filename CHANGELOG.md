@@ -1,4 +1,7 @@
-## [Unreleased]
+## [2.1.0] - 2026-05-21
+
+### Changed
+- **Graph-view clustering via hierarchical tags.** Newly generated STT notes now carry `tags: [voxnote/transcript]`, AI summary notes carry `tags: [voxnote/summary]`, and the auto-seeded vault guide docs (`VoxNote/README.md` / `VoxNote/FEATURES.md`) carry `tags: [voxnote/docs]`. Obsidian's graph view promotes the shared `voxnote` parent into a hub node, so VoxNote output no longer appears as scattered isolated STT↔summary pairs but clusters around a single `#voxnote` node. Guide docs land on a separate `voxnote/docs` branch that users can hide from the graph view via the filter query `-tag:#voxnote/docs` (documented in the new "Graph-view clustering" section of FEATURES). The previous STT default-template tag set (`[meeting, stt]`) is replaced by the single hierarchical tag; users who want the old free-text tags can still add them back in their own templates. Existing notes are not migrated — only newly created notes pick up the new tag scheme (vault README/FEATURES are not re-installed if they already exist).
 
 ## [2.0.0] - 2026-05-15
 
