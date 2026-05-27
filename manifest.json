@@ -1,6 +1,6 @@
 {
 	"id": "voxnote",
-	"name": "VoxNote — Meeting Transcription & AI Summary",
+	"name": "VoxNote",
 	"version": "2.1.0",
 	"minAppVersion": "1.8.7",
 	"description": "Transcribe meeting recordings via Deepgram, then generate template-based AI summaries via Gemini.",
