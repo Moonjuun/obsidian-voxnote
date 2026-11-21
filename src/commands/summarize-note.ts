@@ -1,7 +1,7 @@
 import { Notice, TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
 import { isSummaryReady } from '../providers/availability';
-import { GeminiProvider } from '../providers/gemini';
+import { createSummaryProvider } from '../providers/factory';
 import { loadTemplates, type TemplateMeta } from '../summary/template-loader';
 import {
 	extractTranscriptFromMarkdown,
@@ -66,10 +66,7 @@ export async function summarizeNoteWithTemplate(
 	try {
 		const raw = await plugin.app.vault.read(file);
 		const transcript = extractTranscriptFromMarkdown(raw);
-		const provider = new GeminiProvider({
-			apiKey: plugin.settings.geminiApiKey,
-			model: plugin.settings.geminiModel,
-		});
+		const provider = createSummaryProvider(plugin.settings);
 		const lang = detectLang(plugin.settings.uiLanguage);
 		const { path } = await runSummary(
 			plugin.app,
