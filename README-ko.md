@@ -67,6 +67,18 @@ STT만 사용할 거면 비워두면 됩니다. AI 요약을 활성화하려면:
 
 키가 비어있는 동안에는 AI 관련 메뉴가 표시되지 않습니다.
 
+### 3. Ollama (선택 — 로컬, 무료)
+
+API 키 없이 내 컴퓨터에서 AI 요약을 돌릴 수 있습니다 — [Ollama](https://ollama.com):
+
+- Ollama를 설치합니다. 기본적으로 `http://localhost:11434`에서 대기합니다.
+- 추천 모델을 풀링합니다: `ollama pull qwen2.5:7b`.
+- 설정 → VoxNote → AI 요약 섹션에서 **"요약 엔진"**을 **"Ollama (로컬)"**으로 설정 → **"모델 새로고침"** 클릭 → 모델을 선택합니다.
+
+Transcript 텍스트는 설정된 Ollama 서버로만 전송됩니다 — 기본 `localhost` URL에서는 어떤 데이터도 사용자 컴퓨터 밖으로 나가지 않습니다.
+
+> ⚠️ structured-output JSON이 곧 계약이며, 작은 로컬 모델은 이를 지키는 정도가 제각각입니다 — `qwen2.5` 계열(특히 `qwen2.5:7b-instruct` 이상)은 템플릿 JSON을 안정적으로 채웁니다. 요약이 `JSON 파싱 실패` 오류를 반복한다면 더 큰 모델을 쓰거나 Gemini로 되돌리세요.
+
 ---
 
 ## 사용법
@@ -230,6 +242,9 @@ placeholders:
 | Zero Retention | Deepgram 측 데이터 보관 비활성화 (요금제 조건) | `true` |
 | Gemini API 키 | (옵션) AI 요약 메뉴를 활성화 | (없음) |
 | Gemini 모델 | `gemini-2.5-flash` (빠르고 저렴) / `gemini-2.5-pro` (정확도 우선) | `gemini-2.5-flash` |
+| 요약 엔진 | `Gemini (클라우드)` / `Ollama (로컬)` — AI 요약에 사용되는 엔진 | `gemini` |
+| Ollama 서버 | Ollama 데몬 기본 URL (Ollama 탭만 해당) | `http://localhost:11434` |
+| Ollama 모델 | `ollama list`의 모델 태그 — "모델 새로고침"으로 선택 | (없음) |
 | 템플릿 폴더 | 요약 템플릿(.md)이 들어있는 폴더 | `VoxNote/Templates` |
 | 요약 저장 폴더 | AI 요약 결과를 저장할 폴더 | `VoxNote/AI-Summaries` |
 

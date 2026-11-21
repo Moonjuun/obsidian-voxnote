@@ -55,6 +55,18 @@ Leave this blank if you only want STT. To enable AI summary:
 
 The AI menus stay hidden until a key is set.
 
+### 3. Ollama (optional, local, free)
+
+No API key needed — run AI summaries on your own machine with [Ollama](https://ollama.com):
+
+- Install Ollama. By default it listens on `http://localhost:11434`.
+- Pull a recommended model: `ollama pull qwen2.5:7b`.
+- In **Settings → VoxNote → AI summary**, set **Summary provider** to **Ollama (local)** → click **Refresh models** → pick a model.
+
+Your transcript is sent only to the configured Ollama server — on the default `localhost` URL it never leaves your machine.
+
+> ⚠️ Structured-output JSON is the contract, and small local models vary at keeping it — the `qwen2.5` family (especially `qwen2.5:7b-instruct` and up) fills template JSON reliably. If a summary repeatedly errors with `JSON 파싱 실패`, pick a larger model or fall back to Gemini.
+
 ## Usage
 
 ### Transcribe only
@@ -196,6 +208,9 @@ Every occurrence in both the body and the `speakers` frontmatter array is rewrit
 | Zero Retention | Ask Deepgram to discard data after processing | `true` |
 | Gemini API key | Optional. Enables the AI summary menus | (none) |
 | Gemini model | `gemini-2.5-flash` (fast/cheap) / `gemini-2.5-pro` (higher quality) | `gemini-2.5-flash` |
+| Summary provider | `Gemini (cloud)` or `Ollama (local)` — engine used for AI summaries | `gemini` |
+| Ollama server URL | Ollama daemon base URL (Ollama tab only) | `http://localhost:11434` |
+| Ollama model | Model tag from `ollama list` — picked via "Refresh models" | (none) |
 | Templates folder | Where summary templates live | `VoxNote/Templates` |
 | Summaries folder | Where AI summary notes are written | `VoxNote/AI-Summaries` |
 
