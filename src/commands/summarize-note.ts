@@ -1,5 +1,6 @@
 import { Notice, TFile } from 'obsidian';
 import type DeepgramSttPlugin from '../main';
+import { isSummaryReady } from '../providers/availability';
 import { GeminiProvider } from '../providers/gemini';
 import { loadTemplates, type TemplateMeta } from '../summary/template-loader';
 import {
@@ -29,7 +30,7 @@ export function registerSummarizeNoteCommand(plugin: DeepgramSttPlugin): void {
 }
 
 export function isReady(plugin: DeepgramSttPlugin): boolean {
-	return Boolean(plugin.settings.geminiApiKey && plugin.settings.geminiApiKey.trim());
+	return isSummaryReady(plugin.settings);
 }
 
 export async function pickTemplateAndSummarize(

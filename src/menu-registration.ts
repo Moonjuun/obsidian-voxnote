@@ -6,6 +6,7 @@ import { TitleInputModal } from './modals/title-input-modal';
 import { runTranscribeToNote } from './commands/transcribe-to-note';
 import { runTranscribeAndSummarize } from './commands/transcribe-and-summarize';
 import { summarizeNoteWithTemplate } from './commands/summarize-note';
+import { isSummaryReady } from './providers/availability';
 import { checkReady, notifyIfBlocked } from './utils/guards';
 
 declare module 'obsidian' {
@@ -30,7 +31,7 @@ export function registerFileMenus(plugin: DeepgramSttPlugin): void {
 }
 
 function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): void {
-	const templates = hasGeminiKey(plugin) ? plugin.templatesCache : [];
+	const templates = isSummaryReady(plugin.settings) ? plugin.templatesCache : [];
 	const favorites = templates.filter((t) => t.favorite);
 	const others = templates.filter((t) => !t.favorite);
 
@@ -87,7 +88,7 @@ function buildAudioMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): voi
 }
 
 function buildMarkdownMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): void {
-	if (!hasGeminiKey(plugin)) return;
+	if (!isSummaryReady(plugin.settings)) return;
 	const templates = plugin.templatesCache;
 	if (templates.length === 0) return;
 	const favorites = templates.filter((t) => t.favorite);
@@ -123,10 +124,6 @@ function buildMarkdownMenu(plugin: DeepgramSttPlugin, menu: Menu, file: TFile): 
 			});
 		}
 	});
-}
-
-function hasGeminiKey(plugin: DeepgramSttPlugin): boolean {
-	return Boolean(plugin.settings.geminiApiKey && plugin.settings.geminiApiKey.trim());
 }
 
 function askTitleThenTranscribeOnly(plugin: DeepgramSttPlugin, file: TFile): void {

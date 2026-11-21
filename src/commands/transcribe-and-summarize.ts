@@ -3,6 +3,7 @@ import type DeepgramSttPlugin from '../main';
 import { AudioSuggestModal } from '../modals/audio-suggest-modal';
 import { TitleInputModal } from '../modals/title-input-modal';
 import { TemplateSuggestModal } from '../modals/template-suggest-modal';
+import { isSummaryReady } from '../providers/availability';
 import { GeminiProvider } from '../providers/gemini';
 import { loadTemplates, type TemplateMeta } from '../summary/template-loader';
 import { createTranscriptNote } from '../note-writer';
@@ -38,9 +39,8 @@ export function registerTranscribeAndSummarizeCommand(plugin: DeepgramSttPlugin)
 	});
 }
 
-export function hasGeminiKey(plugin: DeepgramSttPlugin): boolean {
-	return Boolean(plugin.settings.geminiApiKey && plugin.settings.geminiApiKey.trim());
-}
+export const hasGeminiKey = (plugin: DeepgramSttPlugin): boolean =>
+	isSummaryReady(plugin.settings);
 
 function askTitleAndPickTemplate(plugin: DeepgramSttPlugin, file: TFile): void {
 	new TitleInputModal(plugin.app, plugin.t, file.basename, (title) => {
