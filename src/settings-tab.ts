@@ -3,7 +3,8 @@ import type DeepgramSttPlugin from './main';
 import { validateApiKey } from './deepgram';
 import type { UiLang } from './utils/i18n';
 import { compareSemver, fetchLatestRelease, UpdateCheckError } from './update-checker';
-import type { GeminiModel } from './settings';
+import { listOllamaModels } from './providers/ollama';
+import type { GeminiModel, SummaryProviderId } from './settings';
 
 const RELEASES_PAGE_URL = 'https://github.com/Moonjuun/obsidian-voxnote/releases';
 
@@ -131,49 +132,140 @@ export class DeepgramSettingTab extends PluginSettingTab {
 
 		// ─── AI summary (Gemini) ────────────────────────────────────
 		new Setting(containerEl)
-			.setName(t('AI 요약 (Gemini)', 'AI summary (Gemini)'))
+			.setName(t('AI 요약', 'AI summary'))
 			.setHeading();
 
 		new Setting(containerEl)
-			.setName(t('Gemini API 키', 'Gemini API key'))
+			.setName(t('요약 엔진', 'Summary provider'))
 			.setDesc(
 				t(
-					'Google AI Studio에서 발급한 키. 비워두면 STT만 동작하고 AI 요약 메뉴는 숨겨집니다.',
-					'API key from Google AI Studio. Leave blank to use STT only; AI menus stay hidden.',
+					'Ollama를 선택하면 요약 요청이 로컬 네트워크의 Ollama 서버로 전송됩니다 (API 키 불필요).',
+					'With Ollama, summary requests go to a local Ollama server — no API key needed.',
 				),
 			)
-			.addText((text) => {
-				text
-					.setPlaceholder(
-						t('Gemini API 키 붙여넣기 (선택)', 'Paste your Gemini API key (optional)'),
-					)
-					.setValue(this.plugin.settings.geminiApiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.geminiApiKey = value.trim();
-						await this.plugin.saveSettings();
-						await this.plugin.refreshTemplatesCache();
-					});
-				text.inputEl.type = 'password';
-			});
-
-		new Setting(containerEl)
-			.setName(t('Gemini 모델', 'Gemini model'))
 			.addDropdown((dd) =>
 				dd
-					.addOption(
-						'gemini-2.5-flash',
-						t('gemini-2.5-flash (빠르고 저렴, 권장)', 'gemini-2.5-flash (fast & cheap, recommended)'),
-					)
-					.addOption(
-						'gemini-2.5-pro',
-						t('gemini-2.5-pro (정확도 우선)', 'gemini-2.5-pro (higher quality)'),
-					)
-					.setValue(this.plugin.settings.geminiModel)
+					.addOption('gemini', t('Gemini (클라우드)', 'Gemini (cloud)'))
+					.addOption('ollama', t('Ollama (로컬)', 'Ollama (local)'))
+					.setValue(this.plugin.settings.summaryProvider)
 					.onChange(async (value) => {
-						this.plugin.settings.geminiModel = value as GeminiModel;
+						this.plugin.settings.summaryProvider = value as SummaryProviderId;
 						await this.plugin.saveSettings();
+						this.display(); // established redraw idiom — re-renders conditional section
 					}),
 			);
+
+		if (this.plugin.settings.summaryProvider === 'ollama') {
+			// Conditional Ollama block — shown only when Ollama is the summary provider.
+			new Setting(containerEl)
+				.setName(t('Ollama 서버', 'Ollama server'))
+				.setDesc(t('Ollama 서버 주소', 'Ollama server base URL'))
+				.addText((text) =>
+					text
+						.setPlaceholder(
+							t('예: http://localhost:11434', 'e.g. http://localhost:11434'),
+						)
+						.setValue(this.plugin.settings.ollamaUrl)
+						.onChange(async (value) => {
+							this.plugin.settings.ollamaUrl = value.replace(/\/+$/, '');
+							await this.plugin.saveSettings();
+						}),
+				);
+
+			new Setting(containerEl)
+				.setName(t('Ollama 모델', 'Ollama model'))
+				.setDesc(
+					t(
+						'모델이 보이지 않으면 새로고침 버튼으로 Ollama 서버에서 목록을 가져오세요.',
+						'If no models appear, press Refresh to fetch the list from the Ollama server.',
+					),
+				)
+				.addDropdown((dd) => {
+					const options =
+						this.plugin.ollamaModelsCache ??
+						[this.plugin.settings.ollamaModel].filter(Boolean);
+					for (const model of options) {
+						dd.addOption(model, model);
+					}
+					dd
+						.setValue(this.plugin.settings.ollamaModel)
+						.onChange(async (value) => {
+							this.plugin.settings.ollamaModel = value;
+							await this.plugin.saveSettings();
+						});
+				})
+				.addButton((btn) =>
+					btn
+						.setButtonText(t('모델 새로고침', 'Refresh models'))
+						.onClick(async () => {
+							try {
+								const names = await listOllamaModels(
+									this.plugin.settings.ollamaUrl,
+								);
+								this.plugin.ollamaModelsCache = names;
+								const firstModel = names[0];
+								if (
+									names.length > 0 &&
+									firstModel !== undefined &&
+									(this.plugin.settings.ollamaModel === '' ||
+										!names.includes(this.plugin.settings.ollamaModel))
+								) {
+									this.plugin.settings.ollamaModel = firstModel;
+								}
+								await this.plugin.saveSettings();
+								this.display();
+							} catch {
+								new Notice(
+									t(
+										'Ollama에 연결할 수 없습니다 — 서버가 실행 중인지 확인하세요.',
+										'Cannot reach Ollama — check that the server is running.',
+									),
+								);
+							}
+						}),
+				);
+		} else {
+			new Setting(containerEl)
+				.setName(t('Gemini API 키', 'Gemini API key'))
+				.setDesc(
+					t(
+						'Google AI Studio에서 발급한 키. 비워두면 STT만 동작하고 AI 요약 메뉴는 숨겨집니다.',
+						'API key from Google AI Studio. Leave blank to use STT only; AI menus stay hidden.',
+					),
+				)
+				.addText((text) => {
+					text
+						.setPlaceholder(
+							t('Gemini API 키 붙여넣기 (선택)', 'Paste your Gemini API key (optional)'),
+						)
+						.setValue(this.plugin.settings.geminiApiKey)
+						.onChange(async (value) => {
+							this.plugin.settings.geminiApiKey = value.trim();
+							await this.plugin.saveSettings();
+							await this.plugin.refreshTemplatesCache();
+						});
+					text.inputEl.type = 'password';
+				});
+
+			new Setting(containerEl)
+				.setName(t('Gemini 모델', 'Gemini model'))
+				.addDropdown((dd) =>
+					dd
+						.addOption(
+							'gemini-2.5-flash',
+							t('gemini-2.5-flash (빠르고 저렴, 권장)', 'gemini-2.5-flash (fast & cheap, recommended)'),
+						)
+						.addOption(
+							'gemini-2.5-pro',
+							t('gemini-2.5-pro (정확도 우선)', 'gemini-2.5-pro (higher quality)'),
+						)
+						.setValue(this.plugin.settings.geminiModel)
+						.onChange(async (value) => {
+							this.plugin.settings.geminiModel = value as GeminiModel;
+							await this.plugin.saveSettings();
+						}),
+				);
+		}
 
 		new Setting(containerEl)
 			.setName(t('템플릿 폴더', 'Templates folder'))

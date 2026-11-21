@@ -24,6 +24,7 @@ import { loadTemplates, type TemplateMeta } from './summary/template-loader';
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
 	templatesCache: TemplateMeta[] = [];
+	ollamaModelsCache?: string[]; // session-only; never persisted to data.json
 	private consentModalOpen = false;
 	private settingTab: DeepgramSettingTab | null = null;
 
