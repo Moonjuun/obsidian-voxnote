@@ -18,11 +18,13 @@ import { registerSummarizeNoteCommand } from './commands/summarize-note';
 import { registerTranscribeAndSummarizeCommand } from './commands/transcribe-and-summarize';
 import { registerCreateTemplateCommand } from './commands/create-template';
 import { registerFileMenus } from './menu-registration';
+import { isSummaryReady } from './providers/availability';
 import { loadTemplates, type TemplateMeta } from './summary/template-loader';
 
 export default class DeepgramSttPlugin extends Plugin {
 	settings: DeepgramSettings;
 	templatesCache: TemplateMeta[] = [];
+	ollamaModelsCache?: string[]; // session-only; never persisted to data.json
 	private consentModalOpen = false;
 	private settingTab: DeepgramSettingTab | null = null;
 
@@ -89,8 +91,7 @@ export default class DeepgramSttPlugin extends Plugin {
 	}
 
 	async refreshTemplatesCache(): Promise<void> {
-		const key = this.settings.geminiApiKey?.trim();
-		if (!key) {
+		if (!isSummaryReady(this.settings)) {
 			this.templatesCache = [];
 			return;
 		}

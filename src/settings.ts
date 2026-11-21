@@ -3,6 +3,7 @@ import type { UiLang } from './utils/i18n';
 export type DeepgramLanguage = 'ko' | 'en' | 'auto';
 export type DeepgramModel = 'nova-3' | 'nova-2';
 export type GeminiModel = 'gemini-2.5-flash' | 'gemini-2.5-pro';
+export type SummaryProviderId = 'gemini' | 'ollama';
 
 export interface DeepgramSettings {
 	apiKey: string;
@@ -16,6 +17,9 @@ export interface DeepgramSettings {
 	uiLanguage: UiLang;
 	geminiApiKey: string;
 	geminiModel: GeminiModel;
+	summaryProvider: SummaryProviderId;
+	ollamaUrl: string;
+	ollamaModel: string;
 	templatesFolder: string;
 	summariesFolder: string;
 }
@@ -32,6 +36,9 @@ export const DEFAULT_SETTINGS: DeepgramSettings = {
 	uiLanguage: 'auto',
 	geminiApiKey: '',
 	geminiModel: 'gemini-2.5-flash',
+	summaryProvider: 'gemini',
+	ollamaUrl: 'http://localhost:11434',
+	ollamaModel: '',
 	templatesFolder: 'VoxNote/Templates',
 	summariesFolder: 'VoxNote/AI-Summaries',
 };

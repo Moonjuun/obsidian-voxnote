@@ -3,7 +3,8 @@ import type DeepgramSttPlugin from '../main';
 import { AudioSuggestModal } from '../modals/audio-suggest-modal';
 import { TitleInputModal } from '../modals/title-input-modal';
 import { TemplateSuggestModal } from '../modals/template-suggest-modal';
-import { GeminiProvider } from '../providers/gemini';
+import { isSummaryReady } from '../providers/availability';
+import { createSummaryProvider } from '../providers/factory';
 import { loadTemplates, type TemplateMeta } from '../summary/template-loader';
 import { createTranscriptNote } from '../note-writer';
 import { runSummary } from '../summary/runner';
@@ -22,10 +23,15 @@ export function registerTranscribeAndSummarizeCommand(plugin: DeepgramSttPlugin)
 		callback: () => {
 			if (!notifyIfBlocked(checkReady(plugin.settings), plugin.t)) return;
 			if (!hasGeminiKey(plugin)) {
+				const usesOllama = plugin.settings.summaryProvider === 'ollama';
 				new Notice(
 					plugin.t(
-						'Gemini API 키가 설정되지 않았습니다. 설정 탭에서 키를 입력하세요.',
-						'Gemini API key is not set. Configure it in settings.',
+						usesOllama
+							? 'Ollama 모델이 설정되지 않았습니다. 설정 탭에서 모델을 입력하세요.'
+							: 'Gemini API 키가 설정되지 않았습니다. 설정 탭에서 키를 입력하세요.',
+						usesOllama
+							? 'Ollama model is not set. Configure the model in settings.'
+							: 'Gemini API key is not set. Configure it in settings.',
 					),
 					NoticeDuration.Long,
 				);
@@ -38,9 +44,8 @@ export function registerTranscribeAndSummarizeCommand(plugin: DeepgramSttPlugin)
 	});
 }
 
-export function hasGeminiKey(plugin: DeepgramSttPlugin): boolean {
-	return Boolean(plugin.settings.geminiApiKey && plugin.settings.geminiApiKey.trim());
-}
+export const hasGeminiKey = (plugin: DeepgramSttPlugin): boolean =>
+	isSummaryReady(plugin.settings);
 
 function askTitleAndPickTemplate(plugin: DeepgramSttPlugin, file: TFile): void {
 	new TitleInputModal(plugin.app, plugin.t, file.basename, (title) => {
@@ -122,10 +127,7 @@ export async function runTranscribeAndSummarize(
 		0,
 	);
 	try {
-		const provider = new GeminiProvider({
-			apiKey: plugin.settings.geminiApiKey,
-			model: plugin.settings.geminiModel,
-		});
+		const provider = createSummaryProvider(plugin.settings);
 		const lang = detectLang(plugin.settings.uiLanguage);
 		const { path: summaryPath } = await runSummary(
 			plugin.app,
